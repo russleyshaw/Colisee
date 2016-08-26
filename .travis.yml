@@ -10,4 +10,4 @@ before_script:
 
 # Build steps
 script:
-  - gulp scripts
+

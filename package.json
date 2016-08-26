@@ -20,11 +20,8 @@
   },
   "homepage": "https://github.com/russleyshaw/Colisee#readme",
   "dependencies": {
-    "typescript": "^1.8.10"
+    "mocha": "^3.0.2",
   },
   "devDependencies": {
-    "del": "^2.2.2",
-    "gulp": "^3.9.1",
-    "gulp-typescript": "^2.13.6"
   }
 }
