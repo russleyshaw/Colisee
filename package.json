@@ -9,11 +9,9 @@
   "scripts": {
     "lint": "jshint dist/**/*.js",
     "clean": "rm -rf dist/*",
-
     "precompile": "npm run clean",
     "compile:ts": "tsc",
     "compile": "npm run compile:ts && npm run lint",
-    
     "head_server": "dist/src/main.js",
     "build_server": "dist/src/build_server/main.js",
     "play_server": "dist/src/play_server/main.js"
@@ -29,6 +27,7 @@
   },
   "homepage": "https://github.com/russleyshaw/Colisee#readme",
   "devDependencies": {
+    "jshint": "^2.9.3",
     "typescript": "^1.8.10",
     "typings": "^1.3.3"
   },
