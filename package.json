@@ -12,7 +12,7 @@
 
     "precompile": "npm run clean",
     "compile:ts": "tsc",
-    "compile": "npm run compile:ts",
+    "compile": "npm run compile:ts && npm run lint",
     
     "head_server": "dist/src/main.js",
     "build_server": "dist/src/build_server/main.js",
