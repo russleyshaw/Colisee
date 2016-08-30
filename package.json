@@ -9,12 +9,13 @@
   "scripts": {
     "lint": "jshint dist/**/*.js",
     "clean": "rm -rf dist/*",
+    "typings": "typings install",
     "precompile": "npm run clean",
     "compile:ts": "tsc",
     "compile": "npm run compile:ts && npm run lint",
-    "head_server": "dist/src/main.js",
-    "build_server": "dist/src/build_server/main.js",
-    "play_server": "dist/src/play_server/main.js"
+    "head_server": "node dist/src/main.js",
+    "build_server": "node dist/src/build_server/main.js",
+    "play_server": "node dist/src/play_server/main.js"
   },
   "repository": {
     "type": "git",
