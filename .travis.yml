@@ -10,4 +10,5 @@ before_script:
 
 # Build steps
 script:
+  - npm run build
 
