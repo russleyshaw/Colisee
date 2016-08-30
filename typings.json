@@ -1,6 +1,4 @@
 {
   "name": "colisee",
-  "dependencies": {
-    "express": "registry:npm/express#4.14.0+20160815112707"
-  }
+  "dependencies": {}
 }

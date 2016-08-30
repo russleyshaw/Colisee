@@ -1,6 +1,4 @@
-///<reference path="../../typings/index.d.ts"/>
-
-import * as express from "express";
+import express = require('express');
 
 function main() {
     console.log("Running Build Server...");
