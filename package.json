@@ -1,27 +1,39 @@
 {
   "name": "colisee",
   "version": "1.0.0",
-  "description": "Next generation of ACM SIG-Game Arena",
-  "main": "dist/main.js",
+  "description": "",
+  "main": "dist/src/main.js",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
-    "test": "dist/test.js"
+    "lint": "jshint dist/**/*.js",
+    "clean": "rm -rf dist/*",
+
+    "precompile": "npm run clean",
+    "compile:ts": "tsc",
+    "compile": "npm run compile:ts",
+    
+    "head_server": "dist/src/main.js",
+    "build_server": "dist/src/build_server/main.js",
+    "play_server": "dist/src/play_server/main.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/russleyshaw/Colisee.git"
   },
-  "author": "Russley Shaw",
-  "license": "MIT",
+  "author": "",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/russleyshaw/Colisee/issues"
   },
   "homepage": "https://github.com/russleyshaw/Colisee#readme",
-  "dependencies": {
-    "mocha": "^3.0.2",
-  },
   "devDependencies": {
+    "typescript": "^1.8.10",
+    "typings": "^1.3.3"
+  },
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "express": "^4.14.0"
   }
 }
