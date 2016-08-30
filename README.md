@@ -4,7 +4,8 @@ ACM SIG-Game NodeJS Arena
 
 
 ### Compiling
-1) Install NVM - https://github.com/creationix/nvm/blob/master/README.markdown
+1) Install NVM - https://github.com/creationix/nvm/blob/master/README.markdown  
+
 2) Install NodeJS v4.5.0 (LTS)
 ```
 nvm install --lts
