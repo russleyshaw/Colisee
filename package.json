@@ -2,17 +2,19 @@
   "name": "colisee",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/src/main.js",
+  "main": "src/head_server/main.js",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
     "lint": "jshint src/",
-    "head_server": "npm run lint && node src/head_server/main.js",
-    "build_server": "npm run lint && node src/build_server/main.js",
-    "play_server": "npm run lint && node src/play_server/main.js",
-    "mock_vis": "npm run lint && node src/mock/visualizer/main.js",
-    "mock_web:": "npm run lint && node src/mock/webserver/main.js"
+    "serve": "npm run lint && npm-run-all --parallel serve:*",
+    "serve:head": "node src/head_server/main.js",
+    "serve:build": "node src/build_server/main.js",
+    "serve:play": "node src/play_server/main.js",
+    "mock": "npm run lint && npm-run-all --parallel mock:*",
+    "mock:vis": "node src/mock/visualizer/main.js",
+    "mock:web:": "node src/mock/webserver/main.js"
   },
   "repository": {
     "type": "git",
@@ -25,7 +27,8 @@
   },
   "homepage": "https://github.com/russleyshaw/Colisee#readme",
   "devDependencies": {
-    "jshint": "^2.9.3"
+    "jshint": "^2.9.3",
+    "npm-run-all": "^3.0.0"
   },
   "dependencies": {
     "child_process": "^1.0.2",

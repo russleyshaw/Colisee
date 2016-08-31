@@ -4,7 +4,7 @@ var fs = require("fs");
 var statusApp = require("./status/status.js");
 
 function main() {
-    console.log("Running Head Server...");
+    console.log("Running Colisee Head Server...");
 
     var currentVisGame = 1;
 

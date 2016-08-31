@@ -19,13 +19,17 @@ npm install
 
 5) Run a server or mock interface
 ```
-npm run head_server
-OR
-npm run build_server
-OR
-npm run play_server
-OR
-npm run mock_vis
+npm run lint # Checks javascript syntax
+
+npm run serve # Runs all serve scripts in parallel & checks syntax
+npm run mock # Runs all mock scripts in parallel & checks syntax
+
+# Run individual services
+npm run serve:head
+npm run serve:build
+npm run serve:play
+npm run mock:vis
+npm run mock:web
 ```
 
 ### Saving NPM Packages
