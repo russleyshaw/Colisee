@@ -1,10 +1,12 @@
 var express = require("express");
 var fs = require("fs");
 
+var statusApp = require("./status/status.js");
+
 function main() {
     console.log("Running Head Server...");
 
-    var currentVisGame = 0;
+    var currentVisGame = 1;
 
     var app = express();
 
@@ -14,6 +16,8 @@ function main() {
         res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
         next();
     });
+
+    app.use('/', statusApp);
 
     app.get('/api/v1/vis/next', function(req, res){
 
