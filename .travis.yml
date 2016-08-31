@@ -3,12 +3,12 @@ sudo: false
 
 language: node_js
 node_js:
-  - "--lts"
+  - "v6.5.0"
 
 before_script:
   - npm install
 
 # Build steps
 script:
-  - npm run compile
+  - npm run lint
 

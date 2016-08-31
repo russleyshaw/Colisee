@@ -7,15 +7,11 @@
     "doc": "docs"
   },
   "scripts": {
-    "lint": "jshint dist/**/*.js",
-    "clean": "rm -rf dist/*",
-    "typings": "typings install",
-    "precompile": "npm run clean",
-    "compile:ts": "tsc",
-    "compile": "npm run compile:ts && npm run lint",
-    "head_server": "node dist/src/main.js",
-    "build_server": "node dist/src/build_server/main.js",
-    "play_server": "node dist/src/play_server/main.js"
+    "lint": "jshint src/",
+    "head_server": "node src/head_server/main.js",
+    "build_server": "node src/build_server/main.js",
+    "play_server": "node src/play_server/main.js",
+    "mock_vis": "node src/mock/visualizer/main.js"
   },
   "repository": {
     "type": "git",
@@ -28,9 +24,7 @@
   },
   "homepage": "https://github.com/russleyshaw/Colisee#readme",
   "devDependencies": {
-    "jshint": "^2.9.3",
-    "typescript": "^1.8.10",
-    "typings": "^1.3.3"
+    "jshint": "^2.9.3"
   },
   "dependencies": {
     "child_process": "^1.0.2",
