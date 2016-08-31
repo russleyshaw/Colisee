@@ -1,0 +1,36 @@
+<html>
+
+<head>
+    <title>Mock Web Server</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+</head>
+
+<body>
+
+<button id="clientBtn">Get client</button>
+<br/>
+<textarea id="clientData"></textarea>
+
+<br/><br/>
+
+<button id="gameBtn">Get game</button>
+<br/>
+<textarea id="gameData"></textarea>
+
+<script>
+    $(clientBtn).click(function(){
+        $.get("http://localhost:3000/api/v1/web/client", function(data){
+           $(clientData).text(data);
+        });
+    });
+    $(gameBtn).click(function(){
+        $.get("http://localhost:3000/api/v1/web/game", function(data){
+            $(gameData).text(data);
+        });
+    });
+</script>
+
+</body>
+
+</html>

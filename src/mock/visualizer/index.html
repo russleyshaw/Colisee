@@ -14,7 +14,7 @@
 
 <script>
     $(nextGameBtn).click(function(){
-        $.get("http://localhost:3000/api/vis/next", function(data){
+        $.get("http://localhost:3000/api/v1/vis/next", function(data){
            $(nextGameData).text(data);
         });
     });

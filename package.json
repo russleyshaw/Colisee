@@ -11,7 +11,8 @@
     "head_server": "npm run lint && node src/head_server/main.js",
     "build_server": "npm run lint && node src/build_server/main.js",
     "play_server": "npm run lint && node src/play_server/main.js",
-    "mock_vis": "npm run lint && node src/mock/visualizer/main.js"
+    "mock_vis": "npm run lint && node src/mock/visualizer/main.js",
+    "mock_web": "npm run lint && node src/mock/webserver/main.js"
   },
   "repository": {
     "type": "git",
