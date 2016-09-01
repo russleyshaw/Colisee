@@ -51,7 +51,7 @@
 - Must allow each log entry to contain an id, severity/level, timestamp, location, message
 - Must allow logging of trace, info, warning, error and critical error messages
 - Must provide a web page that contains a searchable, sortable, and filterable listing of logs
-- 
+
 ### Gamelog Server
 - Must accept a request for a new gamelog to be entered
   - `POST /api/v2/gamelog/new`
