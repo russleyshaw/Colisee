@@ -45,6 +45,15 @@
 ### Log Component
 - Must expose functions to log errors, status, etc, from within the head_server
 - Must expose a RESTful API (/log/) for other services (build server, play servers) to interact with it
+  - `GET /api/v2/log/` - Get recent logs
+  - `GET /api/v2/log/level/:level` - Get recent log by severity level
+  - `POST /api/v2/log/` - Create a new log
 - Must allow each log entry to contain an id, severity/level, timestamp, location, message
 - Must allow logging of trace, info, warning, error and critical error messages
 - Must provide a web page that contains a searchable, sortable, and filterable listing of logs
+- 
+### Gamelog Server
+- Must accept a request for a new gamelog to be entered
+  - `POST /api/v2/gamelog/new`
+- Must accept a request to get an existing gamelog from URL
+  - `GET /api/v2/gamelog/:id`
