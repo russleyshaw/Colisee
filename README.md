@@ -2,7 +2,7 @@
 ACM SIG-Game NodeJS Arena
 
 ### Status
-[![Build Status](https://travis-ci.org/russleyshaw/Colisee.svg?branch=master)](https://travis-ci.org/russleyshaw/Colisee) ![Dependencies](https://david-dm.org/russleyshaw/Colisee.svg) ![DevDependencies](https://img.shields.io/david/dev/russleyshaw/Colisee.svg) 
+[![Build Status](https://travis-ci.org/russleyshaw/Colisee.svg?branch=master)](https://travis-ci.org/russleyshaw/Colisee) ![Dependencies](https://david-dm.org/russleyshaw/Colisee.svg) ![DevDependencies](https://img.shields.io/david/dev/russleyshaw/Colisee.svg) [![GitHub issues](https://img.shields.io/github/issues/russleyshaw/Colisee.svg)](https://github.com/russleyshaw/Colisee/issues)
 
 
 ### Compiling
