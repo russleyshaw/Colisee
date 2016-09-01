@@ -2,7 +2,8 @@
 ACM SIG-Game NodeJS Arena
 
 ### Status
-[![Build Status](https://travis-ci.org/russleyshaw/Colisee.svg?branch=master)](https://travis-ci.org/russleyshaw/Colisee) ![Dependencies](https://david-dm.org/russleyshaw/Colisee.svg)
+[![Build Status](https://travis-ci.org/russleyshaw/Colisee.svg?branch=master)](https://travis-ci.org/russleyshaw/Colisee) ![Dependencies](https://david-dm.org/russleyshaw/Colisee.svg) ![DevDependencies](https://img.shields.io/david/dev/russleyshaw/Colisee.svg) 
+
 
 ### Compiling
 1) Install NVM - https://github.com/creationix/nvm/blob/master/README.markdown  
