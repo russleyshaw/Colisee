@@ -8,5 +8,10 @@
 ### Visualizer
 - Colisee must be able to provide the visualizer with a previously unvisualized game
 
-### Game Server
-- Colisee must be able to 
+### Play Server
+
+### Build Server
+- Colisee must accept a git repository and git hash and generate a build
+- Colisee must accept a git repository and provide the latest build'
+
+### Bracket Visualizer

@@ -2,6 +2,8 @@ var express = require("express");
 var fs = require("fs");
 
 var statusApp = require("./status/status.js");
+var bracketApp = require("./bracket/bracket.js");
+var logApp = require("./log/log.js");
 
 function main() {
     console.log("Running Colisee Head Server...");
@@ -18,6 +20,8 @@ function main() {
     });
 
     app.use('/', statusApp);
+    app.use('/', bracketApp);
+    app.use('/', logApp);
 
     app.get('/api/v1/vis/next', function(req, res){
 
