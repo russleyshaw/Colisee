@@ -2,7 +2,7 @@
 ACM SIG-Game NodeJS Arena
 
 ### Status
-[![Build Status](https://travis-ci.org/russleyshaw/Colisee.svg?branch=master)](https://travis-ci.org/russleyshaw/Colisee) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5d14609c00c740ce89fac6e3de9802cc)](https://www.codacy.com/app/russleyshaw/Colisee?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=russleyshaw/Colisee&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/russleyshaw/Colisee.svg?branch=master)](https://travis-ci.org/russleyshaw/Colisee)
 
 
 ### Compiling
