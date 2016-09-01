@@ -40,7 +40,7 @@
 - Must run triple elimination tournament and be able to note first, second and third places.
 
 ##### Validating Scheduler
-- Must schedule every AI to see if they break
+- Must schedule every client (at least) once to see if they break
 
 ### Log Component
 - Must expose functions to log errors, status, etc, from within the head_server
