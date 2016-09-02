@@ -42,9 +42,28 @@
 ##### Validating Scheduler
 - Must schedule every client (at least) once to see if they break
 
+### Game Component
+- Must expose a RESTful API for other services and SIG-Game components to make queries about games
+- Must store data in database to retain information across system boots
+- Each game object must contain...
+  - Player names, game status, gamelog URL, winners, losers, win reasons, time of completion
+- `GET /api/v2/game/` - Get recently played games
+- `GET /api/v2/game/id/:id/` - Get an individual game from game id
+- `GET /api/v2/game/client/:client/` - Get games played by client
+- `GET /api/v2/game/clients/:client1/:client2/` - Get games where client1 played client2 or vice versa
+
 ### Log Component
 - Must expose functions to log errors, status, etc, from within the head_server
 - Must expose a RESTful API (/log/) for other services (build server, play servers) to interact with it
+  - `GET /api/v2/log/` - Get recent logs
+  - `GET /api/v2/log/level/:level` - Get recent log by severity level
+  - `POST /api/v2/log/` - Create a new log
 - Must allow each log entry to contain an id, severity/level, timestamp, location, message
 - Must allow logging of trace, info, warning, error and critical error messages
 - Must provide a web page that contains a searchable, sortable, and filterable listing of logs
+
+### Gamelog Server
+- Must accept a request for a new gamelog to be entered
+  - `POST /api/v2/gamelog/new`
+- Must accept a request to get an existing gamelog from URL
+  - `GET /api/v2/gamelog/:id`
