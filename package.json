@@ -11,7 +11,9 @@
     "serve": "npm run lint && npm-run-all --parallel serve:*",
     "serve:head": "node src/head_server/main.js",
     "serve:build": "node src/build_server/main.js",
-    "serve:play": "node src/play_server/main.js",
+    "serve:play": "node src/play_server/main.js 0",
+    "serve:play1": "node src/play_server/main.js 1",
+    "serve:play2": "node src/play_server/main.js 2",
     "mock": "npm run lint && npm-run-all --parallel mock:*",
     "mock:vis": "node src/mock/visualizer/main.js",
     "mock:web:": "node src/mock/webserver/main.js"
@@ -31,7 +33,10 @@
     "npm-run-all": "^3.0.0"
   },
   "dependencies": {
+    "body-parser": "^1.15.2",
     "child_process": "^1.0.2",
-    "express": "^4.14.0"
+    "config": "^1.21.0",
+    "express": "^4.14.0",
+    "handlebars": "^4.0.5"
   }
 }

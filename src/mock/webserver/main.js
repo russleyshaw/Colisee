@@ -1,10 +1,17 @@
 var express = require("express");
 var fs = require("fs");
+var config = require("config");
+var handlebars = require("handlebars");
+var fs = require("fs");
+var path = require("path");
 
 function main() {
-    console.log("Running Mock Web Server...");
+    console.log("Starting Mock Web Server...");
 
     var app = express();
+
+    var indexHtmlTemplate = fs.readFileSync(path.join(__dirname,"index.html"));
+    var indexFunc = handlebars.compile(indexHtmlTemplate.toString());
 
     app.use( function(req, res, next) {
         res.header('Access-Control-Allow-Origin', '*');
@@ -14,7 +21,7 @@ function main() {
     });
 
     app.get('/', function(req, res){
-        res.sendFile(__dirname + "/index.html");
+        res.send(indexFunc(config));
     });
 
     // WEB API for Colisee
@@ -29,8 +36,8 @@ function main() {
         res.send(JSON.stringify(body));
     });
 
-
-    app.listen(3002);
+    console.log("Mock Web Server listening on port " + config.mock_web.port);
+    app.listen(config.mock_web.port);
 }
 
 main();

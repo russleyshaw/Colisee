@@ -1,7 +1,14 @@
 var express = require("express");
+var config = require("config");
 
 function main() {
-    console.log("Running Colisee Play Server...");
+    if( process.argv.length < 3 ) {
+        console.error("Must give Play Server ID as argument!");
+        return;
+    }
+    var play_server_id = process.argv[2];
+
+    console.log("Starting Play Server " + play_server_id + "...");
 
     var app = express();
 
@@ -12,7 +19,8 @@ function main() {
         next();
     });
 
-    app.listen(3004);
+    console.log("Play Server " + play_server_id + " listening on port " + config.play_server.ports[play_server_id]);
+    app.listen(config.play_server.ports[play_server_id]);
 }
 
 main();
