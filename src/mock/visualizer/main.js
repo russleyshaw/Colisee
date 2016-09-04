@@ -1,8 +1,9 @@
 var express = require("express");
-var fs = require("fs");
+var config = require("config");
+
 
 function main() {
-    console.log("Running Mock Visualizer...");
+    console.log("Starting Mock Visualizer...");
 
     var app = express();
 
@@ -17,8 +18,8 @@ function main() {
         res.sendFile(__dirname + "/index.html");
     });
 
-
-    app.listen(3001);
+    console.log('Mock Visualizer listening on port ' + config.mock_vis.port);
+    app.listen(config.mock_vis.port);
 }
 
 main();

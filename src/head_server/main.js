@@ -1,12 +1,12 @@
 var express = require("express");
-var fs = require("fs");
+var config = require("config");
 
 var statusApp = require("./status/status.js");
 var bracketApp = require("./bracket/bracket.js");
 var logApp = require("./log/log.js");
 
 function main() {
-    console.log("Running Colisee Head Server...");
+    console.log("Starting Head Server...");
 
     var currentVisGame = 1;
 
@@ -66,8 +66,8 @@ function main() {
         res.send(JSON.stringify(body));
     });
 
-
-    app.listen(3000);
+    console.log('Head Server listening on port ' + config.head_server.port);
+    app.listen(config.head_server.port);
 }
 
 main();

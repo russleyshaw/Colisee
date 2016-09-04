@@ -1,10 +1,13 @@
 var express = require("express");
+var config = require("config");
+var bodyParser = require('body-parser');
 
 function main() {
-    console.log("Running Colisee Build Server...");
-
+    console.log("Starting Build Server...");
     var app = express();
 
+    app.use( bodyParser.json() );
+    app.use(bodyParser.urlencoded({ extended: true }));
     app.use( function(req, res, next) {
         res.header('Access-Control-Allow-Origin', '*');
         res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -12,20 +15,21 @@ function main() {
         next();
     });
 
-    app.post('/api/build/:repo/:hash/', function (req, res) {
-        //Build git repo for specified git hash
+    app.post('/api/v2/build/', function (req, res, next) {
+        if(typeof req.body.url !== "string" || req.body.url !== "") {
+            res.send({success: false, error: "Body did not contain url"});
+            return;
+        }
+        else if(typeof req.body.hash !== "string" || req.body.url !== "") {
+            res.send({success: false, error: "Body did not contain url"});
+            return;
+        }
 
-        res.send("{status: true}");
+        res.send({success: true});
     });
 
-    app.get('/api/build/:repo/', function(req, res){
-        //Get current build for repo
-
-        res.sendFile(__dirname + "/index.html");
-    });
-
-
-    app.listen(3003);
+    console.log("Build Server listening on port " + config.build_server.port);
+    app.listen(config.build_server.port);
 }
 
 main();

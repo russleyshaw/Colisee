@@ -8,27 +8,45 @@
 
 <body>
 
-<button id="clientBtn">Get client</button>
-<br/>
-<textarea id="clientData"></textarea>
+http://{{head_server.url}}:{{head_server.port}}/api/v1/web/client<br/>
+<button id="clientBtn">Get client</button><br/>
+<textarea id="clientData"></textarea><br/><br/>
 
-<br/><br/>
+http://{{head_server.url}}:{{head_server.port}}/api/v1/web/game<br/>
+<button id="gameBtn">Get game</button><br/>
+<textarea id="gameData"></textarea><br/><br/>
 
-<button id="gameBtn">Get game</button>
-<br/>
-<textarea id="gameData"></textarea>
+http://{{build_server.url}}:{{build_server.port}}/api/v2/build/<br/>
+<button id="buildBtn">Build Git Repo</button> url: <input id="gitUrl" type="text"/> hash: <input id="gitHash" type="text"/><br/>
+<textarea id="buildData"></textarea>
+
 
 <script>
-    $(clientBtn).click(function(){
-        $.get("http://localhost:3000/api/v1/web/client", function(data){
-           $(clientData).text(data);
+$(document).ready(function () {
+
+    $("#clientBtn").click(function () {
+        $.get("http://{{head_server.url}}:{{head_server.port}}/api/v1/web/client", function (data) {
+            $("#clientData").text(data);
         });
     });
-    $(gameBtn).click(function(){
-        $.get("http://localhost:3000/api/v1/web/game", function(data){
-            $(gameData).text(data);
+    $("#gameBtn").click(function () {
+        $.get("http://{{head_server.url}}:{{head_server.port}}/api/v1/web/game", function (data) {
+            $("#gameData").text(data);
         });
     });
+
+    $("#buildBtn").click(function () {
+        var url = "http://{{build_server.url}}:{{build_server.port}}/api/v2/build/";
+        var data = {
+            url: $("#gitUrl").val(),
+            hash: $("#gitHash").val()
+        };
+        $.post(url, data, function (data) {
+            $("#buildData").text(JSON.stringify(data));
+        });
+    });
+
+});
 </script>
 
 </body>
