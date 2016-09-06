@@ -29,6 +29,7 @@ npm run mock # Runs all mock scripts in parallel & checks syntax
 npm run serve:head
 npm run serve:build
 npm run serve:play
+npm run serve:gamelog
 npm run mock:vis
 npm run mock:web
 ```
