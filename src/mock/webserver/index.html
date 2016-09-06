@@ -16,9 +16,12 @@ http://{{head_server.url}}:{{head_server.port}}/api/v1/web/game<br/>
 <button id="gameBtn">Get game</button><br/>
 <textarea id="gameData"></textarea><br/><br/>
 
-http://{{build_server.url}}:{{build_server.port}}/api/v2/build/<br/>
-<button id="buildBtn">Build Git Repo</button> url: <input id="gitUrl" type="text"/> hash: <input id="gitHash" type="text"/><br/>
-<textarea id="buildData"></textarea>
+POST http://{{build_server.url}}:{{build_server.port}}/api/v2/build/<br/>
+<button id="buildBtn">Build Git Repo</button> git url: <input id="gitUrl" type="text"/> git hash: <input id="gitHash" type="text"/><br/>
+<textarea id="buildData"></textarea><br/><br/>
+
+GET http://{{build_server.url}}:{{build_server.port}}/api/v2/build/<br/>
+<button id="tarBtn">Get Repo Tar</button> git url: <input id="tarUrl" type="text"/><br/>
 
 
 <script>
@@ -44,6 +47,11 @@ $(document).ready(function () {
         $.post(url, data, function (data) {
             $("#buildData").text(JSON.stringify(data));
         });
+    });
+
+    $("#tarBtn").click(function () {
+        var url = "http://{{build_server.url}}:{{build_server.port}}/api/v2/build/?url="+encodeURI($("#tarUrl").val());
+        window.location.href = url;
     });
 
 });

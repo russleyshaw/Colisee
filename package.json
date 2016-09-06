@@ -37,6 +37,10 @@
     "child_process": "^1.0.2",
     "config": "^1.21.0",
     "express": "^4.14.0",
-    "handlebars": "^4.0.5"
+    "fs-extra": "^0.30.0",
+    "handlebars": "^4.0.5",
+    "nodegit": "^0.14.1",
+    "querystring": "^0.2.0",
+    "request": "^2.74.0"
   }
 }
