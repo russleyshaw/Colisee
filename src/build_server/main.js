@@ -1,13 +1,10 @@
 var express = require("express");
 var config = require("config");
-var bodyParser = require('body-parser');
-var fs = require("fs");
-var fse = require("fs-extra");
+var bodyParser = require("body-parser");
 var path = require("path");
-var qs = require("querystring");
 var child_process = require("child_process");
-var request = require("request");
 
+/** Main entry point for Colisee Build Server */
 function main() {
 
     //TODO: Add other docker base images
@@ -21,13 +18,13 @@ function main() {
     app.use( bodyParser.json() );
     app.use( bodyParser.urlencoded({ extended: true }) );
     app.use( function(req, res, next) {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-        res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept");
         next();
     });
 
-    app.get('/api/v2/build/', function (req, res) {
+    app.get("/api/v2/build/", function (req, res) {
         //TODO: Verify URL sent correctly
         var url = req.query.url;
         var urlReplaced = url.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
@@ -36,7 +33,7 @@ function main() {
         res.sendFile( path.join(__dirname, "tarballs", urlReplaced+".tar") );
     });
 
-    app.post('/api/v2/build/', function (req, res) {
+    app.post("/api/v2/build/", function (req, res) {
         //TODO: Verify arguments are good
         //TODO: Capture language of repo
 

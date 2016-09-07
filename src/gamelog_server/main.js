@@ -1,7 +1,7 @@
 var express = require("express");
 var fs = require("fs");
 var config = require("config");
-var bodyParser = require('body-parser');
+var bodyParser = require("body-parser");
 
 function main(){
     console.log("Starting Gamelog Server...");
@@ -27,13 +27,13 @@ function main(){
     app.use( bodyParser.json() );
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use( function(req, res, next) {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-        res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept");
         next();
     });
 
-    app.get('/api/v2/glog/:glog/', function(req, res){
+    app.get("/api/v2/glog/:glog/", function(req, res){
         //TODO - verify this is a number
         var glog = parseInt(req.params.glog);
         if (gamelogs.indexOf(glog) != -1) {
@@ -52,7 +52,7 @@ function main(){
         res.send(res_error_data);
     });
 
-    app.post('/api/v2/glog/', function(req, res){
+    app.post("/api/v2/glog/", function(req, res){
         //TODO - Verify data
         if (req.body.gamelog) {
             last_id += 1;

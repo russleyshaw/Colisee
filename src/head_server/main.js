@@ -13,17 +13,17 @@ function main() {
     var app = express();
 
     app.use( function(req, res, next) {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-        res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept");
         next();
     });
 
-    app.use('/', statusApp);
-    app.use('/', bracketApp);
-    app.use('/', logApp);
+    app.use("/", statusApp);
+    app.use("/", bracketApp);
+    app.use("/", logApp);
 
-    app.get('/api/v1/vis/next', function(req, res){
+    app.get("/api/v1/vis/next", function(req, res){
 
         var body = {
             "gamelog": currentVisGame
@@ -34,7 +34,7 @@ function main() {
     });
 
     // WEB SERVER API
-    app.get('/api/v1/web/client', function(req, res){
+    app.get("/api/v1/web/client", function(req, res){
         var body = {
             "name": "a",
             "tag": "a",
@@ -51,7 +51,7 @@ function main() {
         res.send(JSON.stringify(body));
     });
 
-    app.get('/api/v1/web/game', function(req, res){
+    app.get("/api/v1/web/game", function(req, res){
         var body = {
             "players": ["a", "b"],
             "winners": ["a"],
@@ -66,7 +66,7 @@ function main() {
         res.send(JSON.stringify(body));
     });
 
-    console.log('Head Server listening on port ' + config.head_server.port);
+    console.log("Head Server listening on port " + config.head_server.port);
     app.listen(config.head_server.port);
 }
 

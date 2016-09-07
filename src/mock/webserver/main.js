@@ -2,7 +2,6 @@ var express = require("express");
 var fs = require("fs");
 var config = require("config");
 var handlebars = require("handlebars");
-var fs = require("fs");
 var path = require("path");
 
 function main() {
@@ -14,18 +13,18 @@ function main() {
     var indexFunc = handlebars.compile(indexHtmlTemplate.toString());
 
     app.use( function(req, res, next) {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-        res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept");
         next();
     });
 
-    app.get('/', function(req, res){
+    app.get("/", function(req, res){
         res.send(indexFunc(config));
     });
 
     // WEB API for Colisee
-    app.get('/api/v1/client', function(req, res){
+    app.get("/api/v1/client", function(req, res){
         var body = {
             "name": "NAME",
             "git_repo": "GIT_REPO",
