@@ -1,11 +1,11 @@
-var express = require("express");
-var config = require("config");
+const express = require("express");
+const config = require("config");
 
 
 function main() {
     console.log("Starting Mock Visualizer...");
 
-    var app = express();
+    const app = express();
 
     app.use( function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");

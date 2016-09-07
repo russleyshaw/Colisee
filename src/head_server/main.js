@@ -1,16 +1,16 @@
-var express = require("express");
-var config = require("config");
+const express = require("express");
+const config = require("config");
 
-var statusApp = require("./status/status.js");
-var bracketApp = require("./bracket/bracket.js");
-var logApp = require("./log/log.js");
+const statusApp = require("./status/status.js");
+const bracketApp = require("./bracket/bracket.js");
+const logApp = require("./log/log.js");
 
 function main() {
     console.log("Starting Head Server...");
 
-    var currentVisGame = 1;
+    let currentVisGame = 1;
 
-    var app = express();
+    const app = express();
 
     app.use( function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
@@ -25,7 +25,7 @@ function main() {
 
     app.get("/api/v1/vis/next", function(req, res){
 
-        var body = {
+        const body = {
             "gamelog": currentVisGame
         };
         currentVisGame++;
@@ -35,7 +35,7 @@ function main() {
 
     // WEB SERVER API
     app.get("/api/v1/web/client", function(req, res){
-        var body = {
+        const body = {
             "name": "a",
             "tag": "a",
             "repo": "REPO",
@@ -52,7 +52,7 @@ function main() {
     });
 
     app.get("/api/v1/web/game", function(req, res){
-        var body = {
+        const body = {
             "players": ["a", "b"],
             "winners": ["a"],
             "losers": ["b"],

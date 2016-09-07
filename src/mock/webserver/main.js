@@ -1,16 +1,16 @@
-var express = require("express");
-var fs = require("fs");
-var config = require("config");
-var handlebars = require("handlebars");
-var path = require("path");
+const express = require("express");
+const fs = require("fs");
+const config = require("config");
+const handlebars = require("handlebars");
+const path = require("path");
 
 function main() {
     console.log("Starting Mock Web Server...");
 
-    var app = express();
+    const app = express();
 
-    var indexHtmlTemplate = fs.readFileSync(path.join(__dirname,"index.html"));
-    var indexFunc = handlebars.compile(indexHtmlTemplate.toString());
+    const indexHtmlTemplate = fs.readFileSync(path.join(__dirname,"index.html"));
+    const indexFunc = handlebars.compile(indexHtmlTemplate.toString());
 
     app.use( function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
@@ -25,7 +25,7 @@ function main() {
 
     // WEB API for Colisee
     app.get("/api/v1/client", function(req, res){
-        var body = {
+        const body = {
             "name": "NAME",
             "git_repo": "GIT_REPO",
             "git_hash": "GIT_HASH",

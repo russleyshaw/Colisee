@@ -1,19 +1,19 @@
-var express = require("express");
-var config = require("config");
-var bodyParser = require("body-parser");
-var path = require("path");
-var child_process = require("child_process");
+const express = require("express");
+const config = require("config");
+const bodyParser = require("body-parser");
+const path = require("path");
+const child_process = require("child_process");
 
 /** Main entry point for Colisee Build Server */
 function main() {
 
     //TODO: Add other docker base images
-    var cmd = "docker build -t cpp -f" + path.join(__dirname, "dockerfiles/base/cpp.dockerfile") + " .";
+    const cmd = "docker build -t cpp -f" + path.join(__dirname, "dockerfiles/base/cpp.dockerfile") + " .";
     console.log("Running cmd: " + cmd);
     child_process.execSync(cmd);
     console.log("Ran cmd!");
 
-    var app = express();
+    const app = express();
 
     app.use( bodyParser.json() );
     app.use( bodyParser.urlencoded({ extended: true }) );
@@ -26,8 +26,8 @@ function main() {
 
     app.get("/api/v2/build/", function (req, res) {
         //TODO: Verify URL sent correctly
-        var url = req.query.url;
-        var urlReplaced = url.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+        const url = req.query.url;
+        const urlReplaced = url.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
 
         //TODO: Handle if git repo doesnt exist
         res.sendFile( path.join(__dirname, "tarballs", urlReplaced+".tar") );
@@ -39,10 +39,10 @@ function main() {
 
         res.send({success: true, message: "Building and saving client image."});
 
-        var url = req.body.url;
-        var urlReplaced = url.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
-        var hash = req.body.hash;
-        var cmd = "";
+        const url = req.body.url;
+        const urlReplaced = url.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+        const hash = req.body.hash;
+        let cmd = "";
 
         //TODO: Determine if build failed
         //TODO: Capture build output

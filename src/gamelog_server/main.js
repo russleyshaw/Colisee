@@ -1,22 +1,22 @@
-var express = require("express");
-var fs = require("fs");
-var config = require("config");
-var bodyParser = require("body-parser");
+const express = require("express");
+const fs = require("fs");
+const config = require("config");
+const bodyParser = require("body-parser");
 
 function main(){
     console.log("Starting Gamelog Server...");
 
-    var app = express();
-    var gamelogs = [];
-    var last_id = 0;
-    var GLOG_LOCATION = config.gamelog_server.file_location;
+    const app = express();
+    const gamelogs = [];
+    let last_id = 0;
+    const GLOG_LOCATION = config.gamelog_server.file_location;
 
     function load_vars(){
-        var filenames = fs.readdirSync(GLOG_LOCATION);
+        const filenames = fs.readdirSync(GLOG_LOCATION);
         // faster then foreach
-        for (var i = 0, len = filenames.length; i < len; i++) {
+        for (let i = 0, len = filenames.length; i < len; i++) {
             // convert to ints because int conversion/searching is a LOT faster then strings
-            var id = parseInt(filenames[i]);
+            const id = parseInt(filenames[i]);
             gamelogs.push(id);
             if (id > last_id){
                 last_id = id;
@@ -35,10 +35,10 @@ function main(){
 
     app.get("/api/v2/glog/:glog/", function(req, res){
         //TODO - verify this is a number
-        var glog = parseInt(req.params.glog);
+        const glog = parseInt(req.params.glog);
         if (gamelogs.indexOf(glog) != -1) {
-            var gamelog_data = fs.readFileSync(GLOG_LOCATION + glog.toString()).toString();
-            var res_data = {
+            const gamelog_data = fs.readFileSync(GLOG_LOCATION + glog.toString()).toString();
+            const res_data = {
                 "gamelog": gamelog_data
             };
             res.send(res_data);
@@ -46,7 +46,7 @@ function main(){
         }
         //TODO - better no id found
         //TODO - split between not found and invalid
-        var res_error_data = {
+        const res_error_data = {
             "error": "invalid id: "  + glog.toString()
         };
         res.send(res_error_data);
@@ -58,7 +58,7 @@ function main(){
             last_id += 1;
             gamelogs.push(last_id);
             fs.writeFileSync(GLOG_LOCATION + last_id.toString(), req.body.gamelog);
-            var res_data = {
+            const res_data = {
                 "id": last_id
             };
             res.send(res_data);
