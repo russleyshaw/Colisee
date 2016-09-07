@@ -14,6 +14,7 @@
     "serve:play": "node src/play_server/main.js 0",
     "serve:play1": "node src/play_server/main.js 1",
     "serve:play2": "node src/play_server/main.js 2",
+    "serve:gamelog": "node src/gamelog_server/main.js",
     "mock": "npm run lint && npm-run-all --parallel mock:*",
     "mock:vis": "node src/mock/visualizer/main.js",
     "mock:web:": "node src/mock/webserver/main.js"

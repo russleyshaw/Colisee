@@ -4,19 +4,23 @@
 - Must be able to provide the web server with game information
 - Must be able to provide the web server with client information
 - Must be able to request client information from the web server
+- Must be able to send updated git repo and hash information to the head server (which is rerouted to the build server)
 
-### Visualizer
-- Must be able to provide the visualizer with a previously unvisualized game
+### Visualizer Interactions
+- Must be able to provide the visualizer with a previously unvisualized gamelog
 
 ### Play Server
 - Must request head server for a scheduled game to play
 - Must execute built code in a secure environment (docker)
-- Must send request to head server with completed game info & gamelog
+- Must send request to gamelog server with completed game info & gamelog
 
 ### Build Server
 - Must accept a git repository(s) and git hash(es) and generate a build
 - Must accept a git repository and provide the latest build'
 - Must build code in a secure environment (docker)
+- Must be able to serve built code through a RESTful API
+- Must be able to serve build logs through a RESTful API
+- Must notify head server on build success and failure
 
 ### Bracket Visualizer
 - Must incrementally visualize progression of tournament bracket
@@ -64,6 +68,6 @@
 
 ### Gamelog Server
 - Must accept a request for a new gamelog to be entered
-  - `POST /api/v2/gamelog/new`
+  - `POST /api/v2/gamelog/new` - example
 - Must accept a request to get an existing gamelog from URL
-  - `GET /api/v2/gamelog/:id`
+  - `GET /api/v2/gamelog/:id` - example
