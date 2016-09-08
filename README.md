@@ -2,11 +2,11 @@
 ACM SIG-Game NodeJS Arena
 
 ### Status
-[![Build Status](https://travis-ci.org/russleyshaw/Colisee.svg?branch=master)](https://travis-ci.org/russleyshaw/Colisee) ![Dependencies](https://david-dm.org/russleyshaw/Colisee.svg) ![DevDependencies](https://img.shields.io/david/dev/russleyshaw/Colisee.svg) [![GitHub issues](https://img.shields.io/github/issues/russleyshaw/Colisee.svg)](https://github.com/russleyshaw/Colisee/issues) [![Code Climate](https://codeclimate.com/github/russleyshaw/Colisee/badges/gpa.svg)](https://codeclimate.com/github/russleyshaw/Colisee)
+[![Build Status](https://travis-ci.org/russleyshaw/Colisee.svg?branch=master)](https://travis-ci.org/russleyshaw/Colisee) ![Dependencies](https://david-dm.org/russleyshaw/Colisee.svg) ![DevDependencies](https://img.shields.io/david/dev/russleyshaw/Colisee.svg) [![Code Climate](https://codeclimate.com/github/russleyshaw/Colisee/badges/gpa.svg)](https://codeclimate.com/github/russleyshaw/Colisee)
 
 
 ### Setup & Execution
-1) Install NVM - https://github.com/creationix/nvm/blob/master/README.markdown
+1) Install NVM - https://github.com/creationix/nvm/blob/master/README.markdown  
 2) Install Docker - https://docs.docker.com/engine/installation/linux/ubuntulinux/
 
 3) Install NodeJS v6.5.0
