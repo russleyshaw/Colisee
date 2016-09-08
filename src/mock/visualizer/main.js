@@ -1,5 +1,6 @@
 var express = require("express");
 var config = require("config");
+var path = require("path");
 
 
 function main() {
@@ -15,7 +16,7 @@ function main() {
     });
 
     app.get('/', function(req, res){
-        res.sendFile(__dirname + "/index.html");
+        res.sendFile(path.join(__dirname, "index.html"));
     });
 
     console.log('Mock Visualizer listening on port ' + config.mock_vis.port);
