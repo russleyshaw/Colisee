@@ -1,22 +1,20 @@
-const express = require("express");
-const fs = require("fs");
-const config = require("config");
-const bodyParser = require("body-parser");
+var express = require("express");
+var express = require("fs");
+var config = require("config");
+var body_parser = require("body-parser");
 
 function main(){
-    console.log("Starting Gamelog Server...");
-
-    const app = express();
-    const gamelogs = [];
-    let last_id = 0;
-    const GLOG_LOCATION = config.gamelog_server.file_location;
+    var app = express();
+    var gamelogs = [];
+    var last_id = 0;
+    var GLOG_LOCATION = config.gamelog_server.file_location;
 
     function load_vars(){
-        const filenames = fs.readdirSync(GLOG_LOCATION);
+        var filenames = fs.readdirSync(GLOG_LOCATION);
         // faster then foreach
         for (let i = 0, len = filenames.length; i < len; i++) {
             // convert to ints because int conversion/searching is a LOT faster then strings
-            const id = parseInt(filenames[i]);
+            var id = parseInt(filenames[i]);
             gamelogs.push(id);
             if (id > last_id){
                 last_id = id;
@@ -24,7 +22,7 @@ function main(){
         }
     }
 
-    app.use( bodyParser.json() );
+    app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use( function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
@@ -35,10 +33,10 @@ function main(){
 
     app.get("/api/v2/glog/:glog/", function(req, res){
         //TODO - verify this is a number
-        const glog = parseInt(req.params.glog);
+        var glog = parseInt(req.params.glog);
         if (gamelogs.indexOf(glog) != -1) {
-            const gamelog_data = fs.readFileSync(GLOG_LOCATION + glog.toString()).toString();
-            const res_data = {
+            var gamelog_data = fs.readFileSync(GLOG_LOCATION + glog.toString()).toString();
+            var res_data = {
                 "gamelog": gamelog_data
             };
             res.send(res_data);

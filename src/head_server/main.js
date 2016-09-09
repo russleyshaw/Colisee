@@ -1,18 +1,16 @@
-const express = require("express");
-const config = require("config");
+var express = require("express");
+var config = require("config");
 
-const statusApp = require("./status/status.js");
-const bracketApp = require("./bracket/bracket.js");
-const logApp = require("./log/log.js");
+var statusApp = require("./status/status.js");
+var bracketApp = require("./bracket/bracket.js");
+var logApp = require("./log/log.js");
 
-function main() {
-    console.log("Starting Head Server...");
+(function() {
+    var currentVisGame = 1;
 
-    let currentVisGame = 1;
+    var app = express();
 
-    const app = express();
-
-    app.use( function(req, res, next) {
+    app.use(function (req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
         res.header("Access-Control-Allow-Headers", "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept");
@@ -23,9 +21,9 @@ function main() {
     app.use("/", bracketApp);
     app.use("/", logApp);
 
-    app.get("/api/v1/vis/next", function(req, res){
+    app.get("/api/v1/vis/next", function (req, res) {
 
-        const body = {
+        var body = {
             "gamelog": currentVisGame
         };
         currentVisGame++;
@@ -33,9 +31,9 @@ function main() {
         res.send(JSON.stringify(body));
     });
 
-    // WEB SERVER API
-    app.get("/api/v1/web/client", function(req, res){
-        const body = {
+// WEB SERVER API
+    app.get("/api/v1/web/client", function (req, res) {
+        var body = {
             "name": "a",
             "tag": "a",
             "repo": "REPO",
@@ -51,8 +49,8 @@ function main() {
         res.send(JSON.stringify(body));
     });
 
-    app.get("/api/v1/web/game", function(req, res){
-        const body = {
+    app.get("/api/v1/web/game", function (req, res) {
+        var body = {
             "players": ["a", "b"],
             "winners": ["a"],
             "losers": ["b"],
@@ -68,6 +66,4 @@ function main() {
 
     console.log("Head Server listening on port " + config.head_server.port);
     app.listen(config.head_server.port);
-}
-
-main();
+})();
