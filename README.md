@@ -1,5 +1,5 @@
 # Colisee
-ACM SIG-Game NodeJS Arena
+*ACM SIG-Game NodeJS Arena*  
 _Making the world a better place one MegaMinerAI at a time._
 
 ### Status
