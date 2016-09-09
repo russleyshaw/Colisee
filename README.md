@@ -8,7 +8,7 @@ ACM SIG-Game NodeJS Arena
 
 ### Setup & Execution
 1) Install NVM - https://github.com/creationix/nvm/blob/master/README.markdown  
-2) Install Docker - https://docs.docker.com/engine/installation/linux/ubuntulinux/
+2) Install Docker - https://docs.docker.com/engine/installation/linux/ubuntulinux/  
 3) Install PostgreSQL
 ```
 docker run --name colisee -e POSTGRES_PASSWORD=colisee -e POSTGRES_USER=colisee -p 5432:5432 -d postgres
