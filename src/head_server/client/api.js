@@ -10,7 +10,7 @@ router.get("/api/v2/client/:id", function(req, res){
     Client.get(id, function(err, client){
         if(err) { res.send({success: false, message: "Failed to get client"}); return; }
 
-        res.send(data = {
+        res.send({
             success: true,
             client: client
         });
