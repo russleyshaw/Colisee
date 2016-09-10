@@ -1,5 +1,8 @@
 var express = require("express");
 var config = require("config");
+var body_parser = require("body-parser");
+
+var clientApi= require("./client/api.js");
 
 var statusApp = require("./status/status.js");
 var bracketApp = require("./bracket/bracket.js");
@@ -10,6 +13,8 @@ var logApp = require("./log/log.js");
 
     var app = express();
 
+    app.use( body_parser.json() );
+    app.use( body_parser.urlencoded({ extended: true }) );
     app.use(function (req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
@@ -17,6 +22,7 @@ var logApp = require("./log/log.js");
         next();
     });
 
+    app.use("/", clientApi);
     app.use("/", statusApp);
     app.use("/", bracketApp);
     app.use("/", logApp);

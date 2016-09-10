@@ -32,5 +32,5 @@ app.get("/api/v1/client", function(req, res){
     res.send(JSON.stringify(body));
 });
 
-console.log("Mock Web Server listening on port " + config.mock_web.port);
+console.log("Mock Web Server - LISTENING - port " + config.mock_web.port);
 app.listen(config.mock_web.port);

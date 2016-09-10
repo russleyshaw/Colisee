@@ -15,28 +15,28 @@ app.use( function(req, res, next) {
     next();
 });
 
-app.get("/api/v2/build/", function (req, res) {
-    const client_id = req.query.client_id;
+app.get("/api/v2/build/:id", function (req, res) {
+    var id = req.params.id;
 
-    builder.get_tar(client_id, function(err, tar){
+    builder.get_tar(id, function(err, tar){
         if(err) { res.send(404); return; }
         res.send(tar);
     });
 });
 
-app.post("/api/v2/build/", function (req, res) {
+app.post("/api/v2/build/:id", function (req, res) {
+    var id = req.params.id;
+
     //TODO: Verify arguments are good
     //TODO: Capture language of repo
 
     res.send({success: true, message: "Building and saving client image."});
 
-    var client_id = req.body.client_id;
-
-    builder.build(client_id, function(){
+    builder.build(id, function(){
         //TODO: Send success/failure to head server
     });
 });
 
-console.log("Build Server listening on port " + config.build_server.port);
+console.log("Build Server - LISTENING - port " + config.build_server.port);
 app.listen(config.build_server.port);
 

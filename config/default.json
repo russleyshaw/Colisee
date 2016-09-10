@@ -33,10 +33,10 @@
     "port": 3007
   },
   "database": {
-    "url": "localhost",
+    "host": "localhost",
     "port": 5432,
     "username": "colisee",
     "password": "colisee",
-    "db_name": "colisee"
+    "database": "colisee"
   }
 }

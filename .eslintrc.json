@@ -11,11 +11,8 @@
     },
     "rules": {
         "eol-last": 2,
-        "no-duplicate-imports": 2,
         "no-console": 1,
-        "no-var": 2,
         "no-path-concat": 2,
-        "prefer-const": 2,
         "indent": [
             "error",
             4

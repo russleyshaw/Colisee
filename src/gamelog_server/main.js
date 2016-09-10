@@ -1,5 +1,5 @@
 var express = require("express");
-var express = require("fs");
+var fs = require("fs");
 var config = require("config");
 var body_parser = require("body-parser");
 
@@ -12,7 +12,7 @@ function main(){
     function load_vars(){
         var filenames = fs.readdirSync(GLOG_LOCATION);
         // faster then foreach
-        for (let i = 0, len = filenames.length; i < len; i++) {
+        for (var i = 0, len = filenames.length; i < len; i++) {
             // convert to ints because int conversion/searching is a LOT faster then strings
             var id = parseInt(filenames[i]);
             gamelogs.push(id);
@@ -22,8 +22,8 @@ function main(){
         }
     }
 
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(body_parser.json());
+    app.use(body_parser.urlencoded({ extended: true }));
     app.use( function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
