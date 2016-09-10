@@ -1,16 +1,14 @@
-const express = require("express");
-const config = require("config");
+var express = require("express");
+var config = require("config");
 
 function main() {
     if( process.argv.length < 3 ) {
         console.error("Must give Play Server ID as argument!");
         return;
     }
-    const play_server_id = process.argv[2];
+    var play_server_id = process.argv[2];
 
-    console.log("Starting Play Server " + play_server_id + "...");
-
-    const app = express();
+    var app = express();
 
     app.use( function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
