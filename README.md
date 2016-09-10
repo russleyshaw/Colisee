@@ -9,38 +9,61 @@ _Making the world a better place one MegaMinerAI at a time._
 
 ### Setup & Execution
 1) Install NVM - https://github.com/creationix/nvm/blob/master/README.markdown  
-2) Install Docker - https://docs.docker.com/engine/installation/linux/ubuntulinux/  
-3) Install PostgreSQL
-```
-docker run --name colisee -e POSTGRES_PASSWORD=colisee -e POSTGRES_USER=colisee -p 5432:5432 -d postgres
-```
+2) Install Docker - https://docs.docker.com/engine/installation/linux/ubuntulinux/
 
-4) Install NodeJS v6.5.0
+3) Install NodeJS v6.5.0
 ```
 nvm install v6.5.0
 OR
 nvm install    (uses node version described in .nvmrc)
 ```
 
-5) Install package.json dependencies
+4) Install package.json dependencies
 ```
 npm install
 ```
 
-6) Run a server or mock interface
+5) Install PostgreSQL
 ```
-npm run lint # Checks javascript syntax
+npm run db:build
+npm run db:run
+```
 
-npm run serve # Runs all serve scripts in parallel & checks syntax
-npm run mock # Runs all mock scripts in parallel & checks syntax
+6) Run services
+```
+npm run serve
+npm run mock
+```
 
-# Run individual services
-npm run serve:head
-npm run serve:build
-npm run serve:play #
-npm run serve:gamelog
-npm run mock:vis
-npm run mock:web
+### Scripts
+```
+lint                    - runs linter on source code
+watch:lint              - continuously monitors and lints code
+doc                     - generates documentation pages from jsdoc comments
+watch:doc               - continuously generates documentation pages
+
+docker:stop             - stops all docker containers
+docker:purge            - deletes all containers and images
+docker:purge:containers - deletes all containers
+docker:purge:images     - deletes all images
+
+db:build                - build colisee database image from postgresql image
+db:run                  - runs colisee database image as a container
+db:stop":               - stop the colisee database
+
+serve                   - run all colisee services
+serve:head              - run the head server
+serve:build             - run the build server
+serve:gamelog -
+
+serve:play              - run play server with id of 0
+serve:play1             - run play server with id of 1
+serve:play1             - run play server with id of 2
+
+mock                    - run all mock services locally
+mock:vis                - run mock visualizer
+mock:web                - run mock web server
+}
 ```
 
 ### Saving NPM Packages
