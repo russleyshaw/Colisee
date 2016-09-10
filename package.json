@@ -21,6 +21,8 @@
     "db:run": "docker run --name colisee_db -d -p 5432:5432 colisee_image",
     "db:start": "docker start colisee_db",
     "db:stop": "docker stop colisee_db",
+    "db:rm": "docker rm -f colisee_db",
+    "db:rmi": "docker rmi -f colisee_image",
 
     "serve": "npm run lint && npm-run-all --parallel serve:*",
     "serve:head": "node src/head_server/main.js",

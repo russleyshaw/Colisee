@@ -49,12 +49,15 @@ docker:purge:images     - deletes all images
 
 db:build                - build colisee database image from postgresql image
 db:run                  - runs colisee database image as a container
-db:stop":               - stop the colisee database
+db:start                - starts the colisee database
+db:stop                 - stop the colisee database
+db:rm                   - deletes the colisee database container
+db:rmi                  - delete the colisee database image
 
 serve                   - run all colisee services
 serve:head              - run the head server
 serve:build             - run the build server
-serve:gamelog -
+serve:gamelog           - run the gamelog server
 
 serve:play              - run play server with id of 0
 serve:play1             - run play server with id of 1
