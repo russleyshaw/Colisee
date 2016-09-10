@@ -1,26 +1,31 @@
-[![Stories in Ready](https://badge.waffle.io/russleyshaw/Colisee.png?label=ready&title=Ready)](https://waffle.io/russleyshaw/Colisee)
 # Colisee
-ACM SIG-Game NodeJS Arena
+*ACM SIG-Game NodeJS Arena*  
+_Making the world a better place one MegaMinerAI at a time._
 
 ### Status
-[![Build Status](https://travis-ci.org/russleyshaw/Colisee.svg?branch=master)](https://travis-ci.org/russleyshaw/Colisee) ![Dependencies](https://david-dm.org/russleyshaw/Colisee.svg) ![DevDependencies](https://img.shields.io/david/dev/russleyshaw/Colisee.svg) [![Code Climate](https://codeclimate.com/github/russleyshaw/Colisee/badges/gpa.svg)](https://codeclimate.com/github/russleyshaw/Colisee)
+[![Build Status](https://travis-ci.org/russleyshaw/Colisee.svg?branch=master)](https://travis-ci.org/russleyshaw/Colisee) ![Dependencies](https://david-dm.org/russleyshaw/Colisee.svg) ![DevDependencies](https://img.shields.io/david/dev/russleyshaw/Colisee.svg) [![Code Climate](https://codeclimate.com/github/russleyshaw/Colisee/badges/gpa.svg)](https://codeclimate.com/github/russleyshaw/Colisee)  
+[![Stories in Ready](https://badge.waffle.io/russleyshaw/Colisee.png?label=ready&title=Ready)](https://waffle.io/russleyshaw/Colisee)
 
 
 ### Setup & Execution
 1) Install NVM - https://github.com/creationix/nvm/blob/master/README.markdown  
-2) Install Docker - https://docs.docker.com/engine/installation/linux/ubuntulinux/
+2) Install Docker - https://docs.docker.com/engine/installation/linux/ubuntulinux/  
+3) Install PostgreSQL
+```
+docker run --name colisee -e POSTGRES_PASSWORD=colisee -e POSTGRES_USER=colisee -p 5432:5432 -d postgres
+```
 
-3) Install NodeJS v6.5.0
+4) Install NodeJS v6.5.0
 ```
 nvm install v6.5.0
 ```
 
-4) Install package.json dependencies
+5) Install package.json dependencies
 ```
 npm install
 ```
 
-5) Run a server or mock interface
+6) Run a server or mock interface
 ```
 npm run lint # Checks javascript syntax
 
