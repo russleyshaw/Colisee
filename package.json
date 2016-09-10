@@ -11,13 +11,26 @@
     "watch:lint": "watch 'npm run lint' src/",
     "doc": "jsdoc src/ -r -c doc.json -d docs/generated/",
     "watch:doc": "watch 'npm run doc' src/",
+
+    "docker:stop": "docker stop $(docker ps -a -q)",
+    "docker:purge": "npm-run-all --parallel docker:purge:*",
+    "docker:purge:containers": "docker rm -f $(docker ps -a -q)",
+    "docker:purge:images": "docker rmi -f $(docker images -q)",
+
+    "db:build": "docker build -f db/db.dockerfile -t colisee_image db/",
+    "db:run": "docker run --name colisee_db -d -p 5432:5432 colisee_image",
+    "db:start": "docker start colisee_db",
+    "db:stop": "docker stop colisee_db",
+
     "serve": "npm run lint && npm-run-all --parallel serve:*",
     "serve:head": "node src/head_server/main.js",
     "serve:build": "node src/build_server/main.js",
     "serve:gamelog": "node src/gamelog_server/main.js",
+
     "serve:play": "node src/play_server/main.js 0",
     "serve:play1": "node src/play_server/main.js 1",
     "serve:play2": "node src/play_server/main.js 2",
+
     "mock": "npm run lint && npm-run-all --parallel mock:*",
     "mock:vis": "node src/mock/visualizer/main.js",
     "mock:web:": "node src/mock/webserver/main.js"
