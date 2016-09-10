@@ -18,6 +18,8 @@ docker run --name colisee -e POSTGRES_PASSWORD=colisee -e POSTGRES_USER=colisee 
 4) Install NodeJS v6.5.0
 ```
 nvm install v6.5.0
+OR
+nvm install    (uses node version described in .nvmrc)
 ```
 
 5) Install package.json dependencies
@@ -35,7 +37,7 @@ npm run mock # Runs all mock scripts in parallel & checks syntax
 # Run individual services
 npm run serve:head
 npm run serve:build
-npm run serve:play
+npm run serve:play #
 npm run serve:gamelog
 npm run mock:vis
 npm run mock:web
