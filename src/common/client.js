@@ -2,9 +2,35 @@ var pg = require("pg");
 var config = require("config");
 
 /**
- * Class to interface with clients in database
+ * Class to interface with client table in database
  */
 class Client {
+
+    /**
+     * Deletes all rows in client table
+     * @param callback function(err)
+     */
+    static purge(callback) {
+        var pgclient = new pg.Client({
+            user: config.database.username,
+            database: config.database.database,
+            password: config.database.password,
+            port: config.database.port,
+            host: config.database.host
+        });
+        pgclient.connect(function(err) {
+            if(err) { callback(err); return; }
+
+            pgclient.query("DELETE FROM client", [], function (err) {
+                if(err) { callback(err); return; }
+
+                pgclient.end(function (err) {
+                    if(err) { callback(err); return; }
+                    callback();
+                });
+            });
+        });
+    }
 
     /**
      * Gets a client from the databse
@@ -78,7 +104,7 @@ class Client {
                 };
 
                 pgclient.end(function (err) {
-                    if(err) throw err;
+                    if(err) { callback(err, undefined); return; }
                     callback(undefined, data);
                 });
             });

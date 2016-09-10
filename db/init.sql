@@ -16,7 +16,7 @@ CREATE TABLE client
   git_repo character varying NOT NULL,
   git_hash character varying NOT NULL,
   language client_language_enum NOT NULL,
-  CONSTRAINT "CLIENT_PK_ID" PRIMARY KEY (id)
+  CONSTRAINT "CLIENT_PK_ID" PRIMARY KEY (id),
   CONSTRAINT "CLIENT_UNIQUE_NAME" UNIQUE (name)
 );
 
