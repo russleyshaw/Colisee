@@ -63,7 +63,6 @@ serve:play1             - run play server with id of 2
 mock                    - run all mock services locally
 mock:vis                - run mock visualizer
 mock:web                - run mock web server
-}
 ```
 
 ### Saving NPM Packages
