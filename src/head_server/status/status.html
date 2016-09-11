@@ -1,3 +1,9 @@
+/**buttons are needed here
+Where does it get its click from?
+added sched_server*/
+
+
+
 <html>
 
 <head>
@@ -6,7 +12,14 @@
 
 <body>
 
-blah
+<button id="schedStatusBtn" >Status</button><br/>
+<textarea id="clientData"></textarea><br/><br/>
+<script>
+    $("#schedStatusBtn").click(function () {
+        $.get("http://{{sched_server.url}}:{{sched_server.port}}/api/v1/web/client", function (data) {
+            $("#schedStatusBtn").text(data);
+        });
+</script>
 
 </body>
 

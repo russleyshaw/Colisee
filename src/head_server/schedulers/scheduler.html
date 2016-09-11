@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scheduler</title>
+</head>
+<body>
+http://{{build_server.url}}:{{build_server.port}}/api/v2/build/<br/>
+<button type="startBtn" onclick=""alert('Scheduler started')">Start</button>
+http://{{build_server.url}}:{{build_server.port}}/api/v2/build/<br/>
+<button type="stopBtn" onclick=""alert('Scheduler stopped')">Stop</button>
+http://{{build_server.url}}:{{build_server.port}}/api/v2/build/<br/>
+<button type="pauseBtn" onclick=""alert('Scheduler paused')">Pause</button>
+http://{{build_server.url}}:{{build_server.port}}/api/v2/build/<br/>
+<button type="resumeBtn" onclick=""alert('Scheduler has resumed.')">Start</button>
+<br/>
+<textarea id="nextGameData"></textarea>
+
+<script>
+    $(nextGameBtn).click(function(){
+        $.get("http://localhost:3007/api/v1/vis/next", function(data){
+            $(nextGameData).text(data);
+        });
+    });
+</script>
+</body>
+</html>

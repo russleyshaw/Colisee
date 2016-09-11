@@ -1,0 +1,68 @@
+//base scheduler class
+// need to have a status , running, paused, stopped
+// where will this file need to be accessed from?
+var express = require("express");
+var config = require("config");
+
+
+class Scheduler {
+    // creates a scheduler
+    constructor(name) {
+        this.schedulerType = name;
+        this.clientArray =["Saab", "Valentino", "Bob", "Joe"];
+    }
+
+
+
+    onStart(){
+        console.log("This scheduler has been started.");
+    }
+    onStop(){
+        console.log("This scheduler has been stopped.");
+    }
+    onPause(){
+        console.log("This scheduler has been paused.");
+    }
+    onPlay(){
+        console.log("This scheduler is playing a game.");
+    }
+}
+/** Swiss scheduler */
+class swissScheduler extends Scheduler{
+
+
+
+
+
+    onStop(){
+        //super.onStop();
+        console.log("This swissSchedulers has been stopped.");
+
+
+}/** randomly picks 2 clients from a list of clients and puts them in a queue*/
+
+    queueClients(){
+    var clientQueue=[];
+    var job1 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
+    var index = this.clientArray.indexOf(job1);
+    this.clientArray.splice( index, 1 );
+    clientQueue.push(job1);
+    var job2 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
+    var index = this.clientArray.indexOf(job1);
+    this.clientArray.splice( index, 1 );
+    clientQueue.push(job2);
+        for (var i=0;i < clientQueue.length;i++) {
+            console.log(clientQueue[i]);
+        }
+
+}
+}
+function main() {
+    var d = new swissScheduler('Swiss');
+    d.queueClients();
+
+}
+main();
+
+
+ module.exports=Scheduler ;
