@@ -7,7 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "lint": "eslint src/",
+    "lint": "eslint src/ test/",
+    "fix": "eslint --fix src/ test/",
     "watch:lint": "watch 'npm run lint' src/",
     "test": "npm-run-all lint test:*",
     "test:client": "mocha test/client.js",
@@ -50,6 +51,7 @@
     "jshint": "^2.9.3",
     "mocha": "^3.0.2",
     "npm-run-all": "^3.0.0",
+    "should": "^11.1.0",
     "watch": "^0.19.2"
   },
   "dependencies": {

@@ -19,13 +19,13 @@ class Client {
             host: config.database.host
         });
         pgclient.connect(function(err) {
-            if(err) { callback(err); return; }
+            if(err) throw err;
 
             pgclient.query("DELETE FROM client", [], function (err) {
-                if(err) { callback(err); return; }
+                if(err) throw err;
 
                 pgclient.end(function (err) {
-                    if(err) { callback(err); return; }
+                    if(err) throw err;
                     callback();
                 });
             });
@@ -89,11 +89,11 @@ class Client {
         });
 
         pgclient.connect(function(err) {
-            if(err) { callback(err, undefined); return; }
+            if(err) { callback(err); return; }
 
-            pgclient.query("INSERT INTO client (name, git_repo, git_hash, language) VALUES ($1::text, $2::text, $3::text, $4::text) RETURNING *", [name, git_repo, git_hash, language], function (err, result) {
-                if(err) { callback(err, undefined); return; }
-                if(result.rowCount != 1) { callback("No match found", undefined); return; }
+            pgclient.query("INSERT INTO client (name, git_repo, git_hash, language) VALUES ($1::text, $2::text, $3::text, $4) RETURNING *", [name, git_repo, git_hash, language], function (err, result) {
+                if(err) { callback(err); return; }
+                if(result.rowCount != 1) { callback("No match found"); return; }
 
                 var data = {
                     id: result.rows[0].id,
@@ -104,7 +104,7 @@ class Client {
                 };
 
                 pgclient.end(function (err) {
-                    if(err) { callback(err, undefined); return; }
+                    if(err) { callback(err); return; }
                     callback(undefined, data);
                 });
             });
