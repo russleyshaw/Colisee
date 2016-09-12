@@ -1,3 +1,0 @@
-
-before_script:
-  - cp config/database.yml.travis config/database.yml
