@@ -7,8 +7,11 @@ node_js:
 
 before_script:
   - npm install
+  
+before_script:
+  - psql -c 'create database travis_ci_test;' -U postgres
 
 # Build steps
 script:
-  - npm run lint
+  - npm test
 
