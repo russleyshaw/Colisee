@@ -2,6 +2,10 @@
 sudo: false
 
 language: node_js
+
+env:
+  - DB=postgres://postgres@localhost/colisee
+  
 node_js:
   - "v6.5.0"
 
@@ -13,7 +17,8 @@ services:
 
 before_script:
   - npm install
-  - psql -c 'create database travis_ci_test;' -U postgres
+  - psql -c 'create database colisee;' -U postgres
+  - node ./replay.js -d postgres://postgres@localhost/colisee
   
 # Build steps
 script:
