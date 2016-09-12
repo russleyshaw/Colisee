@@ -5,35 +5,58 @@ var express = require("express");
 var config = require("config");
 
 
-class Scheduler {
+class schedulerType {
     // creates a scheduler
-    constructor(name) {
-        this.schedulerType = name;
-        this.clientArray =["Saab", "Valentino", "Bob", "Joe"];
+    constructor( scheduled_max,sched_interval) {
+        this.MAX_SCHEDULED = scheduled_max;
+        this.S_INTERVAL=sched_interval;
+        this.clientArray =[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,26,27,18,19,20,21,22,23,24,25,26,27,28,29,30];
     }
 
 
 
-    onStart(){
+    start(){
         console.log("This scheduler has been started.");
     }
-    onStop(){
+    //stops tournament and does not allow restart with current matches in match_queue.
+    stop(){
         console.log("This scheduler has been stopped.");
     }
-    onPause(){
+    //allows the scheduler to resume with current matches in match_queue.
+    pause(){
         console.log("This scheduler has been paused.");
     }
-    onPlay(){
-        console.log("This scheduler is playing a game.");
+    //This option resumes scheduler with current matches in match_queue
+    resume(){
+        console.log("This scheduler has resumed with current slients in queue.");
+    }
+    //clears the match_queue
+    purge(){
+        console.log("You are about to empty the match_queue.");
+    }
+    //returns number of matches in match_queue
+    num_scheduled(){
+        console.log("The number of matches scheduled are:  ");
+    }
+    //only schedules one match at a time
+    schedule_once(){
+        console.log("This option will only schedule 1 (one) match.");
+    }
+    //switches scheduler to any version available.
+    switch_to() {
+        console.log("You are about to switch schedulers.");
+    }
+    //returns the next match in match_queue
+    next(){
+        console.log("The next match in the queue is: ");
+    }
+    //returns the number of matches in match_queue.
+    num_scheduled(){
+        console.log("The number of scheduled matches are: ");
     }
 }
-/** Swiss scheduler */
-class swissScheduler extends Scheduler{
-
-
-
-
-
+    /** random scheduler */
+class randomScheduler extends Scheduler{
     onStop(){
         //super.onStop();
         console.log("This swissSchedulers has been stopped.");
@@ -44,12 +67,8 @@ class swissScheduler extends Scheduler{
     queueClients(){
     var clientQueue=[];
     var job1 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
-    var index = this.clientArray.indexOf(job1);
-    this.clientArray.splice( index, 1 );
     clientQueue.push(job1);
     var job2 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
-    var index = this.clientArray.indexOf(job1);
-    this.clientArray.splice( index, 1 );
     clientQueue.push(job2);
         for (var i=0;i < clientQueue.length;i++) {
             console.log(clientQueue[i]);
@@ -57,12 +76,7 @@ class swissScheduler extends Scheduler{
 
 }
 }
-function main() {
-    var d = new swissScheduler('Swiss');
-    d.queueClients();
 
-}
-main();
 
 
  module.exports=Scheduler ;
