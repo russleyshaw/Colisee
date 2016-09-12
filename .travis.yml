@@ -18,7 +18,7 @@ services:
 before_script:
   - npm install
   - psql -c 'create database colisee;' -U postgres
-  - node ./replay.js -d postgres://postgres@localhost/colisee
+  - node ./db.dockerfile -d postgres://postgres@localhost/colisee
   
 # Build steps
 script:
