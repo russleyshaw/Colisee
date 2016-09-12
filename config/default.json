@@ -31,5 +31,12 @@
   "mock_web": {
     "url": "localhost",
     "port": 3007
+  },
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "username": "colisee",
+    "password": "colisee",
+    "database": "colisee"
   }
 }

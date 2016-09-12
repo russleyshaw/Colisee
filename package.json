@@ -7,14 +7,30 @@
     "doc": "docs"
   },
   "scripts": {
-    "lint": "jshint src/",
+    "lint": "eslint src/ test/",
+    "fix": "eslint --fix src/ test/",
+    "watch:lint": "watch 'npm run lint' src/",
+    "test": "npm-run-all lint test:*",
+    "test:client": "mocha test/client.js",
+    "doc": "jsdoc src/ -r -c doc.json -d docs/generated/",
+    "watch:doc": "watch 'npm run doc' src/",
+    "docker:stop": "docker stop $(docker ps -a -q)",
+    "docker:purge": "npm-run-all --parallel docker:purge:*",
+    "docker:purge:containers": "docker rm -f $(docker ps -a -q)",
+    "docker:purge:images": "docker rmi -f $(docker images -q)",
+    "db:build": "docker build -f db/db.dockerfile -t colisee_image db/",
+    "db:run": "docker run --name colisee_db -d -p 5432:5432 colisee_image",
+    "db:start": "docker start colisee_db",
+    "db:stop": "docker stop colisee_db",
+    "db:rm": "docker rm -f colisee_db",
+    "db:rmi": "docker rmi -f colisee_image",
     "serve": "npm run lint && npm-run-all --parallel serve:*",
     "serve:head": "node src/head_server/main.js",
     "serve:build": "node src/build_server/main.js",
+    "serve:gamelog": "node src/gamelog_server/main.js",
     "serve:play": "node src/play_server/main.js 0",
     "serve:play1": "node src/play_server/main.js 1",
     "serve:play2": "node src/play_server/main.js 2",
-    "serve:gamelog": "node src/gamelog_server/main.js",
     "mock": "npm run lint && npm-run-all --parallel mock:*",
     "mock:vis": "node src/mock/visualizer/main.js",
     "mock:web:": "node src/mock/webserver/main.js"
@@ -30,14 +46,23 @@
   },
   "homepage": "https://github.com/russleyshaw/Colisee#readme",
   "devDependencies": {
+    "eslint": "^3.5.0",
+    "jsdoc": "^3.4.0",
     "jshint": "^2.9.3",
-    "npm-run-all": "^3.0.0"
+    "mocha": "^3.0.2",
+    "npm-run-all": "^3.0.0",
+    "should": "^11.1.0",
+    "watch": "^0.19.2"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
     "child_process": "^1.0.2",
     "config": "^1.21.0",
     "express": "^4.14.0",
-    "handlebars": "^4.0.5"
+    "fs-extra": "^0.30.0",
+    "handlebars": "^4.0.5",
+    "pg": "^6.1.0",
+    "querystring": "^0.2.0",
+    "request": "^2.74.0"
   }
 }
