@@ -16,9 +16,31 @@ http://{{head_server.url}}:{{head_server.port}}/api/v1/web/game<br/>
 <button id="gameBtn">Get game</button><br/>
 <textarea id="gameData"></textarea><br/><br/>
 
-http://{{build_server.url}}:{{build_server.port}}/api/v2/build/<br/>
-<button id="buildBtn">Build Git Repo</button> url: <input id="gitUrl" type="text"/> hash: <input id="gitHash" type="text"/><br/>
-<textarea id="buildData"></textarea>
+<strong>Create Client</strong><br/>
+POST: http://{{head_server.url}}:{{head_server.port}}/api/v2/client/<br/>
+name: <input id="addclientname" type="text"/><br/>
+git_repo: <input id="addclientgitrepo" type="text"/><br/>
+git_hash: <input id="addclientgithash" type="text"/><br/>
+language: <input id="addclientlanguage" type="text"/><br/>
+<button id="addclientbtn">Create Client</button><br/>
+<textarea id="addclientdata"></textarea><br/><br/>
+
+<strong>Get Client</strong><br/>
+GET: http://{{head_server.url}}:{{head_server.port}}/api/v2/client/:id<br/>
+id: <input id="getclientid" type="number"/><br/>
+<button id="getclientbtn">Get Client</button><br/>
+<textarea id="getclientdata"></textarea><br/><br/>
+
+<strong>Build Client</strong>
+POST http://{{build_server.url}}:{{build_server.port}}/api/v2/build/:id<br/>
+id: <input id="buildclientid" type="number"/><br/>
+<button id="buildbtn">Build Client</button><br/>
+<textarea id="builddata"></textarea><br/><br/>
+
+<strong>Client Tar</strong>
+GET http://{{build_server.url}}:{{build_server.port}}/api/v2/build/:id<br/>
+id: <input id="clienttarid" type="number"/><br/>
+<button id="clienttarbtn">Get Repo Tar</button>
 
 
 <script>
@@ -35,15 +57,36 @@ $(document).ready(function () {
         });
     });
 
-    $("#buildBtn").click(function () {
-        var url = "http://{{build_server.url}}:{{build_server.port}}/api/v2/build/";
+    $("#addclientbtn").click(function () {
+        var url = "http://{{head_server.url}}:{{head_server.port}}/api/v2/client/";
         var data = {
-            url: $("#gitUrl").val(),
-            hash: $("#gitHash").val()
+            name: $("#addclientname").val(),
+            git_repo: $("#addclientgitrepo").val(),
+            git_hash: $("#addclientgithash").val(),
+            language: $("#addclientlanguage").val()
         };
         $.post(url, data, function (data) {
-            $("#buildData").text(JSON.stringify(data));
+            $("#addclientdata").text(JSON.stringify(data));
         });
+    });
+
+    $("#getclientbtn").click(function () {
+        var url = "http://{{head_server.url}}:{{head_server.port}}/api/v2/client/" + $("#getclientid").val();
+        $.get(url, function (data) {
+            $("#getclientdata").text(JSON.stringify(data));
+        });
+    });
+
+    $("#buildbtn").click(function () {
+        var url = "http://{{build_server.url}}:{{build_server.port}}/api/v2/build/"+$("#buildclientid").val();
+        $.post(url, {}, function (data) {
+            $("#builddata").text(JSON.stringify(data));
+        });
+    });
+
+    $("#clienttarbtn").click(function () {
+        var url = "http://{{build_server.url}}:{{build_server.port}}/api/v2/build/"+$("#clienttarid").val();
+        window.location.href = url;
     });
 
 });

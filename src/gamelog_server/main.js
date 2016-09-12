@@ -1,11 +1,9 @@
 var express = require("express");
 var fs = require("fs");
 var config = require("config");
-var bodyParser = require('body-parser');
+var body_parser = require("body-parser");
 
 function main(){
-    console.log("Starting Gamelog Server...");
-
     var app = express();
     var gamelogs = [];
     var last_id = 0;
@@ -24,16 +22,16 @@ function main(){
         }
     }
 
-    app.use( bodyParser.json() );
-    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(body_parser.json());
+    app.use(body_parser.urlencoded({ extended: true }));
     app.use( function(req, res, next) {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-        res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept");
         next();
     });
 
-    app.get('/api/v2/glog/:glog/', function(req, res){
+    app.get("/api/v2/glog/:glog/", function(req, res){
         //TODO - verify this is a number
         var glog = parseInt(req.params.glog);
         if (gamelogs.indexOf(glog) != -1) {
@@ -46,19 +44,19 @@ function main(){
         }
         //TODO - better no id found
         //TODO - split between not found and invalid
-        var res_error_data = {
+        const res_error_data = {
             "error": "invalid id: "  + glog.toString()
         };
         res.send(res_error_data);
     });
 
-    app.post('/api/v2/glog/', function(req, res){
+    app.post("/api/v2/glog/", function(req, res){
         //TODO - Verify data
         if (req.body.gamelog) {
             last_id += 1;
             gamelogs.push(last_id);
             fs.writeFileSync(GLOG_LOCATION + last_id.toString(), req.body.gamelog);
-            var res_data = {
+            const res_data = {
                 "id": last_id
             };
             res.send(res_data);
