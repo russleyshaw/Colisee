@@ -13,8 +13,7 @@ services:
 
 before_script:
   - npm install
-  - psql -c 'create database colisee;' -U postgres
-  - cp config/database.yml.travis config/database.yml
+  - psql -c 'create database travis_ci_test;' -U postgres
   
 # Build steps
 script:
