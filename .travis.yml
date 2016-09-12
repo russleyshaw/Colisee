@@ -5,10 +5,14 @@ language: node_js
 node_js:
   - "v6.5.0"
 
+addons:
+  postgresql: "9.4"
+  
+services:
+  - postgresql
+
 before_script:
   - npm install
-  
-before_script:
   - psql -c 'create database colisee;' -U postgres
   
 # Build steps
