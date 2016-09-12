@@ -2,9 +2,6 @@
 sudo: false
 
 language: node_js
-
-env:
-  - DB=postgres://postgres@localhost/colisee
   
 node_js:
   - "v6.5.0"
