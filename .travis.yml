@@ -16,6 +16,7 @@ before_script:
   - npm install
   - cp config/travis.json config/default.json 
   - psql -c 'create database colisee;' -U postgres
+  - psql -U postgres -d colisee -a -f db/init.sql
   
 # Build steps
 script:
