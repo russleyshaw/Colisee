@@ -9,14 +9,11 @@ node_js:
 addons:
   postgresql: "9.4"
   
-services:
-  - postgresql
-  
 test:
   adapter: postgresql
-  database: colisee
-  username: colisee
-  password: colisee
+  database: "colisee"
+  username: "colisee"
+  password: "colisee"
 
 before_script:
   - npm install
