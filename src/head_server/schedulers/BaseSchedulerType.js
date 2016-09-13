@@ -1,82 +1,83 @@
 //base scheduler class
 // need to have a status , running, paused, stopped
 // where will this file need to be accessed from?
-var express = require("express");
-var config = require("config");
+//var express = require("express");
+//var config = require("config");
 
 
-class schedulerType {
+class SchedulerType{
     // creates a scheduler
     constructor( scheduled_max,sched_interval) {
         this.MAX_SCHEDULED = scheduled_max;
         this.S_INTERVAL=sched_interval;
         this.clientArray =[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,26,27,18,19,20,21,22,23,24,25,26,27,28,29,30];
+        this.match_queue =[];
+        this.is_started = true;
     }
 
 
 
     start(){
         console.log("This scheduler has been started.");
+        do {
+            this.queue_matches(MAX_SCHEDULED);
+        }while(this.is_started);
     }
+
     //stops tournament and does not allow restart with current matches in match_queue.
     stop(){
         console.log("This scheduler has been stopped.");
+        this.is_started = false;
     }
+
     //allows the scheduler to resume with current matches in match_queue.
     pause(){
         console.log("This scheduler has been paused.");
     }
+
     //This option resumes scheduler with current matches in match_queue
     resume(){
-        console.log("This scheduler has resumed with current slients in queue.");
+        console.log("This scheduler has resumed with current matches in queue.");
     }
+
     //clears the match_queue
     purge(){
-        console.log("You are about to empty the match_queue.");
+        console.log("should delete all entries in the match_queue.");
+        this.match_queue.splice(0,this.match_queue.length);
+        console.log("number of matches in match_queue: " + this.match_queue.length);
     }
-    //returns number of matches in match_queue
-    num_scheduled(){
-        console.log("The number of matches scheduled are:  ");
-    }
+
     //only schedules one match at a time
     schedule_once(){
         console.log("This option will only schedule 1 (one) match.");
+        this.queue_matches(1);
     }
+
     //switches scheduler to any version available.
-    switch_to() {
+    switch_to(SchedulerType) {
         console.log("You are about to switch schedulers.");
+        this.
     }
+
     //returns the next match in match_queue
     next(){
-        console.log("The next match in the queue is: ");
+        console.log("The next match in the queue is: "+ this.match_queue[this.match_queue.length]);
+        return this.match_queue[this.match_queue.length];
     }
+
     //returns the number of matches in match_queue.
     num_scheduled(){
-        console.log("The number of scheduled matches are: ");
+        //console.log("The number of scheduled matches are: "+ match_queue.length);
+        return this.match_queue.length;
+
     }
-}
-    /** random scheduler */
-class randomScheduler extends Scheduler{
-    onStop(){
-        //super.onStop();
-        console.log("This swissSchedulers has been stopped.");
+
+    //matches two clients at a time and puts them in Match_queue
+    queue_matches(num_times){
+        console.log("The clients will be specifically queued in this program.")
 
 
-}/** randomly picks 2 clients from a list of clients and puts them in a queue*/
-
-    queueClients(){
-    var clientQueue=[];
-    var job1 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
-    clientQueue.push(job1);
-    var job2 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
-    clientQueue.push(job2);
-        for (var i=0;i < clientQueue.length;i++) {
-            console.log(clientQueue[i]);
-        }
-
-}
 }
 
 
-
- module.exports=Scheduler ;
+module.exports = SchedulerType;

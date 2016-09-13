@@ -12,6 +12,7 @@
     "watch:lint": "watch 'npm run lint' src/",
     "test": "npm-run-all lint test:*",
     "test:client": "mocha test/client.js",
+    "test:scheduler": "mocha test/sched.js",
     "doc": "jsdoc src/ -r -c doc.json -d docs/generated/",
     "watch:doc": "watch 'npm run doc' src/",
     "docker:stop": "docker stop $(docker ps -a -q)",
