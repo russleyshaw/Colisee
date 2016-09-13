@@ -59,6 +59,7 @@
     "body-parser": "^1.15.2",
     "child_process": "^1.0.2",
     "config": "^1.21.0",
+    "export-files": "^2.1.1",
     "express": "^4.14.0",
     "fs-extra": "^0.30.0",
     "handlebars": "^4.0.5",

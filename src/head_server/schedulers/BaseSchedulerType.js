@@ -1,6 +1,6 @@
 //base scheduler class
 
-var MatchType = require("../src/head_server/schedulers/MatchObject");
+var MatchType = require("./MatchObject");
 
 class SchedulerType{
     // creates a scheduler
@@ -17,8 +17,9 @@ class SchedulerType{
     start(){
         console.log("This scheduler has been started.");
         do {
+
             this.queue_matches(MAX_SCHEDULED);
-        }while(this.is_started);
+        }while(this.is_started=true);
     }
 
     //stops tournament and does not allow restart with current matches in match_queue.
@@ -72,21 +73,29 @@ class SchedulerType{
     //matches two clients at a time and puts them in Match_queue
     queue_matches(num_times){
         console.log("The clients will be specifically queued in this program.")
-        for (var j = 0; j < num_times; j++) {
-            var client1 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
-            var client2 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
-            var m= new MatchType(client1,client2);
-            this.match_queue.push(m);
-
-
-
-        }
-        for (var i = 0; i < this.match_queue.length; i++) {
-            console.log(m.match_queue[i]);
-        }
-
+      if (this.match_queue.length < this.MAX_SCHEDULED) {
+          for (var j = 0; j < num_times; j++) {
+              var client1 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
+              var client2 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
+              var m = new MatchType(client1, client2);
+              this.match_queue.push(m);
+          }
+          for (var i = 0; i < this.match_queue.length; i++) {
+              console.log(this.match_queue[i]);
+          }
+      }
+      else
+         console.log("Maximum matches are queued.");
+         return;
     }
 
 }
+function main(){
+    var d= new SchedulerType(20,1000);
+    d.schedule_once();
+    console.log(d.num_scheduled());
+}
+main();
+
 
 module.exports = SchedulerType;
