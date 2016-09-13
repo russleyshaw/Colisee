@@ -20,7 +20,7 @@ test:
 
 before_script:
   - npm install
-  - psql -c 'create database colisee;' -U colisee
+  - psql -c 'create database colisee;' -U postgres
   
 # Build steps
 script:
