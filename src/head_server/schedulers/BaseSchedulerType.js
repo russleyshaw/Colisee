@@ -15,51 +15,42 @@ class SchedulerType{
 
 
     start(){
-        console.log("This scheduler has been started.");
-        do {
-
-            this.queue_matches(MAX_SCHEDULED);
-        }while(this.is_started=true);
+        do this.queue_matches(this.MAX_SCHEDULED); while(this.is_started == true);
     }
 
     //stops tournament and does not allow restart with current matches in match_queue.
     stop(){
-        console.log("This scheduler has been stopped.");
         this.is_started = false;
     }
 
     //allows the scheduler to resume with current matches in match_queue.
     pause(){
-        console.log("This scheduler has been paused.");
+
     }
 
     //This option resumes scheduler with current matches in match_queue
     resume(){
-        console.log("This scheduler has resumed with current matches in queue.");
+
     }
 
     //clears the match_queue
     purge(){
-        console.log("should delete all entries in the match_queue.");
         this.match_queue.splice(0,this.match_queue.length);
-        console.log("number of matches in match_queue: " + this.match_queue.length);
+
     }
 
     //only schedules one match at a time
     schedule_once(){
-        console.log("This option will only schedule 1 (one) match.");
         this.queue_matches(1);
     }
 
     //switches scheduler to any version available.
-    switch_to(SchedulerType) {
-        console.log("You are about to switch schedulers.");
+    switch_to() {
 
     }
 
     //returns the next match in match_queue
     next(){
-        console.log("The next match in the queue is: "+ this.match_queue[this.match_queue.length]);
         return this.match_queue[this.match_queue.length];
     }
 
@@ -72,30 +63,23 @@ class SchedulerType{
 
     //matches two clients at a time and puts them in Match_queue
     queue_matches(num_times){
-        console.log("The clients will be specifically queued in this program.")
-      if (this.match_queue.length < this.MAX_SCHEDULED) {
-          for (var j = 0; j < num_times; j++) {
-              var client1 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
-              var client2 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
-              var m = new MatchType(client1, client2);
-              this.match_queue.push(m);
-          }
-          for (var i = 0; i < this.match_queue.length; i++) {
-              console.log(this.match_queue[i]);
-          }
-      }
-      else
-         console.log("Maximum matches are queued.");
-         return;
+        if (this.match_queue.length < this.MAX_SCHEDULED) {
+            for (var j = 0; j < num_times; j++) {
+                var client1 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
+                var client2 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
+                var m = new MatchType(client1, client2);
+                this.match_queue.push(m);
+            }
+            for (var i = 0; i < this.match_queue.length; i++) {
+                console.log(this.match_queue[i]);
+            }
+        }
+        else
+            return;
     }
 
 }
-function main(){
-    var d= new SchedulerType(20,1000);
-    d.schedule_once();
-    console.log(d.num_scheduled());
-}
-main();
+
 
 
 module.exports = SchedulerType;

@@ -4,7 +4,7 @@
 /* eslint-env node, mocha */
 var should = require("should");
 var RandomScheduler = require("../src/head_server/schedulers/RandomSchedulerType");
-var Scheduler = require("../src/head_server/schedulers/BaseSchedulerType");
+//var Scheduler = require("../src/head_server/schedulers/BaseSchedulerType");
 
 
 // describe("Scheduler", function() {
@@ -53,11 +53,11 @@ describe("Scheduler", function(){
                 done();
             });
             it("should return 1 when a game has been scheduled",function(done){
-                 var d = new RandomScheduler(20,1000);
-                 d.schedule_once();
-                 should(d.num_scheduled()).be.equal(1);
-                 done();
-             });
+                var d = new RandomScheduler(20,1000);
+                d.schedule_once();
+                should(d.num_scheduled()).be.equal(1);
+                done();
+            });
 
         });
 
