@@ -1,8 +1,5 @@
 //base scheduler class
-// need to have a status , running, paused, stopped
-// where will this file need to be accessed from?
-//var express = require("express");
-//var config = require("config");
+
 var MatchType = require("../src/head_server/schedulers/MatchObject");
 
 class SchedulerType{

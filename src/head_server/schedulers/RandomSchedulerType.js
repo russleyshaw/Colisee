@@ -1,7 +1,7 @@
 
 //var express = require("express");
 //var config = require("config");
-var SchedulerType = require("../src/head_server/schedulers/BaseSchedulerType.js");
+var SchedulerType = require("../src/head_server/schedulers/BaseSchedulerType");
 var MatchType = require("../src/head_server/schedulers/MatchObject");
 
 
