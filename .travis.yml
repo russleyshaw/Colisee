@@ -14,7 +14,7 @@ services:
 
 before_script:
   - npm install
-  - psql -c 'create database colisee;' -U postgres
+  - psql -c 'create database colisee;' -U colisee
   
 # Build steps
 script:
