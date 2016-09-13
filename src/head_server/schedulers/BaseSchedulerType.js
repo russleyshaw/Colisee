@@ -3,7 +3,7 @@
 // where will this file need to be accessed from?
 //var express = require("express");
 //var config = require("config");
-
+var MatchType = require("../src/head_server/schedulers/MatchObject");
 
 class SchedulerType{
     // creates a scheduler
@@ -56,7 +56,7 @@ class SchedulerType{
     //switches scheduler to any version available.
     switch_to(SchedulerType) {
         console.log("You are about to switch schedulers.");
-        this.
+
     }
 
     //returns the next match in match_queue
@@ -75,9 +75,21 @@ class SchedulerType{
     //matches two clients at a time and puts them in Match_queue
     queue_matches(num_times){
         console.log("The clients will be specifically queued in this program.")
+        for (var j = 0; j < num_times; j++) {
+            var client1 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
+            var client2 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
+            var m= new MatchType(client1,client2);
+            this.match_queue.push(m);
 
+
+
+        }
+        for (var i = 0; i < this.match_queue.length; i++) {
+            console.log(m.match_queue[i]);
+        }
+
+    }
 
 }
-
 
 module.exports = SchedulerType;

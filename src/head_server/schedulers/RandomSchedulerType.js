@@ -2,7 +2,7 @@
 //var express = require("express");
 //var config = require("config");
 var SchedulerType = require("../src/head_server/schedulers/BaseSchedulerType.js");
-
+var MatchType = require("../src/head_server/schedulers/MatchObject");
 
 
 class RandomScheduler extends SchedulerType{
