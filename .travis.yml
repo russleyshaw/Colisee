@@ -11,6 +11,12 @@ addons:
   
 services:
   - postgresql
+  
+test:
+  adapter: postgresql
+  database: colisee
+  username: colisee
+  password: colisee
 
 before_script:
   - npm install
