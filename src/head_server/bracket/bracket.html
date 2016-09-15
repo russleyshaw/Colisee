@@ -20,7 +20,7 @@
 <script>
     $(document).ready( function() {
         $.get( "http://localhost:3000/bracket/testData/", function( data ) {
-            $("#data").innerHTML = JSON.stringify(data);
+            $("#data").html(JSON.stringify(data));
         });
     });
 </script>
