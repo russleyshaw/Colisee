@@ -14,4 +14,8 @@ router.get("/bracket/jquerytest/", function(req, res){
     res.sendFile(path.join(__dirname, "jquerybrackettest.html"));
 });
 
+router.get("/bracket/testData/", function(req, res){
+    res.sendFile(path.join(__dirname, "testData.json"));
+});
+
 module.exports = router;
