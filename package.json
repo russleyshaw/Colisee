@@ -53,7 +53,8 @@
     "mocha": "^3.0.2",
     "npm-run-all": "^3.0.0",
     "should": "^11.1.0",
-    "watch": "^0.19.2"
+    "watch": "^0.19.2",
+    "chai":"*"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
