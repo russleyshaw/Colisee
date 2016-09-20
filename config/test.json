@@ -34,9 +34,9 @@
   },
   "database": {
     "host": "localhost",
-    "port": 5432,
-    "username": "postgres",
-    "password": "",
-    "database": "colisee"
+    "port": 5433,
+    "username": "colisee",
+    "password": "colisee",
+    "database": "colisee_test"
   }
 }
