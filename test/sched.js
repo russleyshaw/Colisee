@@ -1,89 +1,50 @@
-/**
- * Created by gary on 9/12/16.
- */
 /* eslint-env node, mocha */
 var should = require("should");
-var RandomScheduler = require("../src/head_server/schedulers/RandomSchedulerType");
-//var Scheduler = require("../src/head_server/schedulers/BaseSchedulerType");
 
+var RandomSchedulerType = require("../src/head_server/schedulers/RandomSchedulerType");
+var Scheduler = require("../src/head_server/schedulers/Scheduler");
 
-// describe("Scheduler", function() {
-//     describe("RandomSchedulerType", function () {
-//         describe("start", function () {
-//             it("Should not start this scheduler.", function (done) {
-//                 var d = new RandomScheduler(20,1000);
-//                 should(d.num_scheduled()).be.equal(0);
-//                 done();
-//             });
-//             it("Should start this scheduler.", function (done) {
-//                 var d = new RandomScheduler(20,1000);
-//                 d.start();
-//                 should(d.num_scheduled()).be.equal(20);
-//                 done();
-//             });
-//         });
-//     });
-// });
-// describe("Scheduler", function(){
-//     describe("RandomSchedulerType", function(){
-//         describe("num_scheduled()", function(){
-//             it("should return 0 when no games have been scheduled",function(done){
-//                 var d = new Scheduler(20,1000);
-//                 d.switch_to( new RandomScheduler() );
-//                 should(d.num_scheduled()).be.equal(0);
-//                 done();
-//             });
-//             it("should return 1 when a games have been scheduled",function(done){
-//                 var d = new Scheduler(20,1000);
-//                 d.switch_to( new RandomScheduler() );
-//                 d.schedule_once();
-//                 should(d.num_scheduled()).be.equal(1);
-//                 done();
-//             });
-//         });
-//
-//     });
-// });
-describe("Scheduler", function(){
-    describe("RandomSchedulerType", function(){
-        describe("schedule_once()", function(){
-            it("should return 0 when no game has been scheduled",function(done){
-                var d = new RandomScheduler(20,1000);
-                should(d.num_scheduled()).be.equal(0);
+describe("Scheduler", function() {
+    describe("RandomSchedulerType", function () {
+
+        describe("start", function () {
+            it("should begin scheduling games", function (done) {
+                var sched = new Scheduler();
+
+                sched.switchTo(new RandomSchedulerType);
+                sched.start();
+
+                setTimeout(function () {
+                    should( sched.numScheduled() ).be.within(4, 6);
+                    done();
+                }, 500);
+            });
+        });
+
+        describe("stop", function () {
+            it("should stop a started scheduler", function (done) {
+                var sched = new Scheduler();
+
+                sched.switchTo(new RandomSchedulerType);
+                sched.start();
+
+                setTimeout(function () {
+                    sched.stop();
+                    should( sched.numScheduled() ).be.within(4, 6);
+                    done();
+                }, 500);
+            });
+        });
+
+        describe("scheduleOnce()", function(){
+            it("should schedule an individual game",function(done){
+                var sched = new Scheduler();
+                sched.switchTo( new RandomSchedulerType() );
+                sched.scheduleOnce();
+                should( sched.numScheduled() ).be.equal(1);
                 done();
             });
-            it("should return 1 when a game has been scheduled",function(done){
-                var d = new RandomScheduler(20,1000);
-                d.schedule_once();
-                should(d.num_scheduled()).be.equal(1);
-                done();
-            });
-
         });
 
     });
 });
-// describe("Scheduler", function(){
-//     describe("RandomSchedulerType", function(){
-//         describe("next()", function(){
-//             it("should return 1 when a game has been scheduled",function(done){
-//                 var d = new Scheduler();
-//                 d.next();
-//                 should(d.next).be.ok()
-//                 done();
-//             });
-//         });
-//
-//     });
-// });
-// describe("create", function() {
-//     it("should create a new client in the database", function (done) {
-//         Scheduler.create("user1", "repo1", "hash1", "cpp", function (err, client) {
-//             should(err).not.be.ok();
-//
-//             done();
-//         });
-//
-//     });
-// });
-

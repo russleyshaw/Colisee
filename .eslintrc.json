@@ -11,7 +11,7 @@
     },
     "rules": {
         "eol-last": 2,
-        "no-console": 1,
+        "no-console": 0,
         "no-path-concat": 2,
         "indent": [
             "error",

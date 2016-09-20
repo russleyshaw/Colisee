@@ -1,3 +1,5 @@
 test:
   adapter: postgresql
-  database: colisee
+  username: colisee
+  password: colisee
+  database: colisee_test
