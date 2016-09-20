@@ -8,7 +8,7 @@ CREATE TYPE client_language_enum AS ENUM (
     'java'
 );
 
-DROP TABLE IF EXISTS client;
+DROP TABLE IF EXISTS client CASCADE;
 CREATE TABLE client
 (
   id serial NOT NULL,
@@ -19,8 +19,10 @@ CREATE TABLE client
   CONSTRAINT "CLIENT_PK_ID" PRIMARY KEY (id),
   CONSTRAINT "CLIENT_UNIQUE_NAME" UNIQUE (name)
 );
+DELETE FROM client;
+ALTER SEQUENCE client_id_seq RESTART WITH 1;
 
-DROP TABLE IF EXISTS game_result;
+DROP TABLE IF EXISTS game_result CASCADE;
 CREATE TABLE game_result
 (
     id serial NOT NULL,
@@ -32,6 +34,8 @@ CREATE TABLE game_result
     gamelog_id integer NOT NULL,
     CONSTRAINT "GAME_RESULT_PK_ID" PRIMARY KEY (id)
 );
+DELETE FROM game_result;
+ALTER SEQUENCE game_result_id_seq RESTART WITH 1;
 
 DROP TYPE IF EXISTS log_severity_enum CASCADE;
 CREATE TYPE log_severity_enum AS ENUM (
@@ -42,7 +46,7 @@ CREATE TYPE log_severity_enum AS ENUM (
     'critical'
 );
 
-DROP TABLE IF EXISTS log;
+DROP TABLE IF EXISTS log CASCADE;
 CREATE TABLE log
 (
     id serial NOT NULL,
@@ -52,3 +56,5 @@ CREATE TABLE log
     time_created timestamp with time zone NOT NULL,
     CONSTRAINT "LOG_PK_ID" PRIMARY KEY (id)
 );
+DELETE FROM log;
+ALTER SEQUENCE log_id_seq RESTART WITH 1;
