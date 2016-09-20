@@ -14,7 +14,7 @@ addons:
 
 before_script:
   - npm install
-  - cp config/travis.json config/test.json
+  - cp config/travis_test.json config/test.json
   - psql -c 'create database colisee_test;' -U postgres
   - psql -U postgres -d colisee_test -a -f db/init.sql
   
