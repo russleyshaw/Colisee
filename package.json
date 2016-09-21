@@ -12,9 +12,11 @@
     "watch:lint": "watch 'npm run lint' src/",
 
     "test": "npm-run-all lint test:*",
+    "test:db": "NODE_ENV=test mocha test/db.js",
     "test:client": "NODE_ENV=test mocha test/client.js",
-    "test:scheduler": "NODE_ENV=test mocha test/sched.js",
+    "test:sched": "NODE_ENV=test mocha test/sched.js",
     "test:logger": "NODE_ENV=test mocha test/logger.js",
+    "test:builder": "NODE_ENV=test mocha test/builder.js",
 
     "doc": "jsdoc src/ -r -c doc.json -d docs/generated/",
     "watch:doc": "watch 'npm run doc' src/",
@@ -57,12 +59,10 @@
   "devDependencies": {
     "eslint": "^3.5.0",
     "jsdoc": "^3.4.0",
-    "jshint": "^2.9.3",
     "mocha": "^3.0.2",
     "npm-run-all": "^3.0.0",
     "should": "^11.1.0",
-    "watch": "^0.19.2",
-    "chai":"*"
+    "watch": "^0.19.2"
   },
   "dependencies": {
     "async": "^2.0.1",
