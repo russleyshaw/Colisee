@@ -46,7 +46,7 @@ describe("Builder", function() {
 
             //approx 64469ms
             this.slow(1000 * 70);
-            this.timeout(1000 * 60 * 2);
+            this.timeout(1000 * 60 * 5);
 
             builder.build(1, function(err) {
                 should(err).not.be.ok();
@@ -61,7 +61,7 @@ describe("Builder", function() {
 
             //approx 64469ms
             this.slow(1000 * 70);
-            this.timeout(1000 * 60 * 2);
+            this.timeout(1000 * 60 * 5);
 
             builder.getTar(1, function(err, tar) {
                 should(err).not.be.ok();
