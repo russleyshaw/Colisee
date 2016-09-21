@@ -2,6 +2,7 @@ var child_process = require("child_process");
 var fs = require("fs");
 var path = require("path");
 var Client = require("../common/client");
+var async = require("async");
 
 /**
  * Manager of building and accessing client docker images
@@ -14,16 +15,22 @@ class Builder {
 
     init(callback) {
         //TODO: Add other docker base images
-        var build_cmds = [
+        var cmds = [
             "docker build -t cpp -f " + path.join(__dirname, "dockerfiles/base/cpp.dockerfile") + " .",
             "docker build -t js -f " + path.join(__dirname, "dockerfiles/base/js.dockerfile") + " .",
         ];
 
-        for(var cmd of build_cmds) {
-            child_process.execSync(cmd);
-        }
-
-        callback();
+        async.map(cmds, function(cmd, cb) {
+            console.log("Running: " + cmd);
+            child_process.exec(cmd, function(err) {
+                if(err) return cb(err);
+                console.log("Done: " + cmd);
+                cb();
+            });
+        }, function(err){
+            if(err) return callback(err);
+            callback();
+        });
     }
 
     /**
@@ -33,7 +40,7 @@ class Builder {
      */
     build(client_id, callback) {
 
-        Client.get(client_id, function(err, client) {
+        Client.getById(client_id, function(err, client) {
             if(err) return callback(err);
 
             //TODO: Determine if build failed
@@ -47,15 +54,18 @@ class Builder {
                 callback("Language not supported!", undefined); return;
             }
 
-            //TODO: Build
-            // Build docker image
-            var cmd = build_cmds[client.language];
-            child_process.execSync(cmd);
 
+            var cmd = build_cmds[client.language];
+            console.log("Running: " + cmd);
+            child_process.execSync(cmd);
+            console.log("Done: " + cmd);
+
+            cmd = "docker save -o "+path.join(__dirname, "tarballs", client.id+".tar")+" "+client.id;
             //TODO: Save docker image using docker component
             // Save docker image
-            cmd = "docker save -o "+path.join(__dirname, "tarballs", client.id+".tar")+" "+client.id;
+            console.log("Running: " + cmd);
             child_process.execSync(cmd);
+            console.log("Done: " + cmd);
 
             callback();
         });
@@ -74,4 +84,4 @@ class Builder {
     }
 }
 
-module.exports = new Builder();
+module.exports = Builder;

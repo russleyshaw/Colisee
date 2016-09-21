@@ -20,42 +20,33 @@ class Db {
         });
     }
 
+    /**
+     * Resets the entire database by running the db/init.sql script
+     * @param callback invokes (err)
+     */
     static reset(callback) {
-        var pgclient = this.newPgClient();
+        var init_sql = fs.readFileSync( path.join(__dirname, "../../db/init.sql") );
+        var sqls = init_sql.toString();
 
-        pgclient.connect(function(err) {
-            if(err) return callback(err);
-
-            var init_sql = fs.readFileSync( path.join(__dirname, "../../db/init.sql") );
-            var sqls = init_sql.toString().split(";");
-
-            async.mapSeries(sqls, function(sql, cb){
-                pgclient.query(sql, [], function (err, result) {
-                    cb(err, result);
-                });
-
-            }, function(err, results){
-                pgclient.end(function (err) {
-                    if(err) return callback(err);
-                    callback();
-                });
-            });
+        Db.queryOnce(sqls, [], function(err) {
+           if(err) return callback(err);
+            callback();
         });
     }
 
     /**
-     *
+     * Perform an individual SQL query on the database
      * @param sql
      * @param args - [arg1, arg2, ...]
-     * @param callback - function(err, result)
+     * @param callback - invokes (err, result)
      */
-    static query_once(sql, args, callback) {
+    static queryOnce(sql, args, callback) {
         var pgclient = this.newPgClient();
 
         pgclient.connect(function(err) {
             if(err) return callback(err);
 
-            pgclient.query(sql, [], function (err, result) {
+            pgclient.query(sql, args, function (err, result) {
                 if(err) return callback(err);
 
                 pgclient.end(function (err) {
@@ -67,11 +58,11 @@ class Db {
     }
 
     /**
-     *
+     * Perform multiple SQL queries in series
      * @param sql_args - [ [sql, [arg1, arg2, ...]], [sql, [arg1, arg2, ...]], ... ]
      * @param callback - function(err, results)
      */
-    static query_lots(sql_args, callback) {
+    static queryLotsSeries(sql_args, callback) {
         var pgclient = this.newPgClient();
 
         pgclient.connect(function(err) {
@@ -79,9 +70,9 @@ class Db {
 
             async.mapSeries(sql_args, function(sqlarg, cb){
                 pgclient.query(sqlarg[0], sqlarg[1], function (err, result) {
-                    cb(err, result);
+                    if(err) return cb(err);
+                    cb(null, result);
                 });
-
             }, function(err, results){
                 pgclient.end(function (err) {
                     if(err) return callback(err);
@@ -90,6 +81,32 @@ class Db {
             });
         });
     }
+
+    /**
+     * Perform multiple SQL queries in parallel
+     * @param sql_args - [ [sql, [arg1, arg2, ...]], [sql, [arg1, arg2, ...]], ... ]
+     * @param callback - function(err, results)
+     */
+    static queryLots(sql_args, callback) {
+        var pgclient = this.newPgClient();
+
+        pgclient.connect(function(err) {
+            if(err) return callback(err);
+
+            async.map(sql_args, function(sqlarg, cb){
+                pgclient.query(sqlarg[0], sqlarg[1], function (err, result) {
+                    if(err) return cb(err);
+                    cb(null, result);
+                });
+            }, function(err, results){
+                pgclient.end(function (err) {
+                    if(err) return callback(err);
+                    callback(null, results);
+                });
+            });
+        });
+    }
+
 }
 
 module.exports = Db;
