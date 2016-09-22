@@ -56,7 +56,7 @@ class Client {
                     language: row.language,
                     time_created: row.time_created,
                     time_modified: row.time_modified
-                }
+                };
             });
 
             callback(null, clients);

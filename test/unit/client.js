@@ -84,7 +84,7 @@ describe("Client", function() {
                 should(clients.length).be.below(2);
 
                 done();
-            })
+            });
         });
         it("should get multiple random clients", function(done){
             Client.getRandom(2, function(err, clients) {
@@ -92,7 +92,7 @@ describe("Client", function() {
                 should(clients.length).be.below(3);
 
                 done();
-            })
+            });
         });
     });
 });
