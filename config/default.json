@@ -1,4 +1,5 @@
 {
+  "game": "checkers"
   "head_server": {
     "url": "localhost",
     "port": 3000
