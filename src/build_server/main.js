@@ -19,7 +19,7 @@ app.get("/api/v2/build/:id", function (req, res) {
     var id = req.params.id;
 
     builder.get_tar(id, function(err, tar){
-        if(err) { res.send(404); return; }
+        if(err) return res.send(404);
         res.send(tar);
     });
 });

@@ -2,8 +2,8 @@
 
 var should = require("should");
 
-var Db = require("../src/common/db");
-var Client = require("../src/common/client");
+var Db = require("../../src/common/db");
+var Client = require("../../src/common/client");
 
 describe("Client", function() {
 
@@ -74,6 +74,25 @@ describe("Client", function() {
                 done();
             });
 
+        });
+    });
+
+    describe("getRandom", function(){
+        it("should get a random client", function(done){
+            Client.getRandom(1, function(err, clients) {
+                should(err).not.be.ok();
+                should(clients.length).be.below(2);
+
+                done();
+            })
+        });
+        it("should get multiple random clients", function(done){
+            Client.getRandom(2, function(err, clients) {
+                should(err).not.be.ok();
+                should(clients.length).be.below(3);
+
+                done();
+            })
         });
     });
 });

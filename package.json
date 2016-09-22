@@ -12,11 +12,8 @@
     "watch:lint": "watch 'npm run lint' src/",
 
     "test": "npm-run-all lint test:*",
-    "test:db": "NODE_ENV=test mocha test/db.js",
-    "test:client": "NODE_ENV=test mocha test/client.js",
-    "test:sched": "NODE_ENV=test mocha test/sched.js",
-    "test:logger": "NODE_ENV=test mocha test/logger.js",
-    "test:builder": "NODE_ENV=test mocha test/builder.js",
+    "test:unit": "NODE_ENV=test mocha --recursive test/unit",
+    "test:integration": "NODE_ENV=test mocha --recursive test/integration",
 
     "doc": "jsdoc src/ -r -c doc.json -d docs/generated/",
     "watch:doc": "watch 'npm run doc' src/",

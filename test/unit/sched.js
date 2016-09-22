@@ -1,8 +1,8 @@
 /* eslint-env node, mocha */
 var should = require("should");
 
-var RandomSchedulerType = require("../src/head_server/schedulers/RandomSchedulerType");
-var Scheduler = require("../src/head_server/schedulers/Scheduler");
+var RandomSchedulerType = require("../../src/head_server/schedulers/RandomSchedulerType");
+var Scheduler = require("../../src/head_server/schedulers/Scheduler");
 
 describe("Scheduler", function() {
     describe("RandomSchedulerType", function () {

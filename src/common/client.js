@@ -43,6 +43,25 @@ class Client {
     }
 
 
+    static getRandom(limit, callback) {
+        Db.queryOnce("SELECT * FROM client ORDER BY RANDOM() LIMIT $1", [limit], function(err, result) {
+            if(err) return callback(err);
+
+            var clients = result.rows.map(function(row){
+                return {
+                    id: row.id,
+                    name: row.name,
+                    git_repo: row.git_repo,
+                    git_hash: row.git_hash,
+                    language: row.language,
+                    time_created: row.time_created,
+                    time_modified: row.time_modified
+                }
+            });
+
+            callback(null, clients);
+        });
+    }
 
     /**
      * Create a client with the given parameters

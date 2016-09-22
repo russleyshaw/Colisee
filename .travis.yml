@@ -4,7 +4,7 @@ sudo: required
 language: node_js
   
 node_js:
-  - "v6.5.0"
+  - "v6.6.0"
   
 services:
   - postgresql

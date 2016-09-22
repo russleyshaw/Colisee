@@ -99,6 +99,7 @@ class Db {
                     cb(null, result);
                 });
             }, function(err, results){
+                if(err) return callback(err);
                 pgclient.end(function (err) {
                     if(err) return callback(err);
                     callback(null, results);

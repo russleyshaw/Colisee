@@ -2,8 +2,7 @@
 
 var should = require("should");
 
-var Db = require("../src/common/db");
-
+var Db = require("../../src/common/db");
 
 describe("Db", function() {
 
@@ -26,17 +25,19 @@ describe("Db", function() {
 
                 Db.queryLots([
                     ["SELECT COUNT(*) FROM client AS count", []],
-                    ["SELECT COUNT(*) FROM game_result AS count", []],
+                    ["SELECT COUNT(*) FROM match AS count", []],
                     ["SELECT COUNT(*) FROM log AS count", []],
+                    ["SELECT COUNT(*) FROM tournament AS count", []]
                 ], function (err, results) {
                     should(err).not.be.ok();
-                    should(results).be.length(3);
+                    should(results).be.length(4);
 
                     // NOTE: COUNT(*) returns a bigint, larger than the max int size in Javascript
                     // https://github.com/brianc/node-postgres/issues/378
                     should(results[0].rows[0].count).equal("0");
                     should(results[1].rows[0].count).equal("0");
                     should(results[2].rows[0].count).equal("0");
+                    should(results[3].rows[0].count).equal("0");
                     done();
                 });
 
@@ -46,13 +47,6 @@ describe("Db", function() {
 });
 
 describe("Db", function() {
-
-    before("initialize database with data", function(done){
-        Db.reset(function(err){
-            should(err).not.be.ok();
-            done();
-        });
-    });
 
     describe("queryOnce", function() {
         it("should make a single database query", function(done){

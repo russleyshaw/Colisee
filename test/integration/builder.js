@@ -2,8 +2,8 @@
 
 var should = require("should");
 
-var Db = require("../src/common/db");
-var Builder = require("../src/build_server/builder");
+var Db = require("../../src/common/db");
+var Builder = require("../../src/build_server/builder");
 
 describe("Builder", function() {
     var builder = new Builder();

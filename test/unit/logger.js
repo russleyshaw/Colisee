@@ -2,8 +2,8 @@
 
 var should = require("should");
 
-var Db = require("../src/common/db");
-var Logger = require("../src/common/logger");
+var Db = require("../../src/common/db");
+var Logger = require("../../src/common/logger");
 
 describe("Logger",function() {
 
