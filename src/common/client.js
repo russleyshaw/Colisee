@@ -5,22 +5,12 @@ var Db = require("./db");
  */
 class Client {
 
-
     static getById(client_id, callback) {
-
         Db.queryOnce("SELECT * FROM client WHERE id = $1::integer", [client_id], function (err, result) {
             if(err) return callback(err);
-            if(result.rowCount != 1) return callback("No match found", undefined);
+            if(result.rows.length != 1) return callback("No match found");
 
-            var data = {
-                id: result.rows[0].id,
-                name: result.rows[0].name,
-                git_repo: result.rows[0].git_repo,
-                git_hash: result.rows[0].git_hash,
-                language: result.rows[0].language,
-            };
-
-            callback(null, data);
+            callback(null, result.rows[0]);
         });
     }
 
@@ -28,17 +18,9 @@ class Client {
 
         Db.queryOnce("SELECT * FROM client WHERE name = $1::text", [client_name], function (err, result) {
             if(err) return callback(err);
-            if(result.rowCount != 1) return callback("No match found", undefined);
+            if(result.rows.length != 1) return callback("No match found", undefined);
 
-            var data = {
-                id: result.rows[0].id,
-                name: result.rows[0].name,
-                git_repo: result.rows[0].git_repo,
-                git_hash: result.rows[0].git_hash,
-                language: result.rows[0].language
-            };
-
-            callback(null, data);
+            callback(null, result.rows[0]);
         });
     }
 
@@ -47,46 +29,26 @@ class Client {
         Db.queryOnce("SELECT * FROM client ORDER BY RANDOM() LIMIT $1", [limit], function(err, result) {
             if(err) return callback(err);
 
-            var clients = result.rows.map(function(row){
-                return {
-                    id: row.id,
-                    name: row.name,
-                    git_repo: row.git_repo,
-                    git_hash: row.git_hash,
-                    language: row.language,
-                    time_created: row.time_created,
-                    time_modified: row.time_modified
-                };
-            });
-
-            callback(null, clients);
+            callback(null, result.rows);
         });
     }
 
     /**
      * Create a client with the given parameters
      * @param name
-     * @param git_repo
-     * @param git_hash
+     * @param repo
+     * @param hash
      * @param language
      * @param callback function(err, created_client)
      */
-    static create(name, git_repo, git_hash, language, callback) {
+    static create(name, repo, hash, language, callback) {
 
-        Db.queryOnce("INSERT INTO client (name, git_repo, git_hash, language) VALUES ($1::text, $2::text, $3::text, $4) RETURNING *",
-            [name, git_repo, git_hash, language], function (err, result) {
+        Db.queryOnce("INSERT INTO client (name, repo, hash, language) VALUES ($1::text, $2::text, $3::text, $4) RETURNING *",
+            [name, repo, hash, language], function (err, result) {
                 if(err) return callback(err);
-                if(result.rowCount != 1) return callback("No match found");
+                if(result.rows.length != 1) return callback("No match found");
 
-                var data = {
-                    id: result.rows[0].id,
-                    name: result.rows[0].name,
-                    git_repo: result.rows[0].git_repo,
-                    git_hash: result.rows[0].git_hash,
-                    language: result.rows[0].language,
-                };
-
-                callback(null, data);
+                callback(null, result.rows[0]);
             });
     }
 }

@@ -31,8 +31,8 @@ CREATE TYPE match_status_enum AS ENUM (
 
 CREATE TABLE "log" (
     id serial NOT NULL PRIMARY KEY,
-    message character varying,
-    location character varying,
+    message character varying NOT NULL,
+    location character varying NOT NULL,
     severity log_severity_enum NOT NULL,
 
     time_created timestamp with time zone NOT NULL DEFAULT now(),
@@ -42,8 +42,8 @@ CREATE TABLE "log" (
 CREATE TABLE "client" (
     id serial NOT NULL PRIMARY KEY,
     name character varying NOT NULL UNIQUE,
-    git_repo character varying NOT NULL,
-    git_hash character varying NOT NULL,
+    repo character varying NOT NULL,
+    hash character varying NOT NULL,
 
     language client_language_enum NOT NULL,
 

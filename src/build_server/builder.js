@@ -16,15 +16,15 @@ class Builder {
     init(callback) {
         //TODO: Add other docker base images
         var cmds = [
-            "docker build -t cpp -f " + path.join(__dirname, "dockerfiles/base/cpp.dockerfile") + " .",
-            "docker build -t js -f " + path.join(__dirname, "dockerfiles/base/js.dockerfile") + " .",
+            `docker build -t cpp -f ${ path.join(__dirname, "dockerfiles/base/cpp.dockerfile")} . > ${path.join(__dirname, "build_logs/cpp.log")}`,
+            `docker build -t js -f ${path.join(__dirname, "dockerfiles/base/js.dockerfile")} . > ${path.join(__dirname, "build_logs/js.log")}`,
         ];
 
         async.map(cmds, function(cmd, cb) {
-            console.log("Running: " + cmd);
+            console.log(`Running: ${cmd}`);
             child_process.exec(cmd, function(err) {
                 if(err) return cb(err);
-                console.log("Done: " + cmd);
+                console.log(`Done: ${cmd}`);
                 cb();
             });
         }, function(err){
@@ -36,38 +36,33 @@ class Builder {
     /**
      * Builds client based on client id and database git repo, hash and language
      * @param client_id
-     * @param callback function(err, tarUrl)
+     * @param callback function(err, succeeded)
      */
     build(client_id, callback) {
 
         Client.getById(client_id, function(err, client) {
             if(err) return callback(err);
 
-            //TODO: Determine if build failed
-            //TODO: Capture build output
-            var build_cmds = {
-                "cpp": "docker build -t "+client.id+" --build-arg git_repo="+client.git_repo+" --build-arg git_hash="+client.git_hash+" -f "+path.join(__dirname, "dockerfiles/client/cpp.dockerfile")+" .",
-                "js": "docker build -t "+client.id+" --build-arg git_repo="+client.git_repo+" --build-arg git_hash="+client.git_hash+" -f "+path.join(__dirname, "dockerfiles/client/js.dockerfile")+" .",
+            var BUILD_CMDS = {
+                "cpp": `docker build --no-cache -t ${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client/cpp.dockerfile")} . > ${path.join(__dirname, `build_logs/${client.id}.log`)}`,
+                "js": `docker build --no-cache -t ${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client/js.dockerfile")} . > ${path.join(__dirname, `build_logs/${client.id}.log`)}`,
             };
+            var SAVE_CMD = `docker save -o ${path.join(__dirname, "tarballs", `${client.id}.tar`)} ${client.id}`;
+            if(!(client.language in BUILD_CMDS)) return callback("Language not supported!");
+            var BUILD_CMD = BUILD_CMDS[client.language];
 
-            if(!(client.language in build_cmds)) {
-                callback("Language not supported!", undefined); return;
-            }
+            console.log(`Running: ${BUILD_CMD}`);
+            child_process.exec(BUILD_CMD, function(err){
+                if(err) return callback(null, false);
+                console.log(`Done: ${BUILD_CMD}`);
 
-
-            var cmd = build_cmds[client.language];
-            console.log("Running: " + cmd);
-            child_process.execSync(cmd);
-            console.log("Done: " + cmd);
-
-            cmd = "docker save -o "+path.join(__dirname, "tarballs", client.id+".tar")+" "+client.id;
-            //TODO: Save docker image using docker component
-            // Save docker image
-            console.log("Running: " + cmd);
-            child_process.execSync(cmd);
-            console.log("Done: " + cmd);
-
-            callback();
+                console.log(`Running: ${SAVE_CMD}`);
+                child_process.exec(SAVE_CMD, function(err){
+                    if(err) return callback(err);
+                    console.log(`Done: ${BUILD_CMD}`);
+                    callback(null, true);
+                });
+            });
         });
     }
 
