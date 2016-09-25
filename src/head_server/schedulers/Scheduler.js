@@ -31,7 +31,7 @@ class Scheduler {
      * Schedule an individual game into the schedule queue
      */
     scheduleOnce(){
-        this.sched_queue.push( this.current_scheduler.genNext() );
+        this.sched_queue.push( this.current_scheduler.genNext(getMatch) );
     }
 
     /**
