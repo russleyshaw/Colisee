@@ -10,9 +10,6 @@
 
     </head>
     <body>
-        <a href="http://localhost:3000/bracket/d3test/" class="btn btn-info" role="button">D3 Test Page</a>
-        <a href="http://localhost:3000/bracket/jquerytest/" class="btn btn-info" role="button">jQuery Bracket Test Page</a>
-
         <div id="data"></div>
     </body>
 </html>
@@ -20,8 +17,24 @@
 <script>
     $(document).ready( function() {
         $.get( "http://localhost:3000/bracket/testData/", function( data ) {
-            $("#data").html(JSON.stringify(data));
+            //$("#data").html(JSON.stringify(data["270"]));
+
+            /*var bracketOne = Object.keys(data).filter(function(key){
+                if(data[key].previous_matches.length == 0)
+                    return data[key];
+            });*/
+
+            var bracketOne = [267, 268, 269, 270, 271, 272, 273];
+            var bracketTwo = [274, 275, 276, 277, 278];
+            var bracketThree = [279,280, 281, 282, 283];
+            var bracketFinal = [284, 285, 286, 287, 288, 289, 290];
+            console.log(bracketOne);
+            console.log(bracketTwo);
+            console.log(bracketThree);
+            console.log(bracketFinal);
+
         });
     });
+
 </script>
 
