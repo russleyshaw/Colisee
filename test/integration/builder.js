@@ -5,6 +5,7 @@ var fs = require("fs");
 var path = require("path");
 
 var Db = require("../../src/common/db");
+var Client = require("../../src/common/client");
 var Builder = require("../../src/build_server/builder");
 
 describe("Builder", function() {
@@ -49,7 +50,14 @@ describe("Builder", function() {
                 should(err).not.be.ok();
                 should(succeeded).be.true();
 
-                done();
+                //Check client was updatedE
+                Client.getById(1, function(err, client){
+                    should(err).not.be.ok();
+                    should(client.build_success).be.true();
+                    should(client.last_success_time).be.ok();
+
+                    done();
+                });
             });
         });
 
@@ -67,9 +75,16 @@ describe("Builder", function() {
 
             builder.build(2, function(err, succeeded) {
                 should(err).not.be.ok();
-                should(succeeded).not.be.true();
+                should(succeeded).be.false();
 
-                done();
+                //Check client was updated
+                Client.getById(2, function(err, client){
+                    should(err).not.be.ok();
+                    should(client.build_success).be.false();
+                    should(client.last_failure_time).be.ok();
+
+                    done();
+                });
             });
         });
 

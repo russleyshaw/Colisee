@@ -1,8 +1,9 @@
 var child_process = require("child_process");
 var fs = require("fs");
 var path = require("path");
-var Client = require("../common/client");
 var async = require("async");
+var Client = require("../common/client");
+var Db = require("../common/db");
 
 /**
  * Manager of building and accessing client docker images
@@ -53,14 +54,25 @@ class Builder {
 
             console.log(`Running: ${BUILD_CMD}`);
             child_process.exec(BUILD_CMD, function(err){
-                if(err) return callback(null, false);
                 console.log(`Done: ${BUILD_CMD}`);
+
+                if(err){
+                    Db.queryOnce("UPDATE client SET build_success = FALSE, last_failure_time = now(), last_modified_time = now() WHERE id = $1",[client.id], function(err){
+                        if(err) return callback(err);
+                        callback(null, false);
+                    });
+                    return;
+                }
 
                 console.log(`Running: ${SAVE_CMD}`);
                 child_process.exec(SAVE_CMD, function(err){
+                    console.log(`Done: ${SAVE_CMD}`);
                     if(err) return callback(err);
-                    console.log(`Done: ${BUILD_CMD}`);
-                    callback(null, true);
+
+                    Db.queryOnce("UPDATE client SET build_success = TRUE, last_success_time = now(), last_modified_time = now() WHERE id = $1", [client.id], function(err){
+                        if(err) return callback(err);
+                        callback(null, true);
+                    });
                 });
             });
         });

@@ -35,8 +35,8 @@ CREATE TABLE "log" (
     location character varying NOT NULL,
     severity log_severity_enum NOT NULL,
 
-    time_created timestamp with time zone NOT NULL DEFAULT now(),
-    time_modified timestamp with time zone NOT NULL DEFAULT now()
+    time_created timestamp NOT NULL DEFAULT now(),
+    time_modified timestamp NOT NULL DEFAULT now()
 );
 
 CREATE TABLE "client" (
@@ -47,17 +47,17 @@ CREATE TABLE "client" (
 
     language client_language_enum NOT NULL,
 
-    time_created timestamp with time zone NOT NULL DEFAULT now(),
-    time_modified timestamp with time zone NOT NULL DEFAULT now()
+    build_success boolean,
+    last_success_time timestamp,
+    last_failure_time timestamp,
+
+    created_time timestamp NOT NULL DEFAULT now(),
+    last_modified_time timestamp NOT NULL DEFAULT now()
 );
 
 CREATE TABLE "tournament" (
     id serial NOT NULL PRIMARY KEY,
-    type tournament_type_enum NOT NULL,
-
-    time_created timestamp with time zone NOT NULL DEFAULT now(),
-    time_modified timestamp with time zone NOT NULL DEFAULT now(),
-    time_finished timestamp with time zone
+    type tournament_type_enum NOT NULL
 );
 
 CREATE TABLE "match" (
@@ -65,13 +65,9 @@ CREATE TABLE "match" (
     clients integer[] NOT NULL,
     tournament integer NOT NULL REFERENCES tournament,
 
-    hashes character varying[] NOT NULL,
+    hashes character varying[],
     reason character varying,
-    gamelog integer UNIQUE,
-
-    time_scheduled timestamp with time zone NOT NULL,
-    time_started timestamp with time zone,
-    time_finished timestamp with time zone
+    gamelog integer UNIQUE
 );
 
 DELETE FROM "log";
