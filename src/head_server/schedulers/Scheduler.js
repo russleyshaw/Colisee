@@ -40,7 +40,7 @@ class Scheduler {
             if(err)return callback(err);
             self.sched_queue.push(clientIDs);
             callback(null, clientIDs);
-        })
+        });
     }
 
     /**
