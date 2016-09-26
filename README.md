@@ -1,6 +1,7 @@
 # Colisee
 *ACM SIG-Game NodeJS Arena*  
-_Making the world a better place one MegaMinerAI at a time._
+_Making the world a better place one MegaMinerAI at a time._  
+https://russleyshaw.github.io/Colisee/
 
 ### Status
 [![Build Status](https://travis-ci.org/russleyshaw/Colisee.svg?branch=master)](https://travis-ci.org/russleyshaw/Colisee) ![Dependencies](https://david-dm.org/russleyshaw/Colisee.svg) ![DevDependencies](https://img.shields.io/david/dev/russleyshaw/Colisee.svg)
