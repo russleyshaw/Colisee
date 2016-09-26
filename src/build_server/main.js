@@ -16,6 +16,8 @@ app.use( function(req, res, next) {
 });
 
 /**
+ * @apiName Get Build
+ * @apiGroup Builder
  * @api {get} /api/v2/build/:id
  * @apiParam {number} id Database client id
  */
@@ -28,7 +30,12 @@ app.get("/api/v2/build/:id", function (req, res) {
     });
 });
 
-
+/**
+ * @apiName Get Build Log
+ * @apiGroup Builder
+ * @api {get} /api/v2/build/:id/log
+ * @apiParam {number} id Database client id
+ */
 app.get("/api/v2/build/:id/log", function (req, res) {
     var id = req.params.id;
 
@@ -38,6 +45,12 @@ app.get("/api/v2/build/:id/log", function (req, res) {
     });
 });
 
+/**
+ * @apiName Build
+ * @apiGroup Builder
+ * @api {post} /api/v2/build/:id
+ * @apiParam {number} id
+ */
 app.post("/api/v2/build/:id", function (req, res) {
     var id = req.params.id;
 
