@@ -1,6 +1,6 @@
 /* eslint-env node, mocha */
 var should = require("should");
-
+//var Client = require("../../src/common/client");
 var RandomSchedulerType = require("../../src/head_server/schedulers/RandomSchedulerType");
 var Scheduler = require("../../src/head_server/schedulers/Scheduler");
 

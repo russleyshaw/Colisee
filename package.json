@@ -65,6 +65,7 @@
     "express": "^4.14.0",
     "fs-extra": "^0.30.0",
     "handlebars": "^4.0.5",
+    "mocha": "^3.0.2",
     "pg": "^6.1.0",
     "querystring": "^0.2.0",
     "request": "^2.74.0"
