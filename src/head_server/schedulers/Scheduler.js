@@ -1,3 +1,5 @@
+
+
 class Scheduler {
 
     constructor() {
@@ -12,7 +14,9 @@ class Scheduler {
     start() {
         var self = this;
         this.interval_ptr = setInterval(function(){
-            self.scheduleOnce();
+            self.scheduleOnce(function(err){
+                console.log(`Error: ${err}`);
+            });
         }, this.SCHEDULE_INTERVAL);
     }
 
@@ -30,8 +34,13 @@ class Scheduler {
     /**
      * Schedule an individual game into the schedule queue
      */
-    scheduleOnce(){
-        this.sched_queue.push( this.current_scheduler.genNext(getMatch) );
+    scheduleOnce(callback){
+        var self=this;
+        this.current_scheduler.genNext(function(err, clientIDs){
+            if(err)return callback(err);
+            self.sched_queue.push(clientIDs);
+            callback(null, clientIDs);
+        })
     }
 
     /**
