@@ -31,6 +31,13 @@ function main(){
         next();
     });
 
+    /**
+     * @apiName Get gamelog
+     * @apiGroup Gamelog
+     * @apiDescription Gets a gamelog from the server
+     * @api {get} /api/v2/glog/:glog
+     * @apiParam {integer} glog Gamelog id
+     */
     app.get("/api/v2/glog/:glog/", function(req, res){
         //TODO - verify this is a number
         var glog = parseInt(req.params.glog);
@@ -40,6 +47,7 @@ function main(){
                 "gamelog": gamelog_data
             };
             res.send(res_data);
+            //TODO: error should be 404
             return;
         }
         //TODO - better no id found
@@ -50,6 +58,12 @@ function main(){
         res.send(res_error_data);
     });
 
+    /**
+     * @apiName Post gamelog
+     * @apiGroup Gamelog
+     * @apiDescription Store a gamelog stored in the request body
+     * @api {post} /api/v2/glog/
+     */
     app.post("/api/v2/glog/", function(req, res){
         //TODO - Verify data
         if (req.body.gamelog) {

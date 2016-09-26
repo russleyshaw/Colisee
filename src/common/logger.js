@@ -1,4 +1,4 @@
-var Db = require("./db");
+var Db = require("./Db");
 
 class Logger {
 

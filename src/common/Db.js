@@ -1,15 +1,25 @@
-/* eslint-disable */
-//TODO: enable linting
+/**
+ * Database interaction and utilies
+ * @file Db.js
+ */
 
 var pg = require("pg");
 var path = require("path");
 var fs = require("fs");
-var process = require("process");
 var config = require("config");
 var async = require("async");
 
+
+/**
+ * Database interaction and utilities class
+ * @class Db
+ */
 class Db {
 
+    /**
+     * Create a new postgresql database client
+     * @returns {pg.Client} returns a new postgresql client instance
+     */
     static newPgClient() {
         return new pg.Client({
             user: config.database.username,
@@ -21,24 +31,31 @@ class Db {
     }
 
     /**
-     * Resets the entire database by running the db/init.sql script
-     * @param callback invokes (err)
+     * Resets the entire database using the init.sql
+     * @param callback {function(err)}
      */
     static reset(callback) {
         var init_sql = fs.readFileSync( path.join(__dirname, "../../db/init.sql") );
         var sqls = init_sql.toString();
 
         Db.queryOnce(sqls, [], function(err) {
-           if(err) return callback(err);
+            if(err) return callback(err);
             callback();
         });
     }
 
     /**
+     * This callback is invoked when queryOnce finishes executing
+     * @callback Db~queryOnceCallback
+     * @param error
+     * @param result
+     */
+
+    /**
      * Perform an individual SQL query on the database
      * @param sql
-     * @param args - [arg1, arg2, ...]
-     * @param callback - invokes (err, result)
+     * @param args
+     * @param callback {Db~queryOnceCallback}
      */
     static queryOnce(sql, args, callback) {
         var pgclient = this.newPgClient();
@@ -58,9 +75,15 @@ class Db {
     }
 
     /**
+     * @callback Db~queryLotsSeriesCallback
+     * @param err
+     * @aram results
+     */
+
+    /**
      * Perform multiple SQL queries in series
-     * @param sql_args - [ [sql, [arg1, arg2, ...]], [sql, [arg1, arg2, ...]], ... ]
-     * @param callback - function(err, results)
+     * @param sql_args
+     * @param callback {Db~queryLotsSeriesCallback}
      */
     static queryLotsSeries(sql_args, callback) {
         var pgclient = this.newPgClient();
@@ -83,9 +106,15 @@ class Db {
     }
 
     /**
+     * @callback Db~queryLotsCallback
+     * @param err
+     * @aram results
+     */
+
+    /**
      * Perform multiple SQL queries in parallel
      * @param sql_args - [ [sql, [arg1, arg2, ...]], [sql, [arg1, arg2, ...]], ... ]
-     * @param callback - function(err, results)
+     * @param callback {Db~queryLotsCallback}
      */
     static queryLots(sql_args, callback) {
         var pgclient = this.newPgClient();

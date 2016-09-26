@@ -1,6 +1,6 @@
 var express = require("express");
 
-var Client = require("../../common/client");
+var Client = require("../../common/Client");
 
 var router = express.Router();
 
