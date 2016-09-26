@@ -31,7 +31,7 @@ describe("Scheduler", function() {
                 sched.switchTo( new RandomSchedulerType() );
                 sched.scheduleOnce(function(err,idArray){
                     should(err).not.be.ok();
-                    should( idArray.length ).be.equal(1);
+                    should( idArray.length ).be.equal(2);
                     done();
                 });
 
