@@ -4,9 +4,9 @@ var should = require("should");
 var fs = require("fs");
 var path = require("path");
 
-var Db = require("../../src/common/db");
-var Client = require("../../src/common/client");
-var Builder = require("../../src/build_server/builder");
+var Db = require("../../src/common/Db");
+var Client = require("../../src/common/Client");
+var Builder = require("../../src/build_server/Builder");
 
 describe("Builder", function() {
     var builder = new Builder();
@@ -100,20 +100,23 @@ describe("Builder", function() {
     describe("getTar", function(){
         it("should retrieve built tar file", function(done) {
 
-            //approx 64469ms
-            this.slow(1000 * 70);
-            this.timeout(1000 * 60 * 5);
-
             builder.getTar(1, function(err, tar) {
                 should(err).not.be.ok();
-
-                //TODO: Do something better with the tar, most likely, to attempt to build an image from it
                 should(tar).be.ok();
-
                 done();
             });
         });
     });
 
-    //TODO: Add builder tests
+    describe("getLog", function(){
+        it("should retrieve the build log", function(done) {
+
+            builder.getLog(1, function(err, log) {
+                should(err).not.be.ok();
+                should(log).be.ok();
+                done();
+            });
+        });
+    });
+
 });

@@ -5,9 +5,6 @@ class RandomScheduler extends BaseScheduler {
         super();
     }
 
-    /**
-     * Generate the next match to be played
-     */
     genNext() {
         //TODO: get 2 random client IDs from the database
         return [1, 5];

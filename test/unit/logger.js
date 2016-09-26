@@ -2,7 +2,7 @@
 
 var should = require("should");
 
-var Db = require("../../src/common/db");
+var Db = require("../../src/common/Db");
 var Logger = require("../../src/common/logger");
 
 describe("Logger",function() {

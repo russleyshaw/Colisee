@@ -56,9 +56,13 @@ class Scheduler {
         }
     }
 
+    //TODO: add a peekNext function that returns the next game without popping off. This will be useful for testing purposes
+
     numScheduled(){
         return this.sched_queue.length;
     }
+
+
 
 }
 

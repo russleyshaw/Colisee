@@ -7,6 +7,8 @@ var clientApi= require("./client/api.js");
 var statusApp = require("./status/status.js");
 var bracketApp = require("./bracket/bracket.js");
 var logApp = require("./log/log.js");
+var schedApp = require("./schedulers/api.js");
+
 
 (function() {
     var currentVisGame = 1;
@@ -26,6 +28,7 @@ var logApp = require("./log/log.js");
     app.use("/", statusApp);
     app.use("/", bracketApp);
     app.use("/", logApp);
+    app.use("/", schedApp);
 
     app.get("/api/v1/vis/next", function (req, res) {
 

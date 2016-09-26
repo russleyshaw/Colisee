@@ -2,8 +2,8 @@
 
 var should = require("should");
 
-var Db = require("../../src/common/db");
-var Client = require("../../src/common/client");
+var Db = require("../../src/common/Db");
+var Client = require("../../src/common/Client");
 
 describe("Client", function() {
 
