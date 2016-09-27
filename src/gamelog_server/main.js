@@ -32,39 +32,36 @@ function main(){
     });
 
     /**
-     * @apiName Get gamelog
      * @apiGroup Gamelog
+     * @apiName Get gamelog
      * @apiDescription Gets a gamelog from the server
      * @api {get} /api/v2/glog/:glog
      * @apiParam {integer} glog Gamelog id
+     * @apiSuccess 200
+     * @apiError 400 Invalid arguments
+     * @apiError 404 Gamelog not found
      */
-    app.get("/api/v2/glog/:glog/", function(req, res){
-        //TODO - verify this is a number
-        var glog = parseInt(req.params.glog);
-        if (gamelogs.indexOf(glog) != -1) {
-            var gamelog_data = fs.readFileSync(GLOG_LOCATION + glog.toString()).toString();
-            var res_data = {
-                "gamelog": gamelog_data
-            };
-            res.send(res_data);
-            //TODO: error should be 404
-            return;
-        }
-        //TODO - better no id found
-        //TODO - split between not found and invalid
-        const res_error_data = {
-            "error": "invalid id: "  + glog.toString()
-        };
-        res.send(res_error_data);
+    app.get("/api/v2/glog/:id/", function(req, res){
+        if(typeof req.params.id !== "number") return res.send(400);
+        if(req.params.id < 0) return res.send(400);
+
+        var id = req.params.id;
+
+        fs.readFile(path.join(_dirname, `gamelogs/${id}.glog`), function(err, data){
+            if(err) return res.send(404);
+            res.send(data);
+        });
     });
 
     /**
-     * @apiName Post gamelog
      * @apiGroup Gamelog
-     * @apiDescription Store a gamelog stored in the request body
      * @api {post} /api/v2/glog/
+     * @apiName Post gamelog
+     * @apiDescription Store a gamelog stored in the request body
+     *
      */
     app.post("/api/v2/glog/", function(req, res){
+
         //TODO - Verify data
         if (req.body.gamelog) {
             last_id += 1;
