@@ -5,7 +5,7 @@ var async = require("async");
 
 var Db = require("../../src/common/Db");
 var Builder = require("../../src/build_server/Builder");
-var Player = require("../../src/play_server/player.js");
+var Player = require("../../src/play_server/Player.js");
 
 var Scheduler = require("../../src/head_server/schedulers/Scheduler");
 var RandomSchedulerType = require("../../src/head_server/schedulers/Scheduler");

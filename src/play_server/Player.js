@@ -7,8 +7,9 @@ class Player {
         this.id = id;
     }
 
-    init() {
-        //var BUILD_CMD = `docker build --no-cache -t ${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client/cpp.dockerfile")} . > ${path.join(__dirname, `build_logs/${client.id}.log`)}`;
+    init(callback) {
+        var cmd = `docker build -t player --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "play.dockerfile")} .`;
+
     }
 
     getNextMatch(callback) {

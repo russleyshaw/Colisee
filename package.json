@@ -9,23 +9,28 @@
   "scripts": {
     "lint": "eslint src/ test/",
     "fix": "eslint --fix src/ test/",
+    
     "docs": "npm-run-all docs:*",
     "docs:js": "jsdoc src/ -t node_modules/minami -r -c doc.json -d docs/js/",
     "docs:api": "apidoc -i src/ -o docs/api/",
+
     "test": "npm-run-all lint test:*",
     "test:unit": "NODE_ENV=test mocha --recursive test/unit",
     "test:integration": "NODE_ENV=test mocha --recursive test/integration",
+
     "db:setup": "npm-run-all db:reset testdb:reset",
     "db:reset": "npm-run-all db:rm db:build db:run db:start",
     "db:rm": "(docker stop colisee_db || true) && (docker rm --force colisee_db || true) && (docker rmi --force colisee_image || true)",
     "db:build": "docker build -f db/db.dockerfile -t colisee_image db/",
     "db:run": "docker run --name colisee_db -d -p 5432:5432 colisee_image",
     "db:start": "docker start colisee_db",
+
     "testdb:reset": "npm-run-all testdb:rm testdb:build testdb:run testdb:start",
     "testdb:rm": "(docker stop colisee_test_db || true) && (docker rm --force colisee_test_db || true) && (docker rmi --force colisee_test_image || true)",
     "testdb:build": "docker build -f db/test_db.dockerfile -t colisee_test_image db/",
     "testdb:run": "docker run --name colisee_test_db -d -p 5433:5432 colisee_test_image",
     "testdb:start": "docker start colisee_test_db",
+
     "serve": "npm run lint && npm-run-all --parallel serve:*",
     "serve:head": "node src/head_server/main.js",
     "serve:build": "node src/build_server/main.js",
@@ -33,6 +38,7 @@
     "serve:play": "node src/play_server/main.js 0",
     "serve:play1": "node src/play_server/main.js 1",
     "serve:play2": "node src/play_server/main.js 2",
+
     "mock": "npm run lint && npm-run-all --parallel mock:*",
     "mock:vis": "node src/mock/visualizer/main.js",
     "mock:web:": "node src/mock/webserver/main.js"
