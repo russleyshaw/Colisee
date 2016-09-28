@@ -2,9 +2,11 @@ var express = require("express");
 var config = require("config");
 var body_parser = require("body-parser");
 
-var builder = require("./Builder");
+var Client = require("../common/Client");
+var Builder = require("./Builder");
 
 var app = express();
+var builder = new Builder();
 
 app.use( body_parser.json() );
 app.use( body_parser.urlencoded({ extended: true }) );
@@ -69,6 +71,7 @@ app.post("/api/v2/build/:id", function (req, res) {
         if(err) return res.send(404);
         res.send(200);
         builder.build(id, function(err){
+            if(err) console.warn(`Error:  ${JSON.stringify(err)}`);
             //TODO: Update database with build status
         });
     });

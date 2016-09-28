@@ -12,6 +12,7 @@ describe("Gamelogger",function() {
     before("Reset gamelogger", function(done){
         glogger.reset((err) => {
             should(err).not.be.ok();
+            done();
         });
     });
 
@@ -47,7 +48,7 @@ describe("Gamelogger",function() {
                     if(err) return cb(err);
                     cb(null, id);
                 });
-            }, (err, results) => {
+            }, (err) => {
                 should(err).not.be.ok();
                 done();
             });
@@ -56,7 +57,7 @@ describe("Gamelogger",function() {
 
     describe("load", function() {
         it("should load a specified glog", (done) => {
-            glogger.get(1, (err) => {
+            glogger.load(1, (err) => {
                 should(err).not.be.ok();
                 done();
             });

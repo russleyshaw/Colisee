@@ -50,5 +50,5 @@ app.post("/api/v2/glog/", (req, res) => {
 });
 
 app.listen(config.gamelog_server.port, () => {
-    console.log("Gamelog server is listening...")
+    console.log("Gamelog server is listening...");
 });

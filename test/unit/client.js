@@ -8,6 +8,7 @@ var Client = require("../../src/common/Client");
 describe("Client", function() {
 
     before("Reset database and initialize test data", function(done){
+        this.timeout(5 * 1000);
         Db.reset(function(err){
             should(err).not.be.ok();
             Db.queryLots([

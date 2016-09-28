@@ -22,7 +22,7 @@ class Gamelogger {
      */
     reset(callback){
         this.last_id = 0;
-        fse.remove( path.join(_dirname, "/gamelogs/*.glog"), (err) => {
+        fse.remove( path.join(__dirname, "/gamelogs/*.glog"), (err) => {
             if(err) return callback(err);
             callback();
         });
