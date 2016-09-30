@@ -4,6 +4,9 @@ var path = require("path");
 var async = require("async");
 var Client = require("../common/Client");
 var Db = require("../common/Db");
+var knex = require("knex")({
+    dialect: "pg"
+});
 
 /**
  * Manager of building and accessing client docker images
@@ -29,10 +32,8 @@ class Builder {
         ];
 
         async.map(cmds, function(cmd, cb) {
-            console.log(`Running: ${cmd}`);
             child_process.exec(cmd, function(err) {
                 if(err) return cb(err);
-                console.log(`Done: ${cmd}`);
                 cb();
             });
         }, function(err){
@@ -55,40 +56,138 @@ class Builder {
      */
     build(client_id, callback) {
 
-        Client.getById(client_id, function(err, client) {
+        Client.getById(client_id, (err, client) => {
             if(err) return callback(err);
 
-            var BUILD_CMDS = {
-                "cpp": `docker build --no-cache --force-rm -t ${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client/cpp.dockerfile")} . > ${path.join(__dirname, `build_logs/${client.id}.log`)}`,
-                "js": `docker build --no-cache --force-rm -t ${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client/js.dockerfile")} . > ${path.join(__dirname, `build_logs/${client.id}.log`)}`,
-            };
-            var SAVE_CMD = `docker save -o ${path.join(__dirname, "tarballs", `${client.id}.tar`)} ${client.id}`;
-            if(!(client.language in BUILD_CMDS)) return callback("Language not supported!");
-            var BUILD_CMD = BUILD_CMDS[client.language];
+            this._buildImageAndTmpLog(client, (err, built) => {
+                if(err) return callback(err);
 
-            console.log(`Running: ${BUILD_CMD}`);
-            child_process.exec(BUILD_CMD, function(err){
-                console.log(`Done: ${BUILD_CMD}`);
-
-                if(err){
-                    Db.queryOnce("UPDATE client SET build_success = FALSE, last_failure_time = now(), last_modified_time = now() WHERE id = $1",[client.id], function(err){
+                if(built) {
+                    this._buildImageGood(client.id, (err) => {
+                        if(err) return callback(err);
+                        callback(null, true);
+                    });
+                    return;
+                }
+                else {
+                    this._buildImageBad(client.id, (err) => {
                         if(err) return callback(err);
                         callback(null, false);
                     });
                     return;
                 }
+            });
+        });
+    }
 
-                console.log(`Running: ${SAVE_CMD}`);
-                child_process.exec(SAVE_CMD, function(err){
-                    console.log(`Done: ${SAVE_CMD}`);
+    /**
+     * Image built successfully. Save tar and hash temporarily, then apply tmp files. Update db
+     * @param client_id
+     * @param callback
+     * @private
+     */
+    _buildImageGood(client_id, callback) {
+        this._saveTarTmp(client_id, (err) => {
+            if(err) return callback(err);
+
+            this._saveHashTmp(client_id, (err) => {
+                if(err) return callback(err);
+
+                this._applyTmpFiles(client_id, (err) => {
                     if(err) return callback(err);
-
-                    Db.queryOnce("UPDATE client SET build_success = TRUE, last_success_time = now(), last_modified_time = now() WHERE id = $1", [client.id], function(err){
-                        if(err) return callback(err);
-                        callback(null, true);
-                    });
+                    callback();
                 });
             });
+        });
+    }
+
+    /**
+     * Image failed building. Delete .tar and .log, update db
+     * @param client_id
+     * @param callback
+     * @private
+     */
+    _buildImageBad(client_id, callback) {
+        var cmds = [
+            `rm -f ${path.join(__dirname, `tar/${client_id}.tar`)} ${path.join(__dirname, `hash/${client_id}.sha256`)}`,
+            `mv -f ${path.join(__dirname, `log/${client_id}.log.tmp`)} ${path.join(__dirname, `log/${client_id}.log`)}`,
+        ];
+
+        async.map(cmds, (cmd, cb) => {
+            child_process.exec(cmd, (err) => {
+                if(err) return cb(err);
+                cb();
+            });
+        }, (err, results) => {
+            if(err) return callback(err);
+            callback();
+        });
+    }
+
+    _buildImageAndTmpLog(client, callback) {
+
+        var cmds = {
+            "cpp": `docker build --no-cache --force-rm -t ${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client/cpp.dockerfile")} . > ${path.join(__dirname, `log/${client.id}.log.tmp`)}`,
+            "js": `docker build --no-cache --force-rm -t ${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client/js.dockerfile")} . > ${path.join(__dirname, `log/${client.id}.log.tmp`)}`,
+        };
+
+        if(!(client.language in cmds)) return callback("Language not supported!");
+
+        var cmd = cmds[client.language];
+        child_process.exec(cmd, (err) => {
+            if(err) return callback(null, false);
+            callback(null, true);
+        });
+    }
+
+    _saveTarTmp(client_id, callback) {
+        var cmd = `docker save -o ${path.join(__dirname, `tar/${client_id}.tar.tmp`)} ${client_id}`;
+        child_process.exec(cmd, (err) => {
+            if(err) return callback(err);
+            callback();
+        });
+    }
+
+    _saveHashTmp(client_id, callback) {
+        var cmd = `sha256sum ${path.join(__dirname, `tar/${client_id}.tar.tmp`)} > ${path.join(__dirname, `hash/${client_id}.sha256.tmp`)}`;
+        child_process.exec(cmd, (err) =>{
+            if(err) return callback(err);
+            callback();
+        });
+    }
+
+    _applyTmpFiles(client_id, callback) {
+        var cmds = [
+            `mv -f ${path.join(__dirname, `tar/${client_id}.tar.tmp`)} ${path.join(__dirname, `tar/${client_id}.tar`)}`,
+            `mv -f ${path.join(__dirname, `log/${client_id}.log.tmp`)} ${path.join(__dirname, `log/${client_id}.log`)}`,
+            `mv -f ${path.join(__dirname, `hash/${client_id}.sha256.tmp`)} ${path.join(__dirname, `hash/${client_id}.sha256`)}`
+        ];
+
+        async.map(cmds, (cmd, cb) => {
+            child_process.exec(cmd, (err) => {
+                if(err) return cb(err);
+                cb();
+            });
+        }, (err, results) => {
+            if(err) return callback(err);
+            callback();
+        });
+    }
+
+    _updateBuildSuccess(client_id, succeeded, callback) {
+        var sql = knex("client").where({id: client.id}).update({
+            last_failure_time: "now()", last_modified_time: "now()", build_success: false
+        }, "*").toString();
+
+        if(succeeded) {
+            sql = knex("client").where({id: client.id}).update({
+                last_success_time: "now()", last_modified_time: "now()", build_success: true
+            }, "*").toString();
+        }
+
+        Db.queryOnce(sql, [], (err) => {
+            if(err) return callback(err);
+            callback(null, succeeded);
         });
     }
 
@@ -105,7 +204,7 @@ class Builder {
      * @param callback {Builder~getTarCallback}
      */
     getTar(client_id, callback) {
-        fs.readFile( path.join(__dirname, "tarballs", client_id+".tar") , function(err, data){
+        fs.readFile( path.join(__dirname, `tar/${client_id}.tar`), (err, data) => {
             if(err) return callback(err);
             callback(null, data);
         });
@@ -124,7 +223,14 @@ class Builder {
      * @param callback {Builder~getLogCallback}
      */
     getLog(client_id, callback) {
-        fs.readFile( path.join(__dirname, `build_logs/${client_id}.log`) , function(err, data){
+        fs.readFile( path.join(__dirname, `log/${client_id}.log`), (err, data) => {
+            if(err) return callback(err);
+            callback(null, data);
+        });
+    }
+
+    getHash(client_id, callback) {
+        fs.readFile( path.join(__dirname, `hash/${client_id}.sha256`), (err, data) => {
             if(err) return callback(err);
             callback(null, data);
         });

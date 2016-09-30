@@ -19,9 +19,7 @@ describe("Builder", function() {
                 [ "INSERT INTO client (name, repo, hash, language) VALUES ($1::text, $2::text, $3::text, $4) RETURNING *", ["test2", "https://github.com/russleyshaw/Joueur.cpp.git", "2864ce98441b0b894d0127d9ceefcf465baec9b5", "cpp"]]
             ], function(err, results) {
                 should(err).not.be.ok();
-
                 should(results).be.length(2);
-
                 done();
             });
         });
@@ -50,7 +48,7 @@ describe("Builder", function() {
                 should(err).not.be.ok();
                 should(succeeded).be.true();
 
-                //Check client was updatedE
+                //Check client was updated
                 Client.getById(1, function(err, client){
                     should(err).not.be.ok();
                     should(client.build_success).be.true();
@@ -118,5 +116,14 @@ describe("Builder", function() {
             });
         });
     });
+    describe("getHash", function(){
+        it("should retrieve the build hash", function(done) {
 
+            builder.getHash(1, function(err, hash) {
+                should(err).not.be.ok();
+                should(hash).be.ok();
+                done();
+            });
+        });
+    });
 });

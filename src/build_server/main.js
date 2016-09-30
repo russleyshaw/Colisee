@@ -5,6 +5,10 @@ var body_parser = require("body-parser");
 var Client = require("../common/Client");
 var Builder = require("./Builder");
 
+var knex = require("knex")({
+    dialect: "pg"
+});
+
 var app = express();
 var builder = new Builder();
 
@@ -17,19 +21,40 @@ app.use( function(req, res, next) {
     next();
 });
 
+/***********************************************************************************************************************
+ * GET
+ */
+
 /**
  * @apiGroup Builder
  * @api {get} /api/v2/build/:id
+ * @apiName Get build information location
+ * @apiDescription Gets the URLs for the requested information locations
+ * @apiParam {number} id Integer representing the id of the client in the database
+ */
+app.get("/api/v2/build/:id/", function(req, res) {
+    var id = req.params.id;
+
+    res.send({
+        tar_url: `http://${config.build_server.url}:${config.build_server.port}/api/v2/build/${id}/tar`,
+        hash_url: `http://${config.build_server.url}:${config.build_server.port}/api/v2/build/${id}/hash`,
+        log_url: `http://${config.build_server.url}:${config.build_server.port}/api/v2/build/${id}/log`,
+    });
+});
+
+/**
+ * @apiGroup Builder
+ * @api {get} /api/v2/build/:id/tar
  * @apiName Get Build
  * @apiDescription Gets the tarred build of the most recent build for a client's code
  * @apiParam {number} id Integer representing the id of the client in the database
  * @apiSuccess 200 The tarred build itself
  * @apiError 404 The tarred build for the given client id was not found
  */
-app.get("/api/v2/build/:id", function (req, res) {
+app.get("/api/v2/build/:id/tar", function(req, res) {
     var id = req.params.id;
 
-    builder.getTar(id, function(err, tar){
+    builder.getTar(id, (err, tar) => {
         if(err) return res.send(404);
         res.send(tar);
     });
@@ -50,6 +75,24 @@ app.get("/api/v2/build/:id/log", function (req, res) {
     builder.getLog(id, function(err, log){
         if(err) return res.send(404);
         res.send(log);
+    });
+});
+
+/**
+ * @apiGroup Builder
+ * @api {get} /api/v2/build/:id/log
+ * @apiName Get Build Log
+ * @apiDescription Gets the build log of the client's most recent build
+ * @apiParam {number} id Database client id
+ * @apiSuccess 200 The build log for the most recent build of the specified client id
+ * @apiError 404 The build log for the build was not found
+ */
+app.get("/api/v2/build/:id/hash", function (req, res) {
+    var id = req.params.id;
+
+    builder.getHash(id, function(err, hash){
+        if(err) return res.send(404);
+        res.send(hash);
     });
 });
 
