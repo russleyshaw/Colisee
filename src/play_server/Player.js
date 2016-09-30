@@ -1,6 +1,7 @@
 var request = require("request");
 var config = require("config");
 var child_process = require("child_process");
+var path = require("path");
 
 class Player {
 
@@ -10,8 +11,8 @@ class Player {
      * @param port
      */
     constructor(id, port) {
-        this.id = (typeof id !== 'undefined') ? id : 0;
-        this.port = (typeof port !== 'undefined') ? port : config.play_server.ports[this.id];
+        this.id = (typeof id !== "undefined") ? id : 0;
+        this.port = (typeof port !== "undefined") ? port : config.play_server.ports[this.id];
     }
 
     /**

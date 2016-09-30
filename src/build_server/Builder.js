@@ -27,8 +27,8 @@ class Builder {
     init(callback) {
         //TODO: Add other docker base images
         var cmds = [
-            `docker build -t cpp -f ${ path.join(__dirname, "dockerfiles/base/cpp.dockerfile")} . > ${path.join(__dirname, "build_logs/cpp.log")}`,
-            `docker build -t js -f ${path.join(__dirname, "dockerfiles/base/js.dockerfile")} . > ${path.join(__dirname, "build_logs/js.log")}`,
+            `docker build -t cpp -f ${ path.join(__dirname, "dockerfiles/base/cpp.dockerfile")} . > ${path.join(__dirname, "log/cpp.log")}`,
+            `docker build -t js -f ${path.join(__dirname, "dockerfiles/base/js.dockerfile")} . > ${path.join(__dirname, "log/js.log")}`,
         ];
 
         async.map(cmds, function(cmd, cb) {
@@ -65,14 +65,30 @@ class Builder {
                 if(built) {
                     this._buildImageGood(client.id, (err) => {
                         if(err) return callback(err);
-                        callback(null, true);
+
+                        //Write to db
+                        var sql = knex("client").where({id: client.id}).update({
+                            last_success_time: "now()", last_modified_time: "now()", build_success: true
+                        }, "*").toString();
+                        Db.queryOnce(sql, [], (err) => {
+                            if(err) return callback(err);
+                            callback(null, true);
+                        });
                     });
                     return;
                 }
                 else {
                     this._buildImageBad(client.id, (err) => {
                         if(err) return callback(err);
-                        callback(null, false);
+
+                        //Write to db
+                        var sql = knex("client").where({id: client.id}).update({
+                            last_failure_time: "now()", last_modified_time: "now()", build_success: false
+                        }, "*").toString();
+                        Db.queryOnce(sql, [], (err) => {
+                            if(err) return callback(err);
+                            callback(null, false);
+                        });
                     });
                     return;
                 }
@@ -118,7 +134,7 @@ class Builder {
                 if(err) return cb(err);
                 cb();
             });
-        }, (err, results) => {
+        }, (err) => {
             if(err) return callback(err);
             callback();
         });
@@ -168,27 +184,22 @@ class Builder {
                 if(err) return cb(err);
                 cb();
             });
-        }, (err, results) => {
+        }, (err) => {
             if(err) return callback(err);
             callback();
         });
     }
 
     _updateBuildSuccess(client_id, succeeded, callback) {
-        var sql = knex("client").where({id: client.id}).update({
-            last_failure_time: "now()", last_modified_time: "now()", build_success: false
-        }, "*").toString();
+
 
         if(succeeded) {
-            sql = knex("client").where({id: client.id}).update({
+            sql = knex("client").where({id: client_id}).update({
                 last_success_time: "now()", last_modified_time: "now()", build_success: true
             }, "*").toString();
         }
 
-        Db.queryOnce(sql, [], (err) => {
-            if(err) return callback(err);
-            callback(null, succeeded);
-        });
+
     }
 
     /**

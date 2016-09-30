@@ -5,10 +5,6 @@ var body_parser = require("body-parser");
 var Client = require("../common/Client");
 var Builder = require("./Builder");
 
-var knex = require("knex")({
-    dialect: "pg"
-});
-
 var app = express();
 var builder = new Builder();
 

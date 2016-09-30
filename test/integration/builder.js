@@ -25,7 +25,7 @@ describe("Builder", function() {
         });
     });
 
-    describe("init", function(){
+    describe.skip("init", function(){
         it("should finish initializing", function(done){
 
             this.timeout(0);
@@ -44,23 +44,36 @@ describe("Builder", function() {
             //approx 64469ms
             this.timeout(0);
 
-            builder.build(1, function(err, succeeded) {
+            builder.build(1, function(err, built) {
                 should(err).not.be.ok();
-                should(succeeded).be.true();
+                should(built).be.true();
 
                 //Check client was updated
                 Client.getById(1, function(err, client){
                     should(err).not.be.ok();
                     should(client.build_success).be.true();
                     should(client.last_success_time).be.ok();
-
                     done();
                 });
             });
         });
-
-        it("should have created a build log", function(done){
-            fs.stat( path.join(__dirname, "../../src/build_server/build_logs/", "1.log"), function(err, stat){
+        it("should have created a tar", function(done){
+            fs.stat( path.join(__dirname, "../../src/build_server/tar/1.tar"), function(err, stat){
+                should(stat).be.ok();
+                should(stat.isFile()).be.ok();
+                done();
+            });
+        });
+        it("should have created a log", function(done){
+            fs.stat( path.join(__dirname, "../../src/build_server/log/1.log"), function(err, stat){
+                should(stat).be.ok();
+                should(stat.isFile()).be.ok();
+                done();
+            });
+        });
+        it("should have created a hash", function(done){
+            fs.stat( path.join(__dirname, "../../src/build_server/hash/1.sha256"), function(err, stat){
+                should(stat).be.ok();
                 should(stat.isFile()).be.ok();
                 done();
             });
@@ -80,19 +93,29 @@ describe("Builder", function() {
                     should(err).not.be.ok();
                     should(client.build_success).be.false();
                     should(client.last_failure_time).be.ok();
-
                     done();
                 });
             });
         });
-
-        it("should have created a build log", function(done){
-            fs.stat( path.join(__dirname, "../../src/build_server/build_logs/", "2.log"), function(err, stat){
+        it("should not have created a tar", function(done){
+            fs.stat( path.join(__dirname, "../../src/build_server/tar/2.tar"), function(err, stat){
+                should(stat).not.be.ok();
+                done();
+            });
+        });
+        it("should have created a log", function(done){
+            fs.stat( path.join(__dirname, "../../src/build_server/log/2.log"), function(err, stat){
+                should(stat).be.ok();
                 should(stat.isFile()).be.ok();
                 done();
             });
         });
-
+        it("should not have created a hash", function(done){
+            fs.stat( path.join(__dirname, "../../src/build_server/hash/2.sha256"), function(err, stat){
+                should(stat).not.be.ok();
+                done();
+            });
+        });
     });
 
     describe("getTar", function(){

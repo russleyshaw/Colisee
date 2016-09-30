@@ -89,7 +89,7 @@ class Client {
             if(result.rows.length != 1) return callback("Query resulted in invalid number of rows");
 
             callback(null, result.rows[0]);
-        })
+        });
     }
 }
 
