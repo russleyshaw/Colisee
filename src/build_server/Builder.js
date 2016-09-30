@@ -190,18 +190,6 @@ class Builder {
         });
     }
 
-    _updateBuildSuccess(client_id, succeeded, callback) {
-
-
-        if(succeeded) {
-            sql = knex("client").where({id: client_id}).update({
-                last_success_time: "now()", last_modified_time: "now()", build_success: true
-            }, "*").toString();
-        }
-
-
-    }
-
     /**
      * Callback invoked when finished retrieving the tar file
      * @callback Builder~getTarCallback
