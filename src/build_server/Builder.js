@@ -13,6 +13,13 @@ var knex = require("knex")({
  */
 class Builder {
 
+    constructor() {
+        this._build_interval = undefined;
+        this._build_interval_time = 1000;
+        this._num_building = 0;
+        this_MAX_BUILDING = 1;
+    }
+
     /**
      * Callback invoked when the builder is finished initializing
      * @callback Builder~initCallback
@@ -43,6 +50,49 @@ class Builder {
     }
 
     /**
+     * Start checking for clients flagged as needing builds
+     */
+    start() {
+        clearInterval(this._build_interval);
+        this._build_interval = setInterval(() => {
+            //Don't build more if at max
+            if(this._num_building >= this._MAX_BUILDING) return;
+
+            //Select oldest client needing build
+            var sql = knex("client").select().where({needs_build: true}).orderBy("last_attempt_time").limit(1).returning().toString();
+            Db.queryOnce(sql, [], (err, result) => {
+                if(err) return console.warn(`Error: ${JSON.stringify(err)}`);
+                if(result.rows.length < 1) return; //None needing building
+
+                this._num_building++;
+
+                var client = result.rows[0];
+
+                this._build(client.id, (err, built) => {
+                    this._num_building--;
+                });
+
+            });
+
+        }, this._build_interval_time);
+    }
+
+    /**
+     * Stop checking for clients flagged as needing builds
+     */
+    stop() {
+        clearInterval(this._build_interval);
+    }
+
+    _unsetNeedsBuild(client_id, callback) {
+        var sql = knex("client").where({id: client_id}).update({needs_build: false}, "*").toString();
+        Db.queryOnce(sql, [], (err) => {
+            if(err) return callback(err);
+            callback();
+        });
+    }
+
+    /**
      * Callback invoked when the client code has finished building
      * @callback Builder~buildCallback
      * @param err
@@ -54,44 +104,55 @@ class Builder {
      * @param client_id {number} Integer id of individual client in database
      * @param callback {Builder~buildCallback}
      */
-    build(client_id, callback) {
+    _build(client_id, callback) {
 
         Client.getById(client_id, (err, client) => {
             if(err) return callback(err);
 
-            this._buildImageAndTmpLog(client, (err, built) => {
+            this._unsetNeedsBuild(client.id, (err) => {
                 if(err) return callback(err);
 
-                if(built) {
-                    this._buildImageGood(client.id, (err) => {
-                        if(err) return callback(err);
+                this._buildImageAndTmpLog(client, (err, built) => {
+                    if(err) return callback(err);
 
-                        //Write to db
-                        var sql = knex("client").where({id: client.id}).update({
-                            last_success_time: "now()", last_modified_time: "now()", build_success: true
-                        }, "*").toString();
-                        Db.queryOnce(sql, [], (err) => {
+                    if(built) {
+                        this._buildImageGood(client.id, (err) => {
                             if(err) return callback(err);
-                            callback(null, true);
-                        });
-                    });
-                    return;
-                }
-                else {
-                    this._buildImageBad(client.id, (err) => {
-                        if(err) return callback(err);
 
-                        //Write to db
-                        var sql = knex("client").where({id: client.id}).update({
-                            last_failure_time: "now()", last_modified_time: "now()", build_success: false
-                        }, "*").toString();
-                        Db.queryOnce(sql, [], (err) => {
-                            if(err) return callback(err);
-                            callback(null, false);
+                            //Write to db
+                            var sql = knex("client").where({id: client.id}).update({
+                                last_success_time: "now()",
+                                last_modified_time: "now()",
+                                last_attempt_time: "now()",
+                                build_success: true
+                            }, "*").toString();
+                            Db.queryOnce(sql, [], (err) => {
+                                if(err) return callback(err);
+                                callback(null, true);
+                            });
                         });
-                    });
-                    return;
-                }
+                        return;
+                    }
+                    else {
+                        this._buildImageBad(client.id, (err) => {
+                            if(err) return callback(err);
+
+                            //Write to db
+                            var sql = knex("client").where({id: client.id}).update({
+                                last_failure_time: "now()",
+                                last_modified_time: "now()",
+                                last_attempt_time: "now()",
+                                build_success: false
+
+                            }, "*").toString();
+                            Db.queryOnce(sql, [], (err) => {
+                                if(err) return callback(err);
+                                callback(null, false);
+                            });
+                        });
+                        return;
+                    }
+                });
             });
         });
     }
