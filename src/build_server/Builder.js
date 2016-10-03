@@ -17,7 +17,7 @@ class Builder {
         this._build_interval = undefined;
         this._build_interval_time = 1000;
         this._num_building = 0;
-        this_MAX_BUILDING = 1;
+        this.MAX_BUILDING = 1;
     }
 
     /**
@@ -68,7 +68,8 @@ class Builder {
 
                 var client = result.rows[0];
 
-                this._build(client.id, (err, built) => {
+                this.build(client.id, (err) => {
+                    if(err) return console.warn(`Error: ${JSON.stringify(err)}`);
                     this._num_building--;
                 });
 
@@ -104,7 +105,7 @@ class Builder {
      * @param client_id {number} Integer id of individual client in database
      * @param callback {Builder~buildCallback}
      */
-    _build(client_id, callback) {
+    build(client_id, callback) {
 
         Client.getById(client_id, (err, client) => {
             if(err) return callback(err);
