@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>build_server/Builder.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Builder.html">Builder</a><ul class='methods'><li data-type='method'><a href="Builder.html#build">build</a></li><li data-type='method'><a href="Builder.html#getLog">getLog</a></li><li data-type='method'><a href="Builder.html#getTar">getTar</a></li><li data-type='method'><a href="Builder.html#init">init</a></li></ul></li><li><a href="Client.html">Client</a><ul class='methods'><li data-type='method'><a href="Client.html#.create">create</a></li></ul></li><li><a href="Db.html">Db</a><ul class='methods'><li data-type='method'><a href="Db.html#.newPgClient">newPgClient</a></li><li data-type='method'><a href="Db.html#.queryLots">queryLots</a></li><li data-type='method'><a href="Db.html#.queryLotsSeries">queryLotsSeries</a></li><li data-type='method'><a href="Db.html#.queryOnce">queryOnce</a></li><li data-type='method'><a href="Db.html#.reset">reset</a></li></ul></li><li><a href="Gamelogger.html">Gamelogger</a><ul class='methods'><li data-type='method'><a href="Gamelogger.html#load">load</a></li><li data-type='method'><a href="Gamelogger.html#reset">reset</a></li><li data-type='method'><a href="Gamelogger.html#save">save</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">build_server/Builder.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var child_process = require("child_process");
+var fs = require("fs");
+var path = require("path");
+var async = require("async");
+var Client = require("../common/Client");
+var Db = require("../common/Db");
+
+/**
+ * Manager of building and accessing client docker images
+ */
+class Builder {
+
+    /**
+     * Callback invoked when the builder is finished initializing
+     * @callback Builder~initCallback
+     * @param err
+     */
+
+    /**
+     * Initializes the builder
+     * @desc Initializes the builder by building docker images for each supported language
+     * @param callback {Builder~initCallback}
+     */
+    init(callback) {
+        //TODO: Add other docker base images
+        var cmds = [
+            `docker build -t cpp -f ${ path.join(__dirname, "dockerfiles/base/cpp.dockerfile")} . > ${path.join(__dirname, "build_logs/cpp.log")}`,
+            `docker build -t js -f ${path.join(__dirname, "dockerfiles/base/js.dockerfile")} . > ${path.join(__dirname, "build_logs/js.log")}`,
+        ];
+
+        async.map(cmds, function(cmd, cb) {
+            console.log(`Running: ${cmd}`);
+            child_process.exec(cmd, function(err) {
+                if(err) return cb(err);
+                console.log(`Done: ${cmd}`);
+                cb();
+            });
+        }, function(err){
+            if(err) return callback(err);
+            callback();
+        });
+    }
+
+    /**
+     * Callback invoked when the client code has finished building
+     * @callback Builder~buildCallback
+     * @param err
+     * @param built {boolean} True if the client code was built successfully
+     */
+
+    /**
+     * Builds client based on client id and database git repo, hash and language
+     * @param client_id {number} Integer id of individual client in database
+     * @param callback {Builder~buildCallback}
+     */
+    build(client_id, callback) {
+
+        Client.getById(client_id, function(err, client) {
+            if(err) return callback(err);
+
+            var BUILD_CMDS = {
+                "cpp": `docker build --no-cache --force-rm -t ${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client/cpp.dockerfile")} . > ${path.join(__dirname, `build_logs/${client.id}.log`)}`,
+                "js": `docker build --no-cache --force-rm -t ${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client/js.dockerfile")} . > ${path.join(__dirname, `build_logs/${client.id}.log`)}`,
+            };
+            var SAVE_CMD = `docker save -o ${path.join(__dirname, "tarballs", `${client.id}.tar`)} ${client.id}`;
+            if(!(client.language in BUILD_CMDS)) return callback("Language not supported!");
+            var BUILD_CMD = BUILD_CMDS[client.language];
+
+            console.log(`Running: ${BUILD_CMD}`);
+            child_process.exec(BUILD_CMD, function(err){
+                console.log(`Done: ${BUILD_CMD}`);
+
+                if(err){
+                    Db.queryOnce("UPDATE client SET build_success = FALSE, last_failure_time = now(), last_modified_time = now() WHERE id = $1",[client.id], function(err){
+                        if(err) return callback(err);
+                        callback(null, false);
+                    });
+                    return;
+                }
+
+                console.log(`Running: ${SAVE_CMD}`);
+                child_process.exec(SAVE_CMD, function(err){
+                    console.log(`Done: ${SAVE_CMD}`);
+                    if(err) return callback(err);
+
+                    Db.queryOnce("UPDATE client SET build_success = TRUE, last_success_time = now(), last_modified_time = now() WHERE id = $1", [client.id], function(err){
+                        if(err) return callback(err);
+                        callback(null, true);
+                    });
+                });
+            });
+        });
+    }
+
+    /**
+     * Callback invoked when finished retrieving the tar file
+     * @callback Builder~getTarCallback
+     * @param err
+     * @param tar_data
+     */
+
+    /**
+     * Gets a tar image from the file system
+     * @param client_id {integer} Integer id of individual client in database
+     * @param callback {Builder~getTarCallback}
+     */
+    getTar(client_id, callback) {
+        fs.readFile( path.join(__dirname, "tarballs", client_id+".tar") , function(err, data){
+            if(err) return callback(err);
+            callback(null, data);
+        });
+    }
+
+    /**
+     * Callback invoked when finished retrieving build log
+     * @callback Builder~getLogCallback
+     * @param err
+     * @param log_data
+     */
+
+    /**
+     * Gets the build log from the file system
+     * @param client_id {integer} Integer id of individual client in database
+     * @param callback {Builder~getLogCallback}
+     */
+    getLog(client_id, callback) {
+        fs.readFile( path.join(__dirname, `build_logs/${client_id}.log`) , function(err, data){
+            if(err) return callback(err);
+            callback(null, data);
+        });
+    }
+}
+
+module.exports = Builder;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Wed Sep 28 2016 01:44:22 GMT-0500 (CDT) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

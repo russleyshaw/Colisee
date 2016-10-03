@@ -1,31 +1,26 @@
-
-//var express = require("express");
-//var config = require("config");
-var SchedulerType = require("./BaseSchedulerType");
-var MatchType = require("./MatchObject");
+var BaseScheduler = require("./BaseSchedulerType");
+var Client = require("../../common/Client");
 
 
-class RandomScheduler extends SchedulerType{
-
-    //matches two clients at a time and puts them in Match_queue
-    queue_matches(num_times){
-        if (this.match_queue.length < this.MAX_SCHEDULED) {
-            for (var j = 0; j < num_times; j++) {
-                var client1 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
-                var client2 = this.clientArray[Math.floor(Math.random() * this.clientArray.length)];
-                var m = new MatchType(client1, client2);
-                this.match_queue.push(m);
-            }
-            for (var i = 0; i < this.match_queue.length; i++) {
-                console.log(this.match_queue[i]);
-            }
-        }
-        else
-            return;
+class RandomSchedulerType extends BaseScheduler {
+    constructor() {
+        super();
     }
+    
+    genNext(callback) {
+        Client.getRandom(2, (err, clients) => {
+            if(err) return callback(err);
+            var client_ids = clients.map(function (client) {
+                return client.id;
+            });
 
+            callback(null, client_ids);
+        });
 
+    }
 }
 
 
-module.exports = RandomScheduler;
+
+
+module.exports = RandomSchedulerType;

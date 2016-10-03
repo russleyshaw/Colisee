@@ -1,13 +1,13 @@
 # Colisee
 *ACM SIG-Game NodeJS Arena*  
-_Making the world a better place one MegaMinerAI at a time._
+_Making the world a better place one MegaMinerAI at a time._  
+https://russleyshaw.github.io/Colisee/
 
 ### Status
-[![Build Status](https://travis-ci.org/russleyshaw/Colisee.svg?branch=master)](https://travis-ci.org/russleyshaw/Colisee) ![Dependencies](https://david-dm.org/russleyshaw/Colisee.svg) ![DevDependencies](https://img.shields.io/david/dev/russleyshaw/Colisee.svg) [![Code Climate](https://codeclimate.com/github/russleyshaw/Colisee/badges/gpa.svg)](https://codeclimate.com/github/russleyshaw/Colisee)  
-[![Stories in Ready](https://badge.waffle.io/russleyshaw/Colisee.png?label=ready&title=Ready)](https://waffle.io/russleyshaw/Colisee)
+[![Build Status](https://travis-ci.org/russleyshaw/Colisee.svg?branch=master)](https://travis-ci.org/russleyshaw/Colisee) ![Dependencies](https://david-dm.org/russleyshaw/Colisee.svg) ![DevDependencies](https://img.shields.io/david/dev/russleyshaw/Colisee.svg)
 
 
-### Setup & Execution
+### Setup
 1) Install NVM - https://github.com/creationix/nvm/blob/master/README.markdown  
 2) Install Docker - https://docs.docker.com/engine/installation/linux/ubuntulinux/
 
@@ -23,38 +23,35 @@ nvm install    (uses node version described in .nvmrc)
 npm install
 ```
 
-5) Install PostgreSQL
+5) Setup normal and test databases
 ```
-npm run db:build
-npm run db:run
+npm run db:setup
 ```
 
-6) Run services
+### Running tests
+```
+npm test
+```
+
+### Running services
 ```
 npm run serve
 npm run mock
 ```
 
-### Scripts
+### Other Important Scripts (not all of them though)
 ```
 lint                    - runs linter on source code
-watch:lint              - continuously monitors and lints code
+fix                     - attempt to automatically fix some linting errors
 doc                     - generates documentation pages from jsdoc comments
-watch:doc               - continuously generates documentation pages
 
-docker:stop             - stops all docker containers
-docker:purge            - deletes all containers and images
-docker:purge:containers - deletes all containers
-docker:purge:images     - deletes all images
+test                    - run all tests
 
-db:build                - build colisee database image from postgresql image
-db:run                  - runs colisee database image as a container
-db:start                - starts the colisee database
-db:stop                 - stop the colisee database
-db:rm                   - deletes the colisee database container
-db:rmi                  - delete the colisee database image
+db:setup                - reset, rebuild and rerun the normal and test databases
 
-serve                   - run all colisee services
+db:start                - start the normal database
+testdb:start            - start the testing database
+
 serve:head              - run the head server
 serve:build             - run the build server
 serve:gamelog           - run the gamelog server
@@ -63,7 +60,6 @@ serve:play              - run play server with id of 0
 serve:play1             - run play server with id of 1
 serve:play1             - run play server with id of 2
 
-mock                    - run all mock services locally
 mock:vis                - run mock visualizer
 mock:web                - run mock web server
 ```

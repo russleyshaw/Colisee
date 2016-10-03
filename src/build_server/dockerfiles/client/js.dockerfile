@@ -1,9 +1,12 @@
 FROM js
 
-ARG git_repo
-ARG git_hash
+ARG REPO
+ARG HASH
 
 RUN mkdir client
-RUN git clone ${git_repo} client
-RUN cd client && git reset --hard ${git_hash}
-RUN cd client && make
+RUN git clone ${REPO} client
+
+WORKDIR client/
+
+RUN git reset --hard ${HASH}
+RUN make

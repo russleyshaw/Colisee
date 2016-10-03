@@ -1,0 +1,45 @@
+{
+  "game": "checkers",
+  "server_repo": "https://github.com/russleyshaw/Cerveau.git",
+  "server_hash": "ad1f0f2ce2a0e1925858d9460c719d9f8788f36c",
+  "head_server": {
+    "url": "localhost",
+    "port": 3000
+  },
+  "build_server": {
+    "url": "localhost",
+    "port": 3001
+  },
+  "play_server": {
+    "urls": [
+      "localhost",
+      "localhost",
+      "localhost"
+    ],
+    "ports": [
+      3002,
+      3003,
+      3004
+    ]
+  },
+  "gamelog_server": {
+    "url": "localhost",
+    "port": 3005,
+    "file_location": "src/gamelog_server/gamelogs/"
+  },
+  "mock_vis": {
+    "url": "localhost",
+    "port": 3006
+  },
+  "mock_web": {
+    "url": "localhost",
+    "port": 3007
+  },
+  "database": {
+    "host": "localhost",
+    "port": 5433,
+    "username": "colisee",
+    "password": "colisee",
+    "database": "colisee_test"
+  }
+}
