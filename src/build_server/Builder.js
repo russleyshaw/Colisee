@@ -9,10 +9,6 @@ var Db = require("../common/Db");
  * Manager of building and accessing client docker images
  */
 class Builder {
-    /**
-     * Creates a new Builder object
-     */
-    constructor() {}
 
     /**
      * Callback invoked when the builder is finished initializing
@@ -54,7 +50,7 @@ class Builder {
 
     /**
      * Builds client based on client id and database git repo, hash and language
-     * @param client_id {integer} Database client id of client to build
+     * @param client_id {number} Integer id of individual client in database
      * @param callback {Builder~buildCallback}
      */
     build(client_id, callback) {
@@ -105,7 +101,7 @@ class Builder {
 
     /**
      * Gets a tar image from the file system
-     * @param client_id
+     * @param client_id {integer} Integer id of individual client in database
      * @param callback {Builder~getTarCallback}
      */
     getTar(client_id, callback) {
@@ -124,7 +120,7 @@ class Builder {
 
     /**
      * Gets the build log from the file system
-     * @param client_id
+     * @param client_id {integer} Integer id of individual client in database
      * @param callback {Builder~getLogCallback}
      */
     getLog(client_id, callback) {

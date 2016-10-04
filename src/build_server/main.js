@@ -2,9 +2,11 @@ var express = require("express");
 var config = require("config");
 var body_parser = require("body-parser");
 
-var builder = require("./Builder");
+var Client = require("../common/Client");
+var Builder = require("./Builder");
 
 var app = express();
+var builder = new Builder();
 
 app.use( body_parser.json() );
 app.use( body_parser.urlencoded({ extended: true }) );
@@ -16,10 +18,13 @@ app.use( function(req, res, next) {
 });
 
 /**
- * @apiName Get Build
  * @apiGroup Builder
  * @api {get} /api/v2/build/:id
- * @apiParam {number} id Database client id
+ * @apiName Get Build
+ * @apiDescription Gets the tarred build of the most recent build for a client's code
+ * @apiParam {number} id Integer representing the id of the client in the database
+ * @apiSuccess 200 The tarred build itself
+ * @apiError 404 The tarred build for the given client id was not found
  */
 app.get("/api/v2/build/:id", function (req, res) {
     var id = req.params.id;
@@ -31,10 +36,13 @@ app.get("/api/v2/build/:id", function (req, res) {
 });
 
 /**
- * @apiName Get Build Log
  * @apiGroup Builder
  * @api {get} /api/v2/build/:id/log
+ * @apiName Get Build Log
+ * @apiDescription Gets the build log of the client's most recent build
  * @apiParam {number} id Database client id
+ * @apiSuccess 200 The build log for the most recent build of the specified client id
+ * @apiError 404 The build log for the build was not found
  */
 app.get("/api/v2/build/:id/log", function (req, res) {
     var id = req.params.id;
@@ -46,18 +54,26 @@ app.get("/api/v2/build/:id/log", function (req, res) {
 });
 
 /**
- * @apiName Build
  * @apiGroup Builder
+ * @apiName Build Client Code
+ * @apiDescription Builds code for client given by id
  * @api {post} /api/v2/build/:id
- * @apiParam {number} id
+ * @apiParam {number} id Database client id
+ * @apiSuccess 200 The client is valid and build has started
+ * @apiError 400 Invalid parameters were given
+ * @apiError 404 The client is valid and the build has started
  */
 app.post("/api/v2/build/:id", function (req, res) {
+    if(typeof req.params.id !== "number") return res.send(400);
     var id = req.params.id;
 
-    res.send({message: "Building and saving client image."});
-
-    builder.build(id, function(){
-
+    Client.getById(id, function(err){
+        if(err) return res.send(404);
+        res.send(200);
+        builder.build(id, function(err){
+            if(err) console.warn(`Error:  ${JSON.stringify(err)}`);
+            //TODO: Update database with build status
+        });
     });
 });
 

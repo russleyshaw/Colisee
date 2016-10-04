@@ -12,10 +12,9 @@ class Scheduler {
     }
 
     start() {
-        var self = this;
-        this.interval_ptr = setInterval(function(){
-            self.scheduleOnce(function(err){
-                console.log(`Error: ${err}`);
+        this.interval_ptr = setInterval(() => {
+            this.scheduleOnce(function(err){
+                if(err) return console.log(`Error: ${err}`);
             });
         }, this.SCHEDULE_INTERVAL);
     }
@@ -35,10 +34,9 @@ class Scheduler {
      * Schedule an individual game into the schedule queue
      */
     scheduleOnce(callback){
-        var self=this;
-        this.current_scheduler.genNext(function(err, clientIDs){
+        this.current_scheduler.genNext( (err, clientIDs) => {
             if(err)return callback(err);
-            self.sched_queue.push(clientIDs);
+            this.sched_queue.push(clientIDs);
             callback(null, clientIDs);
         });
     }

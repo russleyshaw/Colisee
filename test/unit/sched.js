@@ -2,22 +2,28 @@
 var should = require("should");
 var RandomSchedulerType = require("../../src/head_server/schedulers/RandomSchedulerType");
 var Scheduler = require("../../src/head_server/schedulers/Scheduler");
-var Db = require("../../src/common/db");
+var Db = require("../../src/common/Db");
 
 
 describe("Scheduler", function() {
     function setupDb(callback){
         Db.reset(function(err){
             if(err) return callback(err);
-            var sql_args=[
-                [ "INSERT INTO client (name, git_repo, git_hash, language) VALUES ($1::text, $2::text, $3::text, $4) RETURNING *", ["test1", "https://github.com/russleyshaw/Joueur.cpp.git", "98ae5ac0daa867a7ec98f2f5f8f2add6dc91c00c", "cpp"]],[ "INSERT INTO client (name, git_repo, git_hash, language) VALUES ($1::text, $2::text, $3::text, $4) RETURNING *", ["test2", "https://github.com/russleyshaw/Joueur.cpp.git", "98ae5ac0daa867a7ec98f2f5f8f2add6dc91c00c", "cpp"]],[ "INSERT INTO client (name, git_repo, git_hash, language) VALUES ($1::text, $2::text, $3::text, $4) RETURNING *", ["test3", "https://github.com/russleyshaw/Joueur.cpp.git", "98ae5ac0daa867a7ec98f2f5f8f2add6dc91c00c", "cpp"]]];
+            var sql_args= [
+                [ "INSERT INTO client (name, repo, hash, language) VALUES ($1::text, $2::text, $3::text, $4) RETURNING *",
+                    ["test1", "https://github.com/russleyshaw/Joueur.cpp.git", "98ae5ac0daa867a7ec98f2f5f8f2add6dc91c00c", "cpp"]],
+                [ "INSERT INTO client (name, repo, hash, language) VALUES ($1::text, $2::text, $3::text, $4) RETURNING *",
+                    ["test2", "https://github.com/russleyshaw/Joueur.cpp.git", "98ae5ac0daa867a7ec98f2f5f8f2add6dc91c00c", "cpp"]],
+                [ "INSERT INTO client (name, repo, hash, language) VALUES ($1::text, $2::text, $3::text, $4) RETURNING *",
+                    ["test3", "https://github.com/russleyshaw/Joueur.cpp.git", "98ae5ac0daa867a7ec98f2f5f8f2add6dc91c00c", "cpp"]]
+            ];
             Db.queryLots(sql_args,function(err, results){
                 if(err) return callback(err);
                 callback(null, results);
             });
         });
     }
-    before("Reset database and initialise clients." , function(done){
+    before("Reset database and initialize clients." , function(done){
         setupDb(function(err){
             should(err).be.not.ok();
             done();
