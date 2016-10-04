@@ -74,11 +74,9 @@ CREATE TABLE "match" (
     reason character varying,
     gamelog integer UNIQUE,
 
-<<<<<<< HEAD
-    scheduled_time timestamp NOT NULL DEFAULT now(),
-=======
+
     last_scheduled_time timestamp NOT NULL DEFAULT now()
->>>>>>> master
+
 );
 
 DELETE FROM "log";
