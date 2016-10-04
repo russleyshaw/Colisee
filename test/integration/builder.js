@@ -23,7 +23,7 @@ describe("Builder", function() {
         });
     });
 
-    describe.skip("init", function(){
+    describe("init", function(){
         it("should finish initializing", function(done){
 
             this.timeout(0);
