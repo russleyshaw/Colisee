@@ -1,7 +1,6 @@
 /* eslint-env node, mocha */
 
 var should = require("should");
-var fs = require("fs");
 var path = require("path");
 
 var Db = require("../../src/common/Db");
@@ -57,27 +56,6 @@ describe("Builder", function() {
                 });
             });
         });
-        it("should have created a tar", function(done){
-            fs.stat( path.join(__dirname, "../../src/build_server/tar/1.tar"), function(err, stat){
-                //should(stat).be.ok();
-                //should(stat.isFile()).be.ok();
-                done();
-            });
-        });
-        it("should have created a log", function(done){
-            fs.stat( path.join(__dirname, "../../src/build_server/log/1.log"), function(err, stat){
-                //should(stat).be.ok();
-                //should(stat.isFile()).be.ok();
-                done();
-            });
-        });
-        it("should have created a hash", function(done){
-            fs.stat( path.join(__dirname, "../../src/build_server/hash/1.sha256"), function(err, stat){
-                //should(stat).be.ok();
-                //should(stat.isFile()).be.ok();
-                done();
-            });
-        });
 
         it("should fail to build a given bad cpp client", function(done) {
 
@@ -95,25 +73,6 @@ describe("Builder", function() {
                     should(client.last_failure_time).be.ok();
                     done();
                 });
-            });
-        });
-        it("should not have created a tar", function(done){
-            fs.stat( path.join(__dirname, "../../src/build_server/tar/2.tar"), function(err, stat){
-                //should(stat).not.be.ok();
-                done();
-            });
-        });
-        it("should have created a log", function(done){
-            fs.stat( path.join(__dirname, "../../src/build_server/log/2.log"), function(err, stat){
-                //should(stat).be.ok();
-                //should(stat.isFile()).be.ok();
-                done();
-            });
-        });
-        it("should not have created a hash", function(done){
-            fs.stat( path.join(__dirname, "../../src/build_server/hash/2.sha256"), function(err, stat){
-                //should(stat).not.be.ok();
-                done();
             });
         });
     });
