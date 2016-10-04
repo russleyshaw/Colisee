@@ -7,91 +7,125 @@ var Client = require("../../src/common/Client");
 
 describe("Client", function() {
 
-    before("Reset database and initialize test data", function(done){
+    before("Reset database and initialize test data", function(done) {
+        //Db.DEBUG = true;
         this.timeout(5 * 1000);
-        Db.reset(function(err){
+        Db.reset((err) => {
             should(err).not.be.ok();
-            Db.queryLots([
-                [ "INSERT INTO client (name, repo, hash, language) VALUES ($1::text, $2::text, $3::text, $4) RETURNING *", ["test1", "https://github.com/russleyshaw/Joueur.cpp.git", "98ae5ac0daa867a7ec98f2f5f8f2add6dc91c00c", "cpp"]],
-                [ "INSERT INTO client (name, repo, hash, language) VALUES ($1::text, $2::text, $3::text, $4) RETURNING *", ["test2", "https://github.com/russleyshaw/Joueur.cpp.git", "98ae5ac0daa867a7ec98f2f5f8f2add6dc91c00c", "cpp"]]
-            ], function(err) {
+            done();
+        });
+    });
+
+    describe("create", () => {
+        it("should create a new client in the database", (done) => {
+            var client = {
+                name: "test1"
+            };
+            Client.create(client, (err, client) => {
                 should(err).not.be.ok();
+                should(client.id).equal(1);
+                should(client.name).equal("test1");
+                done();
+            });
+        });
+
+        it("should create a new client in the database", (done) => {
+            var client = {
+                name: "test2"
+            };
+            Client.create(client, (err, client) => {
+                should(err).not.be.ok();
+                should(client.id).equal(2);
+                should(client.name).equal("test2");
+                done();
+            });
+        });
+
+        it("should create a new client in the database", (done) => {
+            var client = {
+                name: "test3"
+            };
+            Client.create(client, (err, client) => {
+                should(err).not.be.ok();
+                should(client.id).equal(3);
+                should(client.name).equal("test3");
+                done();
+            });
+        });
+
+        it("should not create a client with an invalid language", (done) => {
+            var client = {
+                name: "test4",
+                language: "cpp1"
+            };
+            Client.create(client, (err) => {
+                should(err).be.ok();
+                done();
+            });
+        });
+
+        it("should not create a client with a given id", (done) => {
+            var client = {
+                id: 1,
+                name: "test4",
+            };
+            Client.create(client, (err) => {
+                should(err).be.ok();
                 done();
             });
         });
     });
 
-    describe("getById", function() {
-        it("should retrieve a client by id", function(done){
-            Client.getById(1, function(err, client){
+    describe("updateById", function() {
+        it("should update a client based on its id", function(done){
+            var fields = {
+                language: "cpp",
+            };
+            Client.updateById(1, fields, (err, client) => {
                 should(err).not.be.ok();
+                should(client.id).equal(1);
+                should(client.language).equal("cpp");
+                done();
+            });
+        });
+    });
 
+    describe("getById", () => {
+        it("should retrieve a client by id", (done) => {
+            Client.getById(1, (err, client) => {
+                should(err).not.be.ok();
                 should(client.id).be.equal(1);
                 should(client.name).be.equal("test1");
-                should(client.repo).be.equal("https://github.com/russleyshaw/Joueur.cpp.git");
-                should(client.hash).be.equal("98ae5ac0daa867a7ec98f2f5f8f2add6dc91c00c");
-                should(client.language).be.equal("cpp");
-
                 done();
             });
         });
     });
 
-    describe("getByName", function() {
-        it("should retrieve a client by name", function(done){
-            Client.getByName("test2", function(err, client){
+    describe("getByName", () => {
+        it("should retrieve a client by name", (done) => {
+            Client.getByName("test2", (err, client) => {
                 should(err).not.be.ok();
 
                 should(client.id).be.equal(2);
                 should(client.name).be.equal("test2");
-                should(client.repo).be.equal("https://github.com/russleyshaw/Joueur.cpp.git");
-                should(client.hash).be.equal("98ae5ac0daa867a7ec98f2f5f8f2add6dc91c00c");
-                should(client.language).be.equal("cpp");
 
                 done();
             });
         });
     });
 
-    describe("create", function() {
-        it("should create a new client in the database", function(done) {
-            Client.create("test3", "https://github.com/russleyshaw/Joueur.cpp.git", "98ae5ac0daa867a7ec98f2f5f8f2add6dc91c00c", "cpp", function(err, client) {
+    describe("getRandom", () => {
+        it("should get a random client", (done) => {
+            Client.getRandom(1, (err, clients) => {
                 should(err).not.be.ok();
-
-                should(client.id).equal(3);
-                should(client.name).equal("test3");
-                should(client.repo).equal("https://github.com/russleyshaw/Joueur.cpp.git");
-                should(client.hash).equal("98ae5ac0daa867a7ec98f2f5f8f2add6dc91c00c");
-                should(client.language).equal("cpp");
-
-                done();
-            });
-
-        });
-
-        it("should not create a client with an invalid language", function(done) {
-            Client.create("test2", "https://github.com/russleyshaw/Joueur.cpp.git", "hash1", "cpp1", function(err) {
-                should(err).be.ok();
-                done();
-            });
-
-        });
-    });
-
-    describe("getRandom", function(){
-        it("should get a random client", function(done){
-            Client.getRandom(1, function(err, clients) {
-                should(err).not.be.ok();
-                should(clients.length).be.below(2);
-
+                should(clients.length).be.equal(1);
                 done();
             });
         });
-        it("should get multiple random clients", function(done){
-            Client.getRandom(2, function(err, clients) {
+        it("should get multiple random clients", (done) =>{
+            Client.getRandom(2, (err, clients) => {
                 should(err).not.be.ok();
-                should(clients.length).be.below(3);
-
+                should(clients.length).be.equal(2);
                 done();
             });
         });

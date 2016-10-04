@@ -1,4 +1,7 @@
 var Db = require("./Db");
+var knex = require("knex")({
+    dialect: "pg"
+});
 
 /**
  * Class to interface with client table in database
@@ -6,7 +9,8 @@ var Db = require("./Db");
 class Client {
 
     static getById(client_id, callback) {
-        Db.queryOnce("SELECT * FROM client WHERE id = $1::integer", [client_id], function (err, result) {
+        var sql = knex("client").where({id: client_id}).toString();
+        Db.queryOnce(sql, [], function (err, result) {
             if(err) return callback(err);
             if(result.rows.length != 1) return callback("No match found");
 
@@ -15,41 +19,77 @@ class Client {
     }
 
     static getByName(client_name, callback) {
-
-        Db.queryOnce("SELECT * FROM client WHERE name = $1::text", [client_name], function (err, result) {
+        var sql = knex("client").where({name: client_name}).toString();
+        Db.queryOnce(sql, [], function (err, result) {
             if(err) return callback(err);
-            if(result.rows.length != 1) return callback("No match found", undefined);
+            if(result.rows.length != 1) return callback("No match found");
 
             callback(null, result.rows[0]);
         });
     }
 
-
+    /**
+     * Retrieve <code>limit</code> random number of clients
+     * @param limit {number} Number of random clients (without replacement) to select
+     * @param callback
+     */
     static getRandom(limit, callback) {
-        Db.queryOnce("SELECT * FROM client ORDER BY RANDOM() LIMIT $1", [limit], function(err, result) {
+        var sql = knex("client").orderByRaw("random()").limit(limit).toString();
+        Db.queryOnce(sql, [], function(err, result) {
             if(err) return callback(err);
-
+            if(result.rows.length != limit) return callback("Inserted rows not fully returned");
             callback(null, result.rows);
         });
     }
 
     /**
-     * Create a client with the given parameters
-     * @param name
-     * @param repo
-     * @param hash
-     * @param language
-     * @param callback function(err, created_client)
+     * @callback Client~createCallback
+     * @param err
+     * @param client {Object} newly created client
      */
-    static create(name, repo, hash, language, callback) {
 
-        Db.queryOnce("INSERT INTO client (name, repo, hash, language) VALUES ($1::text, $2::text, $3::text, $4) RETURNING *",
-            [name, repo, hash, language], function (err, result) {
-                if(err) return callback(err);
-                if(result.rows.length != 1) return callback("No match found");
+    /**
+     * Creates a client from the given object
+     * @param client {Object}
+     * @param callback {Client~createCallback}
+     */
+    static create(client, callback) {
+        if(client.hasOwnProperty("id")) return callback("client ids are created automatically");
 
-                callback(null, result.rows[0]);
-            });
+        var sql = knex("client").insert(client, "*").toString();
+        Db.queryOnce(sql, [], function(err, result) {
+            if(err) return callback(err);
+            if(result.rows.length != 1) return callback("Inserted row not returned");
+            callback(null, result.rows[0]);
+        });
+    }
+
+    /**
+     * @callback Client~updateByIdCallback
+     * @param err
+     * @param client {Object} Updated client
+     */
+
+    /**
+     * Update client given the id and fields to update
+     * @param id {number} Client database id
+     * @param fields {Object} JSON of fields to update
+     * @param callback {Client~updateByIdCallback}
+     */
+    static updateById(id, fields, callback) {
+        if(fields.hasOwnProperty("id")) return callback("Cannot update id");
+        if(fields.hasOwnProperty("created_time")) return callback("Cannot update created time");
+        if(fields.hasOwnProperty("last_modified_time")) return callback("Cannot update modified time");
+
+        fields["last_modified_time"] = "now()";
+
+        var sql = knex("client").where({id: id}).update(fields, "*").toString();
+        Db.queryOnce(sql, [], (err, result) => {
+            if(err) return callback(err);
+            if(result.rows.length != 1) return callback("Query resulted in invalid number of rows");
+
+            callback(null, result.rows[0]);
+        });
     }
 }
 

@@ -24,6 +24,8 @@ describe("Scheduler", function() {
         });
     }
     before("Reset database and initialize clients." , function(done){
+        this.timeout(8000);
+        setTimeout(setupDb, 8000);
         setupDb(function(err){
             should(err).be.not.ok();
             done();
