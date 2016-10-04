@@ -1,7 +1,6 @@
 /* eslint-env node, mocha */
 
 var should = require("should");
-var path = require("path");
 
 var Db = require("../../src/common/Db");
 var Client = require("../../src/common/Client");
