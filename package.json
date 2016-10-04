@@ -54,18 +54,17 @@
     "minami": "^1.1.1",
     "mocha": "^3.0.2",
     "npm-run-all": "^3.0.0",
-    "should": "^11.1.0",
-    "watch": "^0.19.2"
+    "should": "^11.1.0"
   },
   "dependencies": {
     "async": "^2.0.1",
     "body-parser": "^1.15.2",
     "child_process": "^1.0.2",
     "config": "^1.21.0",
-    "export-files": "^2.1.1",
     "express": "^4.14.0",
     "fs-extra": "^0.30.0",
     "handlebars": "^4.0.5",
+    "knex": "^0.12.2",
     "mocha": "^3.0.2",
     "pg": "^6.1.0",
     "querystring": "^0.2.0",

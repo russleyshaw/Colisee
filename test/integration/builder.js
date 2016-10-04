@@ -1,8 +1,6 @@
 /* eslint-env node, mocha */
 
 var should = require("should");
-var fs = require("fs");
-var path = require("path");
 
 var Db = require("../../src/common/Db");
 var Client = require("../../src/common/Client");
@@ -19,9 +17,7 @@ describe("Builder", function() {
                 [ "INSERT INTO client (name, repo, hash, language) VALUES ($1::text, $2::text, $3::text, $4) RETURNING *", ["test2", "https://github.com/russleyshaw/Joueur.cpp.git", "2864ce98441b0b894d0127d9ceefcf465baec9b5", "cpp"]]
             ], function(err, results) {
                 should(err).not.be.ok();
-
                 should(results).be.length(2);
-
                 done();
             });
         });
@@ -46,25 +42,17 @@ describe("Builder", function() {
             //approx 64469ms
             this.timeout(0);
 
-            builder.build(1, function(err, succeeded) {
+            builder.build(1, function(err, built) {
                 should(err).not.be.ok();
-                should(succeeded).be.true();
+                should(built).be.true();
 
-                //Check client was updatedE
+                //Check client was updated
                 Client.getById(1, function(err, client){
                     should(err).not.be.ok();
                     should(client.build_success).be.true();
                     should(client.last_success_time).be.ok();
-
                     done();
                 });
-            });
-        });
-
-        it("should have created a build log", function(done){
-            fs.stat( path.join(__dirname, "../../src/build_server/build_logs/", "1.log"), function(err, stat){
-                should(stat.isFile()).be.ok();
-                done();
             });
         });
 
@@ -82,19 +70,10 @@ describe("Builder", function() {
                     should(err).not.be.ok();
                     should(client.build_success).be.false();
                     should(client.last_failure_time).be.ok();
-
                     done();
                 });
             });
         });
-
-        it("should have created a build log", function(done){
-            fs.stat( path.join(__dirname, "../../src/build_server/build_logs/", "2.log"), function(err, stat){
-                should(stat.isFile()).be.ok();
-                done();
-            });
-        });
-
     });
 
     describe("getTar", function(){
@@ -118,5 +97,14 @@ describe("Builder", function() {
             });
         });
     });
+    describe("getHash", function(){
+        it("should retrieve the build hash", function(done) {
 
+            builder.getHash(1, function(err, hash) {
+                should(err).not.be.ok();
+                should(hash).be.ok();
+                done();
+            });
+        });
+    });
 });

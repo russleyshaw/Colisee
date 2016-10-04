@@ -42,12 +42,14 @@ CREATE TABLE "log" (
 CREATE TABLE "client" (
     id serial NOT NULL PRIMARY KEY,
     name character varying NOT NULL UNIQUE,
-    repo character varying NOT NULL,
-    hash character varying NOT NULL,
+    repo character varying,
+    hash character varying,
 
-    language client_language_enum NOT NULL,
+    language client_language_enum,
 
+    needs_build boolean NOT NULL DEFAULT false,
     build_success boolean,
+    last_attempt_time timestamp,
     last_success_time timestamp,
     last_failure_time timestamp,
 

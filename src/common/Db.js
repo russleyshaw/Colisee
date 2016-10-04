@@ -9,6 +9,7 @@ var fs = require("fs");
 var config = require("config");
 var async = require("async");
 
+var _DEBUG = false;
 
 /**
  * Database interaction and utilities class
@@ -38,9 +39,19 @@ class Db {
         var init_sql = fs.readFileSync( path.join(__dirname, "../../db/init.sql") );
         var sqls = init_sql.toString();
 
-        Db.queryOnce(sqls, [], function(err) {
+        var pgclient = this.newPgClient();
+
+        pgclient.connect((err) => {
             if(err) return callback(err);
-            callback();
+
+            pgclient.query(sqls, [], function (err, result) {
+                if(err) return callback(err);
+
+                pgclient.end(function (err) {
+                    if(err) return callback(err);
+                    callback(null, result);
+                });
+            });
         });
     }
 
@@ -60,10 +71,13 @@ class Db {
     static queryOnce(sql, args, callback) {
         var pgclient = this.newPgClient();
 
-        pgclient.connect(function(err) {
+        pgclient.connect((err) => {
             if(err) return callback(err);
 
+            if(Db.DEBUG) console.log(`Running SQL - ${sql.toString()}`);
             pgclient.query(sql, args, function (err, result) {
+                if(Db.DEBUG) console.log(`Result - ${JSON.stringify(result)}`);
+                if(Db.DEBUG) console.log(`Error - ${JSON.stringify(err)}`);
                 if(err) return callback(err);
 
                 pgclient.end(function (err) {
@@ -92,7 +106,10 @@ class Db {
             if(err) return callback(err);
 
             async.mapSeries(sql_args, function(sqlarg, cb){
+                if(Db.DEBUG) console.log(`Running SQL - ${sqlarg[0].toString()}`);
                 pgclient.query(sqlarg[0], sqlarg[1], function (err, result) {
+                    if(Db.DEBUG) console.log(`Result - ${JSON.stringify(result)}`);
+                    if(Db.DEBUG) console.log(`Error - ${JSON.stringify(err)}`);
                     if(err) return cb(err);
                     cb(null, result);
                 });
@@ -123,7 +140,10 @@ class Db {
             if(err) return callback(err);
 
             async.map(sql_args, function(sqlarg, cb){
+                if(Db.DEBUG) console.log(`Running SQL - ${sqlarg[0].toString()}`);
                 pgclient.query(sqlarg[0], sqlarg[1], function (err, result) {
+                    if(Db.DEBUG) console.log(`Result - ${JSON.stringify(result)}`);
+                    if(Db.DEBUG) console.log(`Error - ${JSON.stringify(err)}`);
                     if(err) return cb(err);
                     cb(null, result);
                 });
@@ -135,6 +155,22 @@ class Db {
                 });
             });
         });
+    }
+
+    /**
+     * Getter for database debug printing
+     * @returns {boolean}
+     */
+    static get DEBUG() {
+        return _DEBUG;
+    }
+
+    /**
+     * Setter for database debug printing
+     * @param val {boolean}
+     */
+    static set DEBUG(val) {
+        _DEBUG = val;
     }
 
 }
