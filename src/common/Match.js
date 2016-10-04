@@ -5,7 +5,7 @@ var Db = require("./Db");
  */
 
 
-class Match{
+class Match {
     static getById(match_id, callback){
         Db.queryOnce("SELECT * FROM match WHERE id = $1:integer", [match_id], function(err, result){
             if(err) return callback(err);
@@ -23,8 +23,8 @@ class Match{
         });
     }
 
-    static create(clients, tournament, hashes, reason, gamelog, callback){
-        Db.queryOnce("INSERT INTO match(clients, tournament, hashes, reason, gamelog) VALUES ($1::integer, $2::integer, $3::text, $4::text, $5::integer) RETURNING *", [clients, tournament, hashes, reason, gamelog], function(err, result){
+    static create(clients, reason, gamelog, callback){
+        Db.queryOnce("INSERT INTO match(clients,  reason, gamelog) VALUES ($1, $2::text, $3::integer) RETURNING *", [clients, reason, gamelog], function(err, result){
             if(err) return callback(err);
             if(result.rows.length != 1) return callback("No match found.");
 
