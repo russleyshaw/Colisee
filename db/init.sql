@@ -26,7 +26,11 @@ CREATE TYPE tournament_status_enum AS ENUM (
 );
 
 CREATE TYPE match_status_enum AS ENUM (
+<<<<<<< HEAD
+    'playing', 'scheduled', 'sending', 'finished', 'failed'
+=======
     'playing', 'scheduled', 'sending', 'succeeded', 'failed'
+>>>>>>> master
 );
 
 CREATE TABLE "log" (
@@ -70,7 +74,9 @@ CREATE TABLE "match" (
     reason character varying,
     gamelog integer UNIQUE,
 
+
     last_scheduled_time timestamp NOT NULL DEFAULT now()
+
 );
 
 DELETE FROM "log";
