@@ -26,11 +26,9 @@ CREATE TYPE tournament_status_enum AS ENUM (
 );
 
 CREATE TYPE match_status_enum AS ENUM (
-<<<<<<< HEAD
+
     'playing', 'scheduled', 'sending', 'finished', 'failed'
-=======
-    'playing', 'scheduled', 'sending', 'succeeded', 'failed'
->>>>>>> master
+
 );
 
 CREATE TABLE "log" (
@@ -69,7 +67,7 @@ CREATE TABLE "tournament" (
 CREATE TABLE "match" (
     id serial NOT NULL PRIMARY KEY,
     clients integer[] NOT NULL,
-
+    status match_status_enum DEFAULT "scheduled",
 
     reason character varying,
     gamelog integer UNIQUE,

@@ -1,4 +1,7 @@
-
+var Db = require("../../common/Db");
+var knex = require("knex")({
+    dialect: "pg"
+});
 
 class Scheduler {
 
@@ -11,14 +14,38 @@ class Scheduler {
         this.sched_queue = new Array();
     }
 
-    start() {
+    /**
+     *
+     * @param callback
+     */
+    getNumScheduled(callback){
+        var sql = knex("match").where("status","scheduled").count("* as count").toString();
+        Db.queryOnce(sql,[],function(err,result){
+            if(err)return callback(err);
+            callback(result.rows[0].count);
+        });
+    }
+
+    /**
+     *
+     * @param callback
+     */
+    start(callback) {
         this.interval_ptr = setInterval(() => {
-            this.scheduleOnce(function(err){
-                if(err) return console.log(`Error: ${err}`);
+            this.getNumScheduled((err,numScheduled)=>{
+                if (numScheduled < this.MAX_SCHEDULED){
+                    this.scheduleOnce(function(err){
+                        if(err)return callback(err);
+                    });
+                }
             });
+
         }, this.SCHEDULE_INTERVAL);
     }
 
+    /**
+     * clears match objects for new tournament.
+     */
     stop() {
         clearInterval(this.interval_ptr);
     }
@@ -31,7 +58,8 @@ class Scheduler {
     }
 
     /**
-     * Schedule an individual game into the schedule queue
+     *
+     * @param callback
      */
     scheduleOnce(callback){
         this.current_scheduler.genNext( (err, clientIDs) => {
