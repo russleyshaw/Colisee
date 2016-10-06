@@ -43,7 +43,7 @@ class Match {
         if(fields.hasOwnProperty("modified_time")) return callback("Cannot update a match modified_time");
 
         if(fields.hasOwnProperty("clients")) {
-            match.clients = `{${fields.clients.toString()}}`;
+            fields.clients = `{${fields.clients.toString()}}`;
         }
 
         fields.modified_time = "now()";
