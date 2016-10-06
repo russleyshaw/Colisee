@@ -1,3 +1,5 @@
+
+
 class Scheduler {
 
     constructor() {
@@ -10,9 +12,10 @@ class Scheduler {
     }
 
     start() {
-        var self = this;
-        this.interval_ptr = setInterval(function(){
-            self.scheduleOnce();
+        this.interval_ptr = setInterval(() => {
+            this.scheduleOnce(function(err){
+                if(err) return console.log(`Error: ${err}`);
+            });
         }, this.SCHEDULE_INTERVAL);
     }
 
@@ -30,8 +33,12 @@ class Scheduler {
     /**
      * Schedule an individual game into the schedule queue
      */
-    scheduleOnce(){
-        this.sched_queue.push( this.current_scheduler.genNext() );
+    scheduleOnce(callback){
+        this.current_scheduler.genNext( (err, clientIDs) => {
+            if(err)return callback(err);
+            this.sched_queue.push(clientIDs);
+            callback(null, clientIDs);
+        });
     }
 
     /**
@@ -56,9 +63,13 @@ class Scheduler {
         }
     }
 
+    //TODO: add a peekNext function that returns the next game without popping off. This will be useful for testing purposes
+
     numScheduled(){
         return this.sched_queue.length;
     }
+
+
 
 }
 

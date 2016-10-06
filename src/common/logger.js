@@ -1,4 +1,4 @@
-var Db = require("./db");
+var Db = require("./Db");
 
 class Logger {
 
@@ -47,7 +47,7 @@ class Logger {
         pgclient.connect(function(err){
             if(err) return callback(err);
 
-            pgclient.query("INSERT INTO log (message, location, severity, time_created) VALUES ($1::text, $2::text, $3, now() ) RETURNING *", [message, location, severity], function (err, result) {
+            pgclient.query("INSERT INTO log (message, location, severity, created_time) VALUES ($1::text, $2::text, $3, now() ) RETURNING *", [message, location, severity], function (err, result) {
                 if(err) return callback(err);
                 if(result.rowCount != 1) { callback("No match found"); return; }
 
@@ -56,7 +56,7 @@ class Logger {
                     message: result.rows[0].message,
                     location: result.rows[0].location,
                     severity: result.rows[0].severity,
-                    time_created: result.rows[0].time_created
+                    created_time: result.rows[0].created_time
                 };
 
                 pgclient.end(function(err){

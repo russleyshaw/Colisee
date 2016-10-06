@@ -1,60 +1,84 @@
+DROP TABLE IF EXISTS "log" CASCADE;
+DROP TABLE IF EXISTS "client" CASCADE;
+DROP TABLE IF EXISTS "schedule" CASCADE;
+DROP TABLE IF EXISTS "match" CASCADE;
 
-DROP TYPE IF EXISTS client_language_enum CASCADE;
+DROP TYPE IF EXISTS "log_severity_enum" CASCADE;
+DROP TYPE IF EXISTS "schedule_type_enum" CASCADE;
+DROP TYPE IF EXISTS "client_language_enum" CASCADE;
+DROP TYPE IF EXISTS "match_status_enum" CASCADE;
+
 CREATE TYPE client_language_enum AS ENUM (
-    'cpp',
-    'python',
-    'csharp',
-    'javascript',
-    'java'
+    'cpp', 'python', 'csharp', 'javascript', 'java'
 );
 
-DROP TABLE IF EXISTS client CASCADE;
-CREATE TABLE client
-(
-  id serial NOT NULL,
-  name character varying NOT NULL,
-  git_repo character varying NOT NULL,
-  git_hash character varying NOT NULL,
-  language client_language_enum NOT NULL,
-  CONSTRAINT "CLIENT_PK_ID" PRIMARY KEY (id),
-  CONSTRAINT "CLIENT_UNIQUE_NAME" UNIQUE (name)
-);
-DELETE FROM client;
-ALTER SEQUENCE client_id_seq RESTART WITH 1;
-
-DROP TABLE IF EXISTS game_result CASCADE;
-CREATE TABLE game_result
-(
-    id serial NOT NULL,
-    clients integer[] NOT NULL,
-    hashes character varying[] NOT NULL,
-    reason character varying NOT NULL,
-    time_started timestamp with time zone NOT NULL,
-    time_finished timestamp with time zone NOT NULL,
-    gamelog_id integer NOT NULL,
-    CONSTRAINT "GAME_RESULT_PK_ID" PRIMARY KEY (id)
-);
-DELETE FROM game_result;
-ALTER SEQUENCE game_result_id_seq RESTART WITH 1;
-
-DROP TYPE IF EXISTS log_severity_enum CASCADE;
 CREATE TYPE log_severity_enum AS ENUM (
-    'debug',
-    'info',
-    'warn',
-    'error',
-    'critical'
+    'debug', 'info', 'warn', 'error', 'critical'
 );
 
-DROP TABLE IF EXISTS log CASCADE;
-CREATE TABLE log
-(
-    id serial NOT NULL,
-    message character varying,
+CREATE TYPE schedule_type_enum AS ENUM (
+    'random', 'single_elimination', 'triple_elimination', 'swiss', 'test'
+);
+
+CREATE TYPE match_status_enum AS ENUM (
+    'playing', 'scheduled', 'sending', 'finished', 'failed'
+);
+
+CREATE TABLE "log" (
+    id serial NOT NULL PRIMARY KEY,
+    message character varying NOT NULL,
     location character varying,
     severity log_severity_enum NOT NULL,
-    time_created timestamp with time zone NOT NULL,
-    CONSTRAINT "LOG_PK_ID" PRIMARY KEY (id)
+
+    created_time timestamp NOT NULL DEFAULT now(),
+    modified_time timestamp NOT NULL DEFAULT now()
 );
-DELETE FROM log;
-ALTER SEQUENCE log_id_seq RESTART WITH 1;
+
+CREATE TABLE "client" (
+    id serial NOT NULL PRIMARY KEY,
+    name character varying NOT NULL UNIQUE,
+    repo character varying,
+    hash character varying,
+
+    language client_language_enum,
+
+    needs_build boolean NOT NULL DEFAULT false,
+    build_success boolean,
+    attempt_time timestamp,
+    success_time timestamp,
+    failure_time timestamp,
+
+    created_time timestamp NOT NULL DEFAULT now(),
+    modified_time timestamp NOT NULL DEFAULT now()
+);
+
+CREATE TABLE "schedule" (
+    id serial NOT NULL PRIMARY KEY,
+    type schedule_type_enum NOT NULL,
+
+    created_time timestamp NOT NULL DEFAULT now(),
+    modified_time timestamp NOT NULL DEFAULT now()
+);
+
+CREATE TABLE "match" (
+    id serial NOT NULL PRIMARY KEY,
+
+    clients integer[] NOT NULL,
+    reason character varying,
+
+    status match_status_enum NOT NULL DEFAULT 'scheduled',
+    gamelog integer UNIQUE,
+
+    created_time timestamp NOT NULL DEFAULT now(),
+    modified_time timestamp NOT NULL DEFAULT now()
+);
+
+DELETE FROM "log";
+DELETE FROM "client";
+DELETE FROM "schedule";
+DELETE FROM "match";
+
+ALTER SEQUENCE "log_id_seq" RESTART WITH 1;
+ALTER SEQUENCE "client_id_seq" RESTART WITH 1;
+ALTER SEQUENCE "match_id_seq" RESTART WITH 1;
+ALTER SEQUENCE "schedule_id_seq" RESTART WITH 1;

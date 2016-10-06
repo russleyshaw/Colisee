@@ -1,19 +1,26 @@
 var BaseScheduler = require("./BaseSchedulerType");
+var Client = require("../../common/Client");
 
-class RandomScheduler extends BaseScheduler {
+
+class RandomSchedulerType extends BaseScheduler {
     constructor() {
         super();
     }
+    
+    genNext(callback) {
+        Client.getRandom(2, (err, clients) => {
+            if(err) return callback(err);
+            var client_ids = clients.map(function (client) {
+                return client.id;
+            });
 
-    /**
-     * Generate the next match to be played
-     */
-    genNext() {
-        //TODO: get 2 random client IDs from the database
-        return [1, 5];
+            callback(null, client_ids);
+        });
+
     }
-
 }
 
 
-module.exports = RandomScheduler;
+
+
+module.exports = RandomSchedulerType;

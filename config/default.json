@@ -1,4 +1,7 @@
 {
+  "game": "checkers",
+  "cerveau_repo": "https://github.com/russleyshaw/Cerveau.git",
+  "cerveau_hash": "ad1f0f2ce2a0e1925858d9460c719d9f8788f36c",
   "head_server": {
     "url": "localhost",
     "port": 3000
