@@ -12,7 +12,7 @@ describe("Logger",function() {
         this.timeout(5 * 1000);
         Db.reset((err) => {
             should(err).not.be.ok();
-        done();
+            done();
         });
     });
 
@@ -90,9 +90,9 @@ describe("Logger",function() {
             };
             Logger.updateById(1, fields, (err, log) => {
                 should(err).not.be.ok();
-            should(log.id).equal(1);
-            should(log.severity).equal("info");
-            done();
+                should(log.id).equal(1);
+                should(log.severity).equal("info");
+                done();
             });
         });
     });
