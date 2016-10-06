@@ -34,8 +34,8 @@ class Builder {
     init(callback) {
         //TODO: Add other docker base images
         var cmds = [
-            `docker build -t cpp -f ${ path.join(__dirname, "dockerfiles/base/cpp.dockerfile")} . > ${path.join(__dirname, "log/cpp.log")}`,
-            `docker build -t js -f ${path.join(__dirname, "dockerfiles/base/js.dockerfile")} . > ${path.join(__dirname, "log/js.log")}`,
+            `docker build -t base_cpp -f ${ path.join(__dirname, "dockerfiles/base_cpp.dockerfile")} . > ${path.join(__dirname, "log/base_cpp.log")}`,
+            `docker build -t base_js -f ${path.join(__dirname, "dockerfiles/base_js.dockerfile")} . > ${path.join(__dirname, "log/base_js.log")}`,
         ];
 
         async.map(cmds, function(cmd, cb) {
@@ -59,7 +59,7 @@ class Builder {
             if(this._num_building >= this._MAX_BUILDING) return;
 
             //Select oldest client needing build
-            var sql = knex("client").select().where({needs_build: true}).orderBy("last_attempt_time").limit(1).returning().toString();
+            var sql = knex("client").select().where({needs_build: true}).orderBy("attempt_time").limit(1).returning().toString();
             Db.queryOnce(sql, [], (err, result) => {
                 if(err) return console.warn(`Error: ${JSON.stringify(err)}`);
                 if(result.rows.length < 1) return; //None needing building
@@ -122,9 +122,9 @@ class Builder {
 
                             //Write to db
                             var sql = knex("client").where({id: client.id}).update({
-                                last_success_time: "now()",
-                                last_modified_time: "now()",
-                                last_attempt_time: "now()",
+                                success_time: "now()",
+                                modified_time: "now()",
+                                attempt_time: "now()",
                                 build_success: true
                             }, "*").toString();
                             Db.queryOnce(sql, [], (err) => {
@@ -140,9 +140,9 @@ class Builder {
 
                             //Write to db
                             var sql = knex("client").where({id: client.id}).update({
-                                last_failure_time: "now()",
-                                last_modified_time: "now()",
-                                last_attempt_time: "now()",
+                                failure_time: "now()",
+                                modified_time: "now()",
+                                attempt_time: "now()",
                                 build_success: false
 
                             }, "*").toString();
@@ -187,8 +187,8 @@ class Builder {
      */
     _buildImageBad(client_id, callback) {
         var cmds = [
-            `rm -f ${path.join(__dirname, `tar/${client_id}.tar`)} ${path.join(__dirname, `hash/${client_id}.sha256`)}`,
-            `mv -f ${path.join(__dirname, `log/${client_id}.log.tmp`)} ${path.join(__dirname, `log/${client_id}.log`)}`,
+            `rm -f ${path.join(__dirname, `tar/client_${client_id}.tar`)} ${path.join(__dirname, `hash/client_${client_id}.sha256`)}`,
+            `mv -f ${path.join(__dirname, `log/client_${client_id}.log.tmp`)} ${path.join(__dirname, `log/client_${client_id}.log`)}`,
         ];
 
         async.map(cmds, (cmd, cb) => {
@@ -205,8 +205,8 @@ class Builder {
     _buildImageAndTmpLog(client, callback) {
 
         var cmds = {
-            "cpp": `docker build --no-cache --force-rm -t ${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client/cpp.dockerfile")} . > ${path.join(__dirname, `log/${client.id}.log.tmp`)}`,
-            "js": `docker build --no-cache --force-rm -t ${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client/js.dockerfile")} . > ${path.join(__dirname, `log/${client.id}.log.tmp`)}`,
+            "cpp": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_cpp.dockerfile")} . > ${path.join(__dirname, `log/client_${client.id}.log.tmp`)}`,
+            "js": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_js.dockerfile")} . > ${path.join(__dirname, `log/client_${client.id}.log.tmp`)}`,
         };
 
         if(!(client.language in cmds)) return callback("Language not supported!");
@@ -219,7 +219,7 @@ class Builder {
     }
 
     _saveTarTmp(client_id, callback) {
-        var cmd = `docker save -o ${path.join(__dirname, `tar/${client_id}.tar.tmp`)} ${client_id}`;
+        var cmd = `docker save -o ${path.join(__dirname, `tar/client_${client_id}.tar.tmp`)} client_${client_id}`;
         child_process.exec(cmd, (err) => {
             if(err) return callback(err);
             callback();
@@ -227,7 +227,7 @@ class Builder {
     }
 
     _saveHashTmp(client_id, callback) {
-        var cmd = `sha256sum ${path.join(__dirname, `tar/${client_id}.tar.tmp`)} > ${path.join(__dirname, `hash/${client_id}.sha256.tmp`)}`;
+        var cmd = `sha256sum ${path.join(__dirname, `tar/client_${client_id}.tar.tmp`)} > ${path.join(__dirname, `hash/client_${client_id}.sha256.tmp`)}`;
         child_process.exec(cmd, (err) =>{
             if(err) return callback(err);
             callback();
@@ -236,9 +236,9 @@ class Builder {
 
     _applyTmpFiles(client_id, callback) {
         var cmds = [
-            `mv -f ${path.join(__dirname, `tar/${client_id}.tar.tmp`)} ${path.join(__dirname, `tar/${client_id}.tar`)}`,
-            `mv -f ${path.join(__dirname, `log/${client_id}.log.tmp`)} ${path.join(__dirname, `log/${client_id}.log`)}`,
-            `mv -f ${path.join(__dirname, `hash/${client_id}.sha256.tmp`)} ${path.join(__dirname, `hash/${client_id}.sha256`)}`
+            `mv -f ${path.join(__dirname, `tar/client_${client_id}.tar.tmp`)} ${path.join(__dirname, `tar/client_${client_id}.tar`)}`,
+            `mv -f ${path.join(__dirname, `log/client_${client_id}.log.tmp`)} ${path.join(__dirname, `log/client_${client_id}.log`)}`,
+            `mv -f ${path.join(__dirname, `hash/client_${client_id}.sha256.tmp`)} ${path.join(__dirname, `hash/client_${client_id}.sha256`)}`
         ];
 
         async.map(cmds, (cmd, cb) => {
@@ -265,7 +265,7 @@ class Builder {
      * @param callback {Builder~getTarCallback}
      */
     getTar(client_id, callback) {
-        fs.readFile( path.join(__dirname, `tar/${client_id}.tar`), (err, data) => {
+        fs.readFile( path.join(__dirname, `tar/client_${client_id}.tar`), (err, data) => {
             if(err) return callback(err);
             callback(null, data);
         });
@@ -284,14 +284,14 @@ class Builder {
      * @param callback {Builder~getLogCallback}
      */
     getLog(client_id, callback) {
-        fs.readFile( path.join(__dirname, `log/${client_id}.log`), (err, data) => {
+        fs.readFile( path.join(__dirname, `log/client_${client_id}.log`), (err, data) => {
             if(err) return callback(err);
             callback(null, data);
         });
     }
 
     getHash(client_id, callback) {
-        fs.readFile( path.join(__dirname, `hash/${client_id}.sha256`), (err, data) => {
+        fs.readFile( path.join(__dirname, `hash/client_${client_id}.sha256`), (err, data) => {
             if(err) return callback(err);
             callback(null, data);
         });
