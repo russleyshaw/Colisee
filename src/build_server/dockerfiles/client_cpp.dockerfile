@@ -1,4 +1,4 @@
-FROM js
+FROM base_cpp
 
 ARG REPO
 ARG HASH

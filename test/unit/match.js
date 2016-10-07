@@ -12,8 +12,8 @@ describe("Match", function() {
         Db.reset(function(err){
             should(err).not.be.ok();
             Db.queryLots([
-                [ "INSERT INTO match (clients,  reason, gamelog) VALUES ($1,  $2::text, $3::integer) RETURNING *", [[1,2],  "Random_reason_1", "1"]],
-                [ "INSERT INTO match (clients, reason, gamelog) VALUES ($1,  $2::text, $3::integer) RETURNING *", [[1,2],  "Random reason 2", "2"]]
+                [ "INSERT INTO match (clients,  reason, gamelog) VALUES ($1,  $2::text, $3::integer) RETURNING *", [[1,2],  "Random_reason_1", 1]],
+                [ "INSERT INTO match (clients, reason, gamelog) VALUES ($1,  $2::text, $3::integer) RETURNING *", [[1,2],  "Random reason 2", 2]]
             ], function(err) {
                 should(err).not.be.ok();
                 done();
@@ -23,12 +23,12 @@ describe("Match", function() {
 
     describe("getById", function() {
         it("should retrieve a match by id", function(done){
-            Match.getById(1, function(err, match){
+            Match.getById(1, (err, match) => {
                 should(err).not.be.ok();
 
                 should(match.id).be.equal(1);
                 should(match.reason).be.equal("Random_reason_1");
-                should(match.gamelog).be.equal("1");
+                should(match.gamelog).be.equal(1);
 
                 done();
             });
@@ -37,12 +37,17 @@ describe("Match", function() {
 
     describe("create", function() {
         it("should create a new match in the database", function(done) {
-            Match.create([1,2],  "Random reason 3", "3", function(err, match) {
+            var match = {
+                clients: [1, 2],
+                reason: "Random reason 3",
+                gamelog: 3
+            };
+            Match.create(match, (err, match) => {
                 should(err).not.be.ok();
 
                 should(match.id).equal(3);
                 should(match.reason).equal("Random reason 3");
-                should(match.gamelog).equal("3");
+                should(match.gamelog).equal(3);
 
                 done();
             });
@@ -50,11 +55,15 @@ describe("Match", function() {
         });
 
         it("should not create a match with an invalid gamelog", function(done) {
-            Match.create([1,2], "Random reason 4", "Random gamelog", function(err) {
+            var match = {
+                clients: [1, 2],
+                reason: "Random reason 4",
+                gamelog: "Random gamelog"
+            };
+            Match.create(match, (err) => {
                 should(err).be.ok();
                 done();
             });
-
         });
     });
 
