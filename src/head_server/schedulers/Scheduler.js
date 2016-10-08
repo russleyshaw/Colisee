@@ -1,4 +1,5 @@
 var Db = require("../../common/Db");
+var Match = require("../../common/Match");
 var knex = require("knex")({
     dialect: "pg"
 });
@@ -64,8 +65,14 @@ class Scheduler {
     scheduleOnce(callback){
         this.current_scheduler.genNext( (err, clientIDs) => {
             if(err)return callback(err);
-            this.sched_queue.push(clientIDs);
-            callback(null, clientIDs);
+            var match = {
+                clients:clientIDs
+            };
+            Match.create(match, (err) => {
+                if (err)return callback(err);
+                callback(null, clientIDs);
+            });
+
         });
     }
 
@@ -93,9 +100,11 @@ class Scheduler {
 
     //TODO: add a peekNext function that returns the next game without popping off. This will be useful for testing purposes
 
-    numScheduled(){
-        return this.sched_queue.length;
-    }
+    // numScheduled(){
+    //
+    //
+    //     return this.sched_queue.length;
+    // }
 
 
 
