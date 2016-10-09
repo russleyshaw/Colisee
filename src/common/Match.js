@@ -17,6 +17,12 @@ class Match {
         });
     }
 
+    /**
+     *
+     * @param match is a json
+     * @param callback
+     * @returns nothing
+     */
     static create(match, callback) {
         if(match.hasOwnProperty("id")) return callback("Cannot create a match with a given id");
         if(match.hasOwnProperty("created_time")) return callback("Cannot create a match with a given created_time");

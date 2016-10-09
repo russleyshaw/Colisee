@@ -23,6 +23,7 @@ class Scheduler {
         var sql = knex("match").where("status","scheduled").count("* as count").toString();
         Db.queryOnce(sql,[],function(err,result){
             if(err)return callback(err);
+            console.log(result.rows[0].count);
             callback(result.rows[0].count);
         });
     }

@@ -43,7 +43,7 @@ CREATE TABLE "client" (
     language client_language_enum,
 
     needs_build boolean NOT NULL DEFAULT false,
-    build_success boolean,
+    build_success boolean NOT NULL DEFAULT false,
     attempt_time timestamp,
     success_time timestamp,
     failure_time timestamp,
