@@ -21,7 +21,7 @@ CREATE TYPE schedule_type_enum AS ENUM (
 );
 
 CREATE TYPE match_status_enum AS ENUM (
-    'playing', 'scheduled', 'sending', 'finished', 'failed'
+    'playing', 'scheduled', 'sending', 'finished', 'failed', 'stopped'
 );
 
 CREATE TABLE "log" (
@@ -43,7 +43,7 @@ CREATE TABLE "client" (
     language client_language_enum,
 
     needs_build boolean NOT NULL DEFAULT false,
-    build_success boolean NOT NULL DEFAULT false,
+    build_success boolean NOT NULL DEFAULT true,
     attempt_time timestamp,
     success_time timestamp,
     failure_time timestamp,

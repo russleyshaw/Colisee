@@ -7,7 +7,7 @@ var knex = require("knex")({
 class Scheduler {
 
     constructor() {
-        this.MAX_SCHEDULED = 50;
+        this.MAX_SCHEDULED = 10;
         this.SCHEDULE_INTERVAL = 100;
 
         this.interval_ptr = undefined;
@@ -22,9 +22,8 @@ class Scheduler {
     getNumScheduled(callback){
         var sql = knex("match").where("status","scheduled").count("* as count").toString();
         Db.queryOnce(sql,[],function(err,result){
-            if(err)return callback(err);
-            console.log(result.rows[0].count);
-            callback(result.rows[0].count);
+            if(err)return console.error("queryOnce returns an error");//callback(err);
+            callback(null,result.rows[0].count);
         });
     }
 
@@ -35,6 +34,7 @@ class Scheduler {
     start(callback) {
         this.interval_ptr = setInterval(() => {
             this.getNumScheduled((err,numScheduled)=>{
+                if(err) return console.error("error returning the number scheduled",numScheduled);
                 if (numScheduled < this.MAX_SCHEDULED){
                     this.scheduleOnce(function(err){
                         if(err)return callback(err);
@@ -48,10 +48,18 @@ class Scheduler {
     /**
      * clears match objects for new tournament.
      */
-    stop() {
-        clearInterval(this.interval_ptr);
+    // stop(callback) {
+    //     var sql= knex.select().table(match).where("match_status_enum","scheduled").update("match_status_enum","stopped").toString;
+    //     Db.queryOnce(sql,args,(err){
+    //         if(err)return callback(err);
+    //
+    //     });
+    //     clearInterval(this.interval_ptr);
+    //     console.log(this.interval_ptr);
+    // }
+    stop(){
+        console.log("");
     }
-
     pause() {}
     resume() {}
 
