@@ -56,7 +56,6 @@ describe("Scheduler", function() {
                 });
                 setTimeout(function () {
                     sched.stop();
-
                     sched.getNumScheduled(function(err,numScheduled){
                         should(err).not.be.ok();
                         should( numScheduled).be.within(1,10);

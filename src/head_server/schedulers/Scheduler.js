@@ -3,6 +3,7 @@ var Match = require("../../common/Match");
 var knex = require("knex")({
     dialect: "pg"
 });
+var Logger = require("../../common/logger");
 
 class Scheduler {
 
@@ -50,12 +51,13 @@ class Scheduler {
      */
     // stop(callback) {
     //     var sql= knex.select().table(match).where("match_status_enum","scheduled").update("match_status_enum","stopped").toString;
-    //     Db.queryOnce(sql,args,(err){
+    //     Db.queryOnce(sql,args,(err)=>{
     //         if(err)return callback(err);
-    //
+    //         clearInterval(this.interval_ptr);
+    //         console.log(this.interval_ptr);
     //     });
-    //     clearInterval(this.interval_ptr);
-    //     console.log(this.interval_ptr);
+    //
+    //
     // }
     stop(){
         console.log("");
@@ -78,7 +80,18 @@ class Scheduler {
                 clients:clientIDs
             };
             Match.create(match, (err) => {
-                if (err)return callback(err);
+                if (err){
+
+                    var log = {
+                        message: "Match.create() error",
+                        severity: "error"
+                    };
+                    Logger.create(log, (err, log) => {
+                        if (err) console.error("Logger.create() error");
+                        callback(null, log);
+                    });
+                    return callback(err);
+                }
                 callback(null, clientIDs);
             });
 

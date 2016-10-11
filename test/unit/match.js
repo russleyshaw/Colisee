@@ -44,7 +44,6 @@ describe("Match", function() {
             };
             Match.create(match, (err, match) => {
                 should(err).not.be.ok();
-
                 should(match.id).equal(3);
                 should(match.reason).equal("Random reason 3");
                 should(match.gamelog).equal(3);
