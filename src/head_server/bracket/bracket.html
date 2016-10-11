@@ -1,40 +1,70 @@
+<!-- Official bracket visualizer, Quan   -->
+
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title>Colisee Bracket Visualizer</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script src="https://d3js.org/d3.v4.min.js"></script>
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+<html lang="en" xmlns:xlink="http://www.w3.org/1999/xlink">
 
-    </head>
-    <body>
-        <div id="data"></div>
-    </body>
-</html>
+<head>
+    <meta charset="utf-8">
+    <title>D3 Test</title>
+Gip
+    <!-- Load D3 libarary -->
+    <!-- Diagonal was removed from d3 v4. Use d3 v3 for now.-->
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+</head>
 
+<body>
 <script>
-    $(document).ready( function() {
-        $.get( "http://localhost:3000/bracket/testData/", function( data ) {
-            //$("#data").html(JSON.stringify(data["270"]));
+    var margin = {top: 140, right: 10, bottom: 140, left: 10},
+            width = 800,
+            height = 1440;
 
-            /*var bracketOne = Object.keys(data).filter(function(key){
-                if(data[key].previous_matches.length == 0)
-                    return data[key];
-            });*/
+    var canvas = d3.select("body").append("svg")
+            .attr("width", 1000)
+            .attr("height", 1440)
+            .append("g")
+            .attr("transform", "translate(50, 50)");
 
-            var bracketOne = [267, 268, 269, 270, 271, 272, 273];
-            var bracketTwo = [274, 275, 276, 277, 278];
-            var bracketThree = [279,280, 281, 282, 283];
-            var bracketFinal = [284, 285, 286, 287, 288, 289, 290];
-            console.log(bracketOne);
-            console.log(bracketTwo);
-            console.log(bracketThree);
-            console.log(bracketFinal);
+    var tree = d3.layout.tree()
+            .size([400, 400]);
 
-        });
+    d3.json("bracketOne.json", function(data) {
+        var nodes = tree.nodes(data);
+        var links = tree.links(nodes);
+
+        var node = canvas.selectAll(".node")
+                .data(nodes)
+                .enter()
+                .append("g")
+                .attr("class", "node")
+                .attr("transform", function (d) { return "translate(" + (width-d.y) + "," + d.x + ")";})
+                .append("svg:a")
+                .attr("xlink:href", function(d){return d.game_link;})
+
+        node.append("circle")
+                .attr("r", 10)
+                .attr("fill", "steelblue");
+
+        node.append("text")
+                .text(function (d) { return d.name; })
+
+
+        var diagonal = d3.svg.diagonal()
+                .projection(function (d) { return [(width-d.y), d.x]; })
+
+        canvas.selectAll(".link")
+                .data(links)
+                .enter()
+                .append("path")
+                .attr("class", "link")
+                .attr("fill", "none")
+                .attr("stroke", "#ADADAD")
+                .attr("d", diagonal);
+
+
     });
+
 
 </script>
 
+</body>
+</html>
