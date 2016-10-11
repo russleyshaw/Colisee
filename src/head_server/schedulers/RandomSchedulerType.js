@@ -10,6 +10,11 @@ class RandomSchedulerType extends BaseScheduler {
     constructor() {
         super();
     }
+
+    /**
+     * calls the Clients getRandom() and returns thier parsed IDs in an array.
+     * @param callback
+     */
     
     genNext(callback) {
         Client.getRandom(2, (err, clients) => {
@@ -24,7 +29,7 @@ class RandomSchedulerType extends BaseScheduler {
     }
 
     /**
-     * 
+     * creates a schedule of type "random" , with generated ID and status "stopped"
      * @param callback
      */
     schedDbId(callback){

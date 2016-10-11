@@ -30,7 +30,13 @@ class Scheduler {
 
 
     /**
+     * Starts a scheduler if MAX_SCHEDULED is not met.
      *
+     * Calls scheduleOnce at a specified Interval until MAX_SCHEDULED is reached.
+     *
+     * Calls schedDbId() to create a schedule in Db whose status ="stopped".
+     *
+     * Logs any errors in the log table as a message.
      * @param callback
      */
     start(callback) {
@@ -83,7 +89,10 @@ class Scheduler {
     }
 
     /**
-     *
+     * Schedules just (1) match by calling the genNext() to get 2 clients from db and
+     * creating a match using those IDs
+     * .
+     * Logs any errors in the Db log table as a message.
      * @param callback
      */
     scheduleOnce(callback){
@@ -112,7 +121,7 @@ class Scheduler {
     }
 
     /**
-     * Switch between different types of schedulers
+     * Switch between different types of schedulers.
      * @param scheduler_type
      */
     switchTo( scheduler_type ) {
@@ -120,7 +129,7 @@ class Scheduler {
     }
 
     /**
-     * Pop and return an individual match off the end of the schedule queue
+     * Needs to return an individual match whose created time is oldest.
      * @returns {*}
      */
     next(){
@@ -133,13 +142,6 @@ class Scheduler {
         }
     }
 
-    //TODO: add a peekNext function that returns the next game without popping off. This will be useful for testing purposes
-
-    // numScheduled(){
-    //
-    //
-    //     return this.sched_queue.length;
-    // }
 
 
 
