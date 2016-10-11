@@ -28,6 +28,7 @@ class Scheduler {
         });
     }
 
+
     /**
      *
      * @param callback
@@ -37,6 +38,18 @@ class Scheduler {
             this.getNumScheduled((err,numScheduled)=>{
                 if(err) return console.error("error returning the number scheduled",numScheduled);
                 if (numScheduled < this.MAX_SCHEDULED){
+                    this.current_scheduler.schedDbId((err) =>{
+                        if(err) {
+                            var log = {
+                                message: "schedDbId() error",
+                                severity: "error"
+                            };
+                            Logger.create(log, (err, log) => {
+                                if (err) console.error("Logger.create() error");
+                                callback(null, log);
+                            });
+                        }
+                    });
                     this.scheduleOnce(function(err){
                         if(err)return callback(err);
                     });
@@ -50,7 +63,7 @@ class Scheduler {
      * clears match objects for new tournament.
      */
     // stop(callback) {
-    //     var sql= knex.select().table(match).where("match_status_enum","scheduled").update("match_status_enum","stopped").toString;
+    //     var sql= knex.select().table(schedule).where("match_status_enum","scheduled").update("match_status_enum","stopped").toString;
     //     Db.queryOnce(sql,args,(err)=>{
     //         if(err)return callback(err);
     //         clearInterval(this.interval_ptr);

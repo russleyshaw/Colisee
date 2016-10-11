@@ -40,28 +40,9 @@ class Match {
         var sql = knex("match").insert(match, "*").toString();
         Db.queryOnce(sql, [], (err, result) => {
             if(err)return callback(err);
-            // if(err) {
-            //     var log = {
-            //         message: "Match.create() error",
-            //         severity: "error"
-            //     };
-            //     Logger.create(log, (err, log) => {
-            //         if (err) console.error("Logger.create() error");
-            //         callback(null, log);
-            //     });
-            //     return callback(err);
-            // }
             if(result.rowCount != 1) return callback("No match found.");
             callback(null, result.rows[0]);
         });
-        //var sql1 = knex("match").where("clients", match.clients).insert("status","scheduled").toString();
-        //console.log("this is sql1"+ sql1);
-        // Db.queryOnce(sql1, [], (err, result) => {
-        //     if (err) return callback(err);
-        //     if (result.rowCount != 1) return callback("No match found.");
-        //     console.log("This is matchIDs hopefully: " + match.clients);
-        //     callback(null, result.rows[0]);
-        // });
     }
 
     static updateById(id, fields, callback) {
