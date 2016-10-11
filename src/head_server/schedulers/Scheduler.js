@@ -19,7 +19,7 @@ class Scheduler {
 
     /**
      *
-     * @param callback
+     * @callback (err, numberScheduled)
      */
     getNumScheduled(callback){
         var sql = knex("match").where("status","scheduled").count("* as count").toString();
@@ -28,9 +28,7 @@ class Scheduler {
             callback(null,result.rows[0].count);
         });
     }
-    type(){
-        return this.current_scheduler;
-    }
+
     /**
      * creates a schedule of type "random" , with generated ID and status "stopped"
      * @param callback
@@ -149,7 +147,7 @@ class Scheduler {
     }
 
     /**
-     * Needs to return an individual match whose created time is oldest.
+     * Gets next scheduled match.
      * @returns {*}
      */
     next(){

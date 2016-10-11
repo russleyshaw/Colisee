@@ -21,7 +21,7 @@ class Match {
 
     /**
      *
-     * @param match is a json that is inserted into the Db match table to create match.
+     * @param {json} match holds a  ClientID array
      * @param callback
      * @returns nothing
      */
