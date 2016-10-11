@@ -18,6 +18,7 @@ describe("Logger",function() {
 
     describe("create", () => {
         it("should create a new log in the database", (done) => {
+            this.timeout(525);
             var log = {
                 message: "test1",
                 severity: "warn"
@@ -32,6 +33,7 @@ describe("Logger",function() {
         });
 
         it("should create a new log in the database", (done) => {
+            this.timeout(525);
             var log = {
                 message: "test2",
                 severity: "warn"
@@ -46,6 +48,7 @@ describe("Logger",function() {
         });
 
         it("should create a new log in the database", (done) => {
+            this.timeout(525);
             var log = {
                 message: "test3",
                 severity: "warn"
@@ -60,6 +63,7 @@ describe("Logger",function() {
         });
 
         it("should not create a log with an invalid severity", (done) => {
+            this.timeout(525);
             var log = {
                 message: "test4",
                 severity: "critical1"
@@ -71,6 +75,7 @@ describe("Logger",function() {
         });
 
         it("should not create a log with a given id", (done) => {
+            this.timeout(525);
             var log = {
                 id: 1,
                 message: "test4",
@@ -85,6 +90,7 @@ describe("Logger",function() {
 
     describe("updateById", function() {
         it("should update a log based on its id", function(done){
+            this.timeout(525);
             var fields = {
                 severity: "info",
             };
@@ -99,6 +105,7 @@ describe("Logger",function() {
 
     describe("getById", () => {
         it("should retrieve a log by id", (done) => {
+            this.timeout(525);
             Logger.getById(1, (err, log) => {
                 should(err).not.be.ok();
                 should(log.id).be.equal(1);
@@ -110,6 +117,7 @@ describe("Logger",function() {
 
     describe("get_latest", () => {
         it("should get most recent log", (done) => {
+            this.timeout(525);
             Logger.get_latest(1, (err, logs) => {
                 should(err).not.be.ok();
                 should(logs.length).be.equal(1);
@@ -117,8 +125,35 @@ describe("Logger",function() {
             });
         });
         it("should get latest specified number of logs", (done) =>{
+            this.timeout(525);
             Logger.get_latest(2, (err, logs) => {
                 should(err).not.be.ok();
+                should(logs.length).be.equal(2);
+                done();
+            });
+        });
+    });
+    describe("get_latest_with_severity", () => {
+        it("should get most recent log with at least specified severity level", (done) => {
+            this.timeout(525);
+            var severity = {
+                severity: "warn"
+            };
+            Logger.get_latest_with_severity(1,severity, (err, logs) => {
+                should(err).not.be.ok();
+                should(logs.severity).be.equal("warn");
+                should(logs.length).be.equal(1);
+                done();
+            });
+        });
+        it("should get latest specified number of logs with at least specified severity level", (done) =>{
+            this.timeout(525);
+            var severity = {
+                severity: "warn"
+            };
+            Logger.get_latest_with_severity(2,severity, (err, logs) => {
+                should(err).not.be.ok();
+                should(logs.severity).be.equal("warn");
                 should(logs.length).be.equal(2);
                 done();
             });

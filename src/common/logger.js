@@ -87,6 +87,22 @@ class Logger {
         });
         //TODO: latest() should get the 10 latest logs, based on creation timeim ba
     }
+
+    /**
+     * Retrieve <code>limit</code> latest number of logs
+     * @param limit {number} Number of latest logs to select
+     * @param severity {enum}
+     * @param callback
+     */
+    static get_latest_with_severity(limit, severity, callback) {
+        var sql = knex("log").where("severity", severity).orderBy("created_time").limit(limit).toString();
+        Db.queryOnce(sql, [], function(err, result) {
+            if(err) return callback(err);
+            if(result.rowCount != limit) return callback("Inserted rows not fully returned");
+            callback(null, result.rows);
+        });
+        //TODO: latest() should get the 10 latest logs, based on creation timeim ba
+    }
 }
 
 
