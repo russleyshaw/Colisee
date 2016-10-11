@@ -13,8 +13,7 @@ class Scheduler {
 
         this.interval_ptr = undefined;
         this.current_scheduler = undefined;
-        this.sched_queue = new Array();
-        this.schedID = 0;
+        this.schedID = null;
 
     }
 
@@ -36,28 +35,15 @@ class Scheduler {
      * creates a schedule of type "random" , with generated ID and status "stopped"
      * @param callback
      */
-    schedDbId(callback){
-        if(this.current_scheduler == "RandomSchedulerType") {
-            var sched = {
-                type: this.current_scheduler.getType()
-            };
-            var sql = knex("schedule").insert(sched,"*").toString();
-            Db.queryOnce(sql,[],function(err,scheduler){
-                if(err)return console.error("queryOnce in schedDbId returns an error");
-                callback(null,scheduler.id);
-            });
-        }
-        if(this.current_scheduler == "SingleEmliminationSchedulerType") {
-            var sched1 = {
-                type: this.current_scheduler.getType()
-            };
-            var sql1 = knex("schedule").insert(sched1,"*").toString();
-            Db.queryOnce(sql1,[],function(err,scheduler){
-                if(err)return console.error("queryOnce in schedDbId returns an error");
-                callback(null,scheduler.id);
-            });
-        }
-
+    createSchedule(callback){
+        var sched1 = {
+            type: this.current_scheduler.getType()
+        };
+        var sql1 = knex("schedule").insert(sched1,"*").toString();
+        Db.queryOnce(sql1,[],function(err,scheduler){
+            if(err)return console.error("queryOnce in schedDbId returns an error");
+            callback(null,scheduler.id);
+        });
     }
 
     /**
@@ -71,7 +57,7 @@ class Scheduler {
      * @param callback
      */
     start() {
-        this.schedDbId((err,scheduleID) =>{
+        this.createSchedule((err,scheduleID) =>{
             if(err) {
                 var log = {
                     message: "schedDbId() error",
@@ -167,13 +153,13 @@ class Scheduler {
      * @returns {*}
      */
     next(){
-        if( this.sched_queue.length > 0) {
-            //TODO: pop off queue
-            return this.sched_queue[this.sched_queue.length-1];
-        }
-        else {
-            return null;
-        }
+        // if( this.sched_queue.length > 0) {
+        //     //TODO: pop off queue
+        //     return this.sched_queue[this.sched_queue.length-1];
+        // }
+        // else {
+        //     return null;
+        // }
     }
 
 
