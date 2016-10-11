@@ -23,6 +23,9 @@ class RandomSchedulerType extends BaseScheduler {
         });
 
     }
+    getType(){
+        return "random";
+    }
 }
 
 

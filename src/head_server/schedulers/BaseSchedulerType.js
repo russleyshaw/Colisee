@@ -7,6 +7,9 @@ class BaseSchedulerType{
      * Generate the next match to be played
      */
     genNext() {}
+    getType(){
+        return "invalid";
+    }
 
 }
 

@@ -10,7 +10,9 @@ class SingleEliminationSchedulerType extends BaseScheduler {
     constructor() {
         super();
     }
-
+    getType(){
+        return "single elimination";
+    }
 }
 
 

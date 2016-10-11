@@ -29,6 +29,9 @@ class Scheduler {
             callback(null,result.rows[0].count);
         });
     }
+    type(){
+        return this.current_scheduler;
+    }
     /**
      * creates a schedule of type "random" , with generated ID and status "stopped"
      * @param callback
@@ -36,7 +39,7 @@ class Scheduler {
     schedDbId(callback){
         if(this.current_scheduler == "RandomSchedulerType") {
             var sched = {
-                type: "random"
+                type: this.current_scheduler.getType()
             };
             var sql = knex("schedule").insert(sched,"*").toString();
             Db.queryOnce(sql,[],function(err,scheduler){
@@ -46,7 +49,7 @@ class Scheduler {
         }
         if(this.current_scheduler == "SingleEmliminationSchedulerType") {
             var sched1 = {
-                type: "single_elimination"
+                type: this.current_scheduler.getType()
             };
             var sql1 = knex("schedule").insert(sched1,"*").toString();
             Db.queryOnce(sql1,[],function(err,scheduler){
@@ -156,6 +159,7 @@ class Scheduler {
      */
     switchTo( scheduler_type ) {
         this.current_scheduler = scheduler_type;
+
     }
 
     /**
