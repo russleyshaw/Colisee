@@ -14,6 +14,8 @@ class Scheduler {
         this.interval_ptr = undefined;
         this.current_scheduler = undefined;
         this.sched_queue = new Array();
+        this.schedID = 0;
+
     }
 
     /**
@@ -27,7 +29,33 @@ class Scheduler {
             callback(null,result.rows[0].count);
         });
     }
+    /**
+     * creates a schedule of type "random" , with generated ID and status "stopped"
+     * @param callback
+     */
+    schedDbId(callback){
+        if(this.current_scheduler == "RandomSchedulerType") {
+            var sched = {
+                type: "random"
+            };
+            var sql = knex("schedule").insert(sched,"*").toString();
+            Db.queryOnce(sql,[],function(err,scheduler){
+                if(err)return console.error("queryOnce in schedDbId returns an error");
+                callback(null,scheduler.id);
+            });
+        }
+        if(this.current_scheduler == "SingleEmliminationSchedulerType") {
+            var sched1 = {
+                type: "single_elimination"
+            };
+            var sql1 = knex("schedule").insert(sched1,"*").toString();
+            Db.queryOnce(sql1,[],function(err,scheduler){
+                if(err)return console.error("queryOnce in schedDbId returns an error");
+                callback(null,scheduler.id);
+            });
+        }
 
+    }
 
     /**
      * Starts a scheduler if MAX_SCHEDULED is not met.
@@ -39,25 +67,27 @@ class Scheduler {
      * Logs any errors in the log table as a message.
      * @param callback
      */
-    start(callback) {
+    start() {
+        this.schedDbId((err,scheduleID) =>{
+            if(err) {
+                var log = {
+                    message: "schedDbId() error",
+                    severity: "error"
+                };
+                Logger.create(log, (err) => {
+                    if (err) console.error("Logger.create() error");
+                    //callback(null, log);
+                });
+                this.schedId= scheduleID;
+            }
+        });
         this.interval_ptr = setInterval(() => {
             this.getNumScheduled((err,numScheduled)=>{
                 if(err) return console.error("error returning the number scheduled",numScheduled);
                 if (numScheduled < this.MAX_SCHEDULED){
-                    this.current_scheduler.schedDbId((err) =>{
-                        if(err) {
-                            var log = {
-                                message: "schedDbId() error",
-                                severity: "error"
-                            };
-                            Logger.create(log, (err, log) => {
-                                if (err) console.error("Logger.create() error");
-                                callback(null, log);
-                            });
-                        }
-                    });
+
                     this.scheduleOnce(function(err){
-                        if(err)return callback(err);
+                        if(err)return console.error("Error calling scheduleOnce().");
                     });
                 }
             });
