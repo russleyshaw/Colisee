@@ -8,7 +8,7 @@ var hb = HandlebarLoader({
     "index": path.join(__dirname, "index.html")
 });
 
-var clientApi= require("./client/api.js");
+var clientApi = require("./client/api.js");
 
 var app = express();
 

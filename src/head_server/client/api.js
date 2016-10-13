@@ -4,18 +4,16 @@ var path = require("path");
 var Client = require("../../common/Client");
 var HandlebarLoader = require("../../common/HandlebarLoader");
 
-var hb = HandlebarLoader({
-    "index": path.join(__dirname, "index.html")
-});
 
 var router = express.Router();
 
+router.use("/client/", express.static(path.join(__dirname, "static/index.html")));
 router.use("/client/static/", express.static(path.join(__dirname, "static")));
 
-router.get("/client/", (req, res) => {
-    res.send(hb["index"]());
-});
+/////////////WEB
 
+
+////////////API
 router.get("/api/v2/client/", (req, res) => {
     Client.getAll((err, clients) => {
         if(err) return res.sendStatus(404);

@@ -126,6 +126,7 @@ class CreateClientGroup extends React.Component {
         };
 
         this.handleCreateClient = this.handleCreateClient.bind(this);
+        this.handleChangedInput = this.handleChangedInput.bind(this);
     }
     render() {
         return(
@@ -141,10 +142,21 @@ class CreateClientGroup extends React.Component {
     }
 
     handleChangedInput(e) {
+        var val = e.target.value == null ? "{}" : e.target.value;
+        this.setState({input: val});
     }
 
     handleCreateClient(e) {
-
+        var body = JSON.parse( this.state.input );
+        var self = this;
+        $.post("api/v2/client/", body, function(newClient){
+            var out = Object.keys(newClient).map(function(key){
+                return <span><strong>{key}</strong> {JSON.stringify(newClient[key])}<br/></span>;
+            });
+            self.setState({output: out});
+        }).fail(function(){
+            self.setState({output: "Failed to create client!"});
+        });
     }
 }
 
