@@ -2,8 +2,6 @@ var express = require("express");
 var path = require("path");
 
 var Client = require("../../common/Client");
-var HandlebarLoader = require("../../common/HandlebarLoader");
-
 
 var router = express.Router();
 

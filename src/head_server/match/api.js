@@ -2,8 +2,6 @@ var express = require("express");
 var path = require("path");
 
 var Match = require("../../common/Match");
-var HandlebarLoader = require("../../common/HandlebarLoader");
-
 
 var router = express.Router();
 
