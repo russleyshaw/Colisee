@@ -9,6 +9,7 @@ var hb = HandlebarLoader({
 });
 
 var clientApi = require("./client/api.js");
+var matchApi = require("./match/api.js");
 
 var app = express();
 
@@ -27,6 +28,7 @@ app.use(function (req, res, next) {
 });
 
 app.use("/", clientApi);
+app.use("/", matchApi);
 
 app.get("/", (req, res) => {
     res.send(hb["index"]());
