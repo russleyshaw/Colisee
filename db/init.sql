@@ -28,7 +28,7 @@ CREATE TABLE "log" (
     id serial NOT NULL PRIMARY KEY,
     message character varying NOT NULL,
     location character varying,
-    severity log_severity_enum NOT NULL,
+    severity log_severity_enum NOT NULL DEFAULT 'debug',
 
     created_time timestamp NOT NULL DEFAULT now(),
     modified_time timestamp NOT NULL DEFAULT now()

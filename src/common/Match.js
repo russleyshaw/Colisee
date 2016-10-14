@@ -7,6 +7,16 @@ var knex = require("knex")({
  * Class to interface with match table in database
  */
 class Match {
+
+    static getAll(callback) {
+        var sql = knex("match").toString();
+        Db.queryOnce(sql, [], function (err, result) {
+            if(err) return callback(err);
+
+            callback(null, result.rows);
+        });
+    }
+
     static getById(match_id, callback) {
         var sql = knex("match").where("id", match_id).toString();
         Db.queryOnce(sql, [], function(err, result){
