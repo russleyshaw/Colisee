@@ -15,27 +15,14 @@
     "test": "npm-run-all lint test:*",
     "test:unit": "NODE_ENV=test mocha --recursive test/unit",
     "test:integration": "NODE_ENV=test mocha --recursive test/integration",
-    "db:setup": "npm-run-all db:reset testdb:reset",
-    "db:reset": "npm-run-all db:rm db:build db:run db:start",
-    "db:rm": "(docker stop colisee_db || true) && (docker rm --force colisee_db || true) && (docker rmi --force colisee_image || true)",
-    "db:build": "docker build -f db/db.dockerfile -t colisee_image db/",
-    "db:run": "docker run --name colisee_db -d -p 5432:5432 colisee_image",
-    "db:start": "docker start colisee_db",
-    "testdb:reset": "npm-run-all testdb:rm testdb:build testdb:run testdb:start",
-    "testdb:rm": "(docker stop colisee_test_db || true) && (docker rm --force colisee_test_db || true) && (docker rmi --force colisee_test_image || true)",
-    "testdb:build": "docker build -f db/test_db.dockerfile -t colisee_test_image db/",
-    "testdb:run": "docker run --name colisee_test_db -d -p 5433:5432 colisee_test_image",
-    "testdb:start": "docker start colisee_test_db",
-    "serve": "npm run lint && npm-run-all --parallel serve:*",
-    "serve:head": "node src/head_server/main.js",
-    "serve:build": "node src/build_server/main.js",
-    "serve:gamelog": "node src/gamelog_server/main.js",
-    "serve:play": "node src/play_server/main.js 0",
-    "serve:play1": "node src/play_server/main.js 1",
-    "serve:play2": "node src/play_server/main.js 2",
-    "mock": "npm run lint && npm-run-all --parallel mock:*",
-    "mock:vis": "node src/mock/visualizer/main.js",
-    "mock:web:": "node src/mock/webserver/main.js"
+
+    "setup": "npm-run-all setup:*",
+    "setup:npm": "npm install",
+    "setup:bower": "bower install",
+    "setup:db": "./db/setupDevelopmentDb.sh",
+
+    "run:head": "node src/head_server/main.js",
+    "watch:head": "nodemon --watch src/head_server/ --ext html,js,jsx --exec 'npm run run:head'"
   },
   "repository": {
     "type": "git",
@@ -49,12 +36,15 @@
   "homepage": "https://github.com/russleyshaw/Colisee#readme",
   "devDependencies": {
     "apidoc": "^0.16.1",
+    "bower": "^1.7.9",
     "eslint": "^3.5.0",
     "jsdoc": "^3.4.0",
     "minami": "^1.1.1",
     "mocha": "^3.0.2",
+    "nodemon": "^1.11.0",
     "npm-run-all": "^3.0.0",
-    "should": "^11.1.0"
+    "should": "^11.1.0",
+    "watch": "^1.0.1"
   },
   "dependencies": {
     "async": "^2.0.1",

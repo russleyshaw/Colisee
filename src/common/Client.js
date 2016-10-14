@@ -8,6 +8,15 @@ var knex = require("knex")({
  */
 class Client {
 
+    static getAll(callback) {
+        var sql = knex("client").toString();
+        Db.queryOnce(sql, [], function (err, result) {
+            if(err) return callback(err);
+
+            callback(null, result.rows);
+        });
+    }
+
     static getById(client_id, callback) {
         var sql = knex("client").where("id", client_id).toString();
         Db.queryOnce(sql, [], function (err, result) {

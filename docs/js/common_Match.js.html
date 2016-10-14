@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>gamelog_server/Gamelogger.js - Documentation</title>
+    <title>common/Match.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,7 +28,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">gamelog_server/Gamelogger.js</h1>
+    <h1 class="page-title">common/Match.js</h1>
     
 
     
@@ -38,76 +38,78 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>var fs = require("fs");
-var fse = require("fs-extra");
-var path = require("path");
+            <pre class="prettyprint source linenums"><code>var Db = require("./Db");
+var knex = require("knex")({
+    "dialect": "pg"
+});
 
-class Gamelogger {
+/**
+ * Class to interface with match table in database
+ */
+class Match {
 
-    /**
-     * Initializes a new Gamelogger
-     */
-    constructor() {
-        this.last_id = 0;
-    }
-
-    /**
-     * @callback Gamelogger~resetCallback
-     * @param err
-     */
-
-    /**
-     * Resets the Gamelogger by deleting all saved gamelogs and resetting id
-     * @param {Gamelogger~resetCallback} callback
-     */
-    reset(callback){
-        this.last_id = 0;
-        fse.remove( path.join(__dirname, "/gamelogs/*.glog"), (err) => {
+    static getAll(callback) {
+        var sql = knex("match").toString();
+        Db.queryOnce(sql, [], function (err, result) {
             if(err) return callback(err);
-            callback();
+
+            callback(null, result.rows);
         });
     }
 
-    /**
-     * @callback Gamelogger~saveCallback
-     * @param err
-     * @param id {number} The id of the saved gamelog
-     */
-
-    /**
-     * Saves a gamelog to the system
-     * @param glog_data {object}
-     * @param {Gamelogger~saveCallback} callback
-     */
-    save(glog_data, callback){
-        this.last_id++;
-        var curr_id = this.last_id;
-        fs.writeFile( path.join(__dirname, `gamelogs/${curr_id}.glog`), glog_data, (err) => {
+    static getById(match_id, callback) {
+        var sql = knex("match").where("id", match_id).toString();
+        Db.queryOnce(sql, [], function(err, result){
             if(err) return callback(err);
-            callback(null, curr_id);
+            if(result.rows.length != 1) return callback("No match found.");
+
+            callback(null, result.rows[0]);
         });
     }
 
-    /**
-     * @callback Gamelogger~loadCallback
-     * @param err
-     * @param data Contents of the requested gamelog
-     */
+    static create(match, callback) {
+        if(match.hasOwnProperty("id")) return callback("Cannot create a match with a given id");
+        if(match.hasOwnProperty("created_time")) return callback("Cannot create a match with a given created_time");
+        if(match.hasOwnProperty("modified_time")) return callback("Cannot create a match with a given modified_time");
 
-    /**
-     * Retrieves a saved gamelog
-     * @param id {number} The id of the requested gamelog
-     * @param {Gamelogger~loadCallback} callback
-     */
-    load(id, callback){
-        fs.readFile( path.join(__dirname, `gamelogs/${id}.glog`), (err, data) => {
+        if(match.hasOwnProperty("clients")) {
+            match.clients = `{${match.clients.toString()}}`;
+        }
+
+        match.created_time = "now()";
+        match.modified_time = "now()";
+
+        var sql = knex("match").insert(match, "*").toString();
+        Db.queryOnce(sql, [], (err, result) => {
             if(err) return callback(err);
-            callback(null, data);
+            if(result.rowCount != 1) return callback("No match found.");
+            callback(null, result.rows[0]);
+        });
+    }
+
+    static updateById(id, fields, callback) {
+        if(fields.hasOwnProperty("id")) return callback("Cannot update a match id");
+        if(fields.hasOwnProperty("created_time")) return callback("Cannot update a match created_time");
+        if(fields.hasOwnProperty("modified_time")) return callback("Cannot update a match modified_time");
+
+        if(fields.hasOwnProperty("clients")) {
+            fields.clients = `{${fields.clients.toString()}}`;
+        }
+
+        fields.modified_time = "now()";
+
+        var sql = knex("match").where("id", id).update(fields).toString();
+        Db.queryOnce(sql, [], function(err, result){
+            if(err) return callback(err);
+            if(result.rows.length != 1) return callback("No match found.");
+
+            callback(null, result.rows[0]);
         });
     }
 }
 
-module.exports = Gamelogger;
+module.exports = Match;
+
 </code></pre>
         </article>
     </section>

@@ -1,78 +1,41 @@
 var express = require("express");
 var config = require("config");
 var body_parser = require("body-parser");
+var path = require("path");
+var HandlebarLoader = require("../common/HandlebarLoader");
 
-var clientApi= require("./client/api.js");
+var hb = HandlebarLoader({
+    "index": path.join(__dirname, "index.html")
+});
 
-var statusApp = require("./status/status.js");
-var bracketApp = require("./bracket/bracket.js");
-var logApp = require("./log/log.js");
-var schedApp = require("./schedulers/api.js");
+var clientApi = require("./client/api");
+var matchApi = require("./match/api");
+var logApi = require("./log/api");
 
+var app = express();
 
-(function() {
-    var currentVisGame = 1;
+app.use("/lib/bootstrap", express.static(path.join(__dirname, "../../bower_components/bootstrap/dist")));
+app.use("/lib/jquery", express.static(path.join(__dirname, "../../bower_components/jquery/dist")));
+app.use("/lib/react", express.static(path.join(__dirname, "../../bower_components/react")));
+app.use("/lib/babel", express.static(path.join(__dirname, "../../bower_components/babel")));
 
-    var app = express();
+app.use( body_parser.json() );
+app.use( body_parser.urlencoded({ extended: true }) );
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept");
+    next();
+});
 
-    app.use( body_parser.json() );
-    app.use( body_parser.urlencoded({ extended: true }) );
-    app.use(function (req, res, next) {
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
-        res.header("Access-Control-Allow-Headers", "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept");
-        next();
-    });
+app.use("/", clientApi);
+app.use("/", matchApi);
+app.use("/", logApi);
 
-    app.use("/", clientApi);
-    app.use("/", statusApp);
-    app.use("/", bracketApp);
-    app.use("/", logApp);
-    app.use("/", schedApp);
+app.get("/", (req, res) => {
+    res.send(hb["index"]());
+});
 
-    app.get("/api/v1/vis/next", function (req, res) {
-
-        var body = {
-            "gamelog": currentVisGame
-        };
-        currentVisGame++;
-
-        res.send(JSON.stringify(body));
-    });
-
-// WEB SERVER API
-    app.get("/api/v1/web/client", function (req, res) {
-        var body = {
-            "name": "a",
-            "tag": "a",
-            "repo": "REPO",
-            "hash": "HASH",
-            "embargoed": false,
-            "embargo_reason": "EMBARGO_REASON",
-            "eligible": true,
-            "rating": 10,
-            "missing": false,
-            "language": "python",
-            "last_game_played": 0
-        };
-        res.send(JSON.stringify(body));
-    });
-
-    app.get("/api/v1/web/game", function (req, res) {
-        var body = {
-            "players": ["a", "b"],
-            "winners": ["a"],
-            "losers": ["b"],
-            "reason": "Player A was faster",
-            "visualized": false,
-            "completion_time": 0,
-            "status": "running",
-            "gamelog": "1.glog",
-            "interestingness": 0
-        };
-        res.send(JSON.stringify(body));
-    });
-
-    console.log("Head Server listening on port " + config.head_server.port);
-    app.listen(config.head_server.port);
-})();
+app.listen(config.head_server.port, () => {
+    console.log(`Head server listening on port ${config.head_server.port}`);
+});

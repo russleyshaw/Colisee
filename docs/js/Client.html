@@ -23,7 +23,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Builder.html">Builder</a><ul class='methods'><li data-type='method'><a href="Builder.html#build">build</a></li><li data-type='method'><a href="Builder.html#getLog">getLog</a></li><li data-type='method'><a href="Builder.html#getTar">getTar</a></li><li data-type='method'><a href="Builder.html#init">init</a></li></ul></li><li><a href="Client.html">Client</a><ul class='methods'><li data-type='method'><a href="Client.html#.create">create</a></li></ul></li><li><a href="Db.html">Db</a><ul class='methods'><li data-type='method'><a href="Db.html#.newPgClient">newPgClient</a></li><li data-type='method'><a href="Db.html#.queryLots">queryLots</a></li><li data-type='method'><a href="Db.html#.queryLotsSeries">queryLotsSeries</a></li><li data-type='method'><a href="Db.html#.queryOnce">queryOnce</a></li><li data-type='method'><a href="Db.html#.reset">reset</a></li></ul></li><li><a href="Gamelogger.html">Gamelogger</a><ul class='methods'><li data-type='method'><a href="Gamelogger.html#load">load</a></li><li data-type='method'><a href="Gamelogger.html#reset">reset</a></li><li data-type='method'><a href="Gamelogger.html#save">save</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="Builder.html">Builder</a><ul class='methods'><li data-type='method'><a href="Builder.html#build">build</a></li><li data-type='method'><a href="Builder.html#getLog">getLog</a></li><li data-type='method'><a href="Builder.html#getTar">getTar</a></li><li data-type='method'><a href="Builder.html#init">init</a></li><li data-type='method'><a href="Builder.html#start">start</a></li><li data-type='method'><a href="Builder.html#stop">stop</a></li></ul></li><li><a href="Client.html">Client</a><ul class='methods'><li data-type='method'><a href="Client.html#.create">create</a></li><li data-type='method'><a href="Client.html#.getRandom">getRandom</a></li><li data-type='method'><a href="Client.html#.updateById">updateById</a></li></ul></li><li><a href="ClientListPanel.html">ClientListPanel</a></li><li><a href="ClientListPanelContents.html">ClientListPanelContents</a></li><li><a href="ClientListPanelItem.html">ClientListPanelItem</a></li><li><a href="CreateClientGroup.html">CreateClientGroup</a></li><li><a href="CreateMatchGroup.html">CreateMatchGroup</a></li><li><a href="Db.html">Db</a><ul class='methods'><li data-type='method'><a href="Db.html#.newPgClient">newPgClient</a></li><li data-type='method'><a href="Db.html#.queryLots">queryLots</a></li><li data-type='method'><a href="Db.html#.queryLotsSeries">queryLotsSeries</a></li><li data-type='method'><a href="Db.html#.queryOnce">queryOnce</a></li><li data-type='method'><a href="Db.html#.reset">reset</a></li></ul></li><li><a href="Gamelogger.html">Gamelogger</a><ul class='methods'><li data-type='method'><a href="Gamelogger.html#load">load</a></li><li data-type='method'><a href="Gamelogger.html#reset">reset</a></li><li data-type='method'><a href="Gamelogger.html#save">save</a></li></ul></li><li><a href="GetClientGroup.html">GetClientGroup</a></li><li><a href="GetMatchGroup.html">GetMatchGroup</a></li><li><a href="Logger.html">Logger</a><ul class='methods'><li data-type='method'><a href="Logger.html#.create">create</a></li><li data-type='method'><a href="Logger.html#.getLatest">getLatest</a></li><li data-type='method'><a href="Logger.html#.updateById">updateById</a></li></ul></li><li><a href="Match.html">Match</a></li><li><a href="MatchListPanel.html">MatchListPanel</a></li><li><a href="MatchListPanelContents.html">MatchListPanelContents</a></li><li><a href="MatchListPanelItem.html">MatchListPanelItem</a></li><li><a href="Player.html">Player</a><ul class='methods'><li data-type='method'><a href="Player.html#init">init</a></li></ul></li></ul>
 </nav>
 
 <div id="main">
@@ -105,7 +105,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="common_Client.js.html">common/Client.js</a>, <a href="common_Client.js.html#line6">line 6</a>
+        <a href="common_Client.js.html">common/Client.js</a>, <a href="common_Client.js.html#line9">line 9</a>
     </li></ul></dd>
     
 
@@ -154,14 +154,14 @@
 
     
 
-    <h4 class="name" id=".create"><span class="type-signature">(static) </span>create<span class="signature">(name, repo, hash, language, callback)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".create"><span class="type-signature">(static) </span>create<span class="signature">(client, callback)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Create a client with the given parameters
+    Creates a client from the given object
 </div>
 
 
@@ -197,64 +197,15 @@
 
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>client</code></td>
             
 
             <td class="type">
             
-            </td>
+                
+<span class="param-type">Object</span>
 
-            
 
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>repo</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>hash</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>language</code></td>
-            
-
-            <td class="type">
             
             </td>
 
@@ -274,13 +225,18 @@
 
             <td class="type">
             
+                
+<span class="param-type"><a href="Client.html#~createCallback">Client~createCallback</a></span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last">function(err, created_client)</td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -321,7 +277,333 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="common_Client.js.html">common/Client.js</a>, <a href="common_Client.js.html#line44">line 44</a>
+        <a href="common_Client.js.html">common/Client.js</a>, <a href="common_Client.js.html#line65">line 65</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".getRandom"><span class="type-signature">(static) </span>getRandom<span class="signature">(limit, callback)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Retrieve <code>limit</code> random number of clients
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>limit</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Number of random clients (without replacement) to select</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="common_Client.js.html">common/Client.js</a>, <a href="common_Client.js.html#line45">line 45</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".updateById"><span class="type-signature">(static) </span>updateById<span class="signature">(id, fields, callback)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Update client given the id and fields to update
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Client database id</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fields</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">JSON of fields to update</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Client.html#~updateByIdCallback">Client~updateByIdCallback</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="common_Client.js.html">common/Client.js</a>, <a href="common_Client.js.html#line93">line 93</a>
     </li></ul></dd>
     
 
@@ -351,6 +633,300 @@
     
 
     
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        
+                
+
+    
+
+    <h4 class="name" id="~createCallback"><span class="type-signature"></span>createCallback<span class="signature">(err, client)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>err</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>client</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">newly created client</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="common_Client.js.html">common/Client.js</a>, <a href="common_Client.js.html#line54">line 54</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+    
+
+    <h4 class="name" id="~updateByIdCallback"><span class="type-signature"></span>updateByIdCallback<span class="signature">(err, client)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>err</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>client</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Updated client</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="common_Client.js.html">common/Client.js</a>, <a href="common_Client.js.html#line81">line 81</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+    
 
     
 </article>
@@ -365,7 +941,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Wed Sep 28 2016 01:44:22 GMT-0500 (CDT) using the Minami theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Thu Oct 13 2016 21:08:13 GMT-0500 (CDT) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
