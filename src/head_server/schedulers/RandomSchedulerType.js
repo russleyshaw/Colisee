@@ -10,7 +10,7 @@ class RandomSchedulerType extends BaseScheduler {
 
     /**
      * calls the Clients getRandom() and returns thier parsed IDs in an array.
-     * @callback (err,ClientID array)
+     * @callback RandomSchedulerType ~genNextCallback
      */
     
     genNext(callback) {

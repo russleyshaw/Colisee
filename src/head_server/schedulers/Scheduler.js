@@ -19,7 +19,7 @@ class Scheduler {
 
     /**
      *
-     * @callback (err, numberScheduled)
+     * @callback Scheduler ~getNumScheduledCallback
      */
     getNumScheduled(callback){
         var sql = knex("match").where("status","scheduled").count("* as count").toString();
@@ -31,7 +31,7 @@ class Scheduler {
 
     /**
      * creates a schedule of type "random" , with generated ID and status "stopped"
-     * @param callback
+     * @callback Scheduler ~createScheduleCallback
      */
     createSchedule(callback){
         var sched1 = {
