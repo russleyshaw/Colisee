@@ -22,7 +22,7 @@
     "setup:db": "./db/setupDevelopmentDb.sh",
 
     "run:head": "node src/head_server/main.js",
-    "watch:head": "nodemon --watch src/head_server/ --ext html,js --exec 'npm run run:head'"
+    "watch:head": "nodemon --watch src/head_server/ --ext html,js,jsx --exec 'npm run run:head'"
   },
   "repository": {
     "type": "git",

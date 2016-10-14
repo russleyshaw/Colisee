@@ -88,7 +88,7 @@ class Logger {
     static getLatest(options, callback) {
         if(!options.hasOwnProperty("limit")) options.limit = 10;
         if(!options.hasOwnProperty("severity")) options.severity = "debug";
-        var sql = knex("log").where("severity", ">=", options.severity).orderBy("created_time").limit(options.limit).toString();
+        var sql = knex("log").where("severity", ">=", options.severity).orderBy("created_time", "desc").limit(options.limit).toString();
         Db.queryOnce(sql, [], function(err, result) {
             if(err) return callback(err);
             if(result.rowCount > options.limit) return callback("Returned too many logs");
