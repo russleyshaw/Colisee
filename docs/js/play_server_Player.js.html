@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>head_server/schedulers/Scheduler.js - Documentation</title>
+    <title>play_server/Player.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,7 +28,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">head_server/schedulers/Scheduler.js</h1>
+    <h1 class="page-title">play_server/Player.js</h1>
     
 
     
@@ -38,82 +38,75 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>
+            <pre class="prettyprint source linenums"><code>var request = require("request");
+var config = require("config");
+var child_process = require("child_process");
+var path = require("path");
 
-class Scheduler {
+class Player {
 
-    constructor() {
-        this.MAX_SCHEDULED = 50;
-        this.SCHEDULE_INTERVAL = 100;
-
-        this.interval_ptr = undefined;
-        this.current_scheduler = undefined;
-        this.sched_queue = new Array();
-    }
-
-    start() {
-        this.interval_ptr = setInterval(() => {
-            this.scheduleOnce(function(err){
-                if(err) return console.log(`Error: ${err}`);
-            });
-        }, this.SCHEDULE_INTERVAL);
-    }
-
-    stop() {
-        clearInterval(this.interval_ptr);
-    }
-
-    pause() {}
-    resume() {}
-
-    purge() {
-        //TODO: delete all entries in schedule queue
+    /**
+     * Creates a new player
+     * @param id
+     * @param port
+     */
+    constructor(id, port) {
+        this.id = (typeof id !== "undefined") ? id : 0;
+        this.port = (typeof port !== "undefined") ? port : config.play_server.ports[this.id];
     }
 
     /**
-     * Schedule an individual game into the schedule queue
+     * @callback Player~initCallback
+     * @param err
      */
-    scheduleOnce(callback){
-        this.current_scheduler.genNext( (err, clientIDs) => {
-            if(err)return callback(err);
-            this.sched_queue.push(clientIDs);
-            callback(null, clientIDs);
+
+    /**
+     *
+     * @param callback {Player~initCallback}
+     */
+    init(callback) {
+        var repo = config.cerveau_repo;
+        var hash = config.cerveau_hash;
+
+        var cmd = `docker build -t player_image_${this.id} --build-arg REPO=${repo} --build-arg HASH=${hash} -f ${path.join(__dirname, "play.dockerfile")} .`;
+        console.log(`Player - Running - ${cmd}`);
+        child_process.exec(cmd, (err) => {
+            console.log(`Player - Done - ${cmd}`);
+            if(err) return callback(err);
+
         });
     }
 
-    /**
-     * Switch between different types of schedulers
-     * @param scheduler_type
-     */
-    switchTo( scheduler_type ) {
-        this.current_scheduler = scheduler_type;
+    start(callback){
+        var cmd = `docker run --name player_${this.id} -d -p 3000:${this.port} player_image_${this.id}`;
+        console.log(`Player - Running - ${cmd}`);
+        child_process.exec(cmd, (err) => {
+            console.log(`Player - Done - ${cmd}`);
+            if(err) return callback(err);
+
+        });
     }
 
-    /**
-     * Pop and return an individual match off the end of the schedule queue
-     * @returns {*}
-     */
-    next(){
-        if( this.sched_queue.length > 0) {
-            //TODO: pop off queue
-            return this.sched_queue[this.sched_queue.length-1];
-        }
-        else {
-            return null;
-        }
+    stop(callback) {
+        var cmd = `docker stop player_${this.id}`;
+        console.log(`Player - Running - ${cmd}`);
+        child_process.exec(cmd, (err) => {
+            console.log(`Player - Done - ${cmd}`);
+            if(err) return callback(err);
+
+        });
     }
 
-    //TODO: add a peekNext function that returns the next game without popping off. This will be useful for testing purposes
-
-    numScheduled(){
-        return this.sched_queue.length;
+    getNextMatch(callback) {
+        request.get(`http://${config.head_server.host}:${config.head_server.port}/api/v2/sched/next`, function(err, response, body){
+            if(err) return callback(err);
+            callback(null, body);
+        });
     }
-
-
-
 }
 
-module.exports = Scheduler;
+
+module.exports = Player;
 </code></pre>
         </article>
     </section>

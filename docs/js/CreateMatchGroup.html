@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>head_server/schedulers/Scheduler.js - Documentation</title>
+    <title>CreateMatchGroup - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,95 +28,132 @@
 
 <div id="main">
     
-    <h1 class="page-title">head_server/schedulers/Scheduler.js</h1>
+    <h1 class="page-title">CreateMatchGroup</h1>
     
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>
+        <h2>
+        CreateMatchGroup
+        </h2>
+        
+            <div class="class-description">Create Match Section</div>
+        
+    
+</header>
 
-class Scheduler {
+<article>
+    <div class="container-overview">
+    
+        
 
-    constructor() {
-        this.MAX_SCHEDULED = 50;
-        this.SCHEDULE_INTERVAL = 100;
+    
+    <h2>Constructor</h2>
+    
 
-        this.interval_ptr = undefined;
-        this.current_scheduler = undefined;
-        this.sched_queue = new Array();
-    }
+    <h4 class="name" id="CreateMatchGroup"><span class="type-signature"></span>new CreateMatchGroup<span class="signature">()</span><span class="type-signature"></span></h4>
 
-    start() {
-        this.interval_ptr = setInterval(() => {
-            this.scheduleOnce(function(err){
-                if(err) return console.log(`Error: ${err}`);
-            });
-        }, this.SCHEDULE_INTERVAL);
-    }
-
-    stop() {
-        clearInterval(this.interval_ptr);
-    }
-
-    pause() {}
-    resume() {}
-
-    purge() {
-        //TODO: delete all entries in schedule queue
-    }
-
-    /**
-     * Schedule an individual game into the schedule queue
-     */
-    scheduleOnce(callback){
-        this.current_scheduler.genNext( (err, clientIDs) => {
-            if(err)return callback(err);
-            this.sched_queue.push(clientIDs);
-            callback(null, clientIDs);
-        });
-    }
-
-    /**
-     * Switch between different types of schedulers
-     * @param scheduler_type
-     */
-    switchTo( scheduler_type ) {
-        this.current_scheduler = scheduler_type;
-    }
-
-    /**
-     * Pop and return an individual match off the end of the schedule queue
-     * @returns {*}
-     */
-    next(){
-        if( this.sched_queue.length > 0) {
-            //TODO: pop off queue
-            return this.sched_queue[this.sched_queue.length-1];
-        }
-        else {
-            return null;
-        }
-    }
-
-    //TODO: add a peekNext function that returns the next game without popping off. This will be useful for testing purposes
-
-    numScheduled(){
-        return this.sched_queue.length;
-    }
+    
 
 
 
-}
 
-module.exports = Scheduler;
-</code></pre>
-        </article>
-    </section>
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="head_server_match_static_index.jsx.html">head_server/match/static/index.jsx</a>, <a href="head_server_match_static_index.jsx.html#line120">line 120</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

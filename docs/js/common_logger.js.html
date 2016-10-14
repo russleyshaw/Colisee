@@ -23,7 +23,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Builder.html">Builder</a><ul class='methods'><li data-type='method'><a href="Builder.html#build">build</a></li><li data-type='method'><a href="Builder.html#getLog">getLog</a></li><li data-type='method'><a href="Builder.html#getTar">getTar</a></li><li data-type='method'><a href="Builder.html#init">init</a></li></ul></li><li><a href="Client.html">Client</a><ul class='methods'><li data-type='method'><a href="Client.html#.create">create</a></li></ul></li><li><a href="Db.html">Db</a><ul class='methods'><li data-type='method'><a href="Db.html#.newPgClient">newPgClient</a></li><li data-type='method'><a href="Db.html#.queryLots">queryLots</a></li><li data-type='method'><a href="Db.html#.queryLotsSeries">queryLotsSeries</a></li><li data-type='method'><a href="Db.html#.queryOnce">queryOnce</a></li><li data-type='method'><a href="Db.html#.reset">reset</a></li></ul></li><li><a href="Gamelogger.html">Gamelogger</a><ul class='methods'><li data-type='method'><a href="Gamelogger.html#load">load</a></li><li data-type='method'><a href="Gamelogger.html#reset">reset</a></li><li data-type='method'><a href="Gamelogger.html#save">save</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="Builder.html">Builder</a><ul class='methods'><li data-type='method'><a href="Builder.html#build">build</a></li><li data-type='method'><a href="Builder.html#getLog">getLog</a></li><li data-type='method'><a href="Builder.html#getTar">getTar</a></li><li data-type='method'><a href="Builder.html#init">init</a></li><li data-type='method'><a href="Builder.html#start">start</a></li><li data-type='method'><a href="Builder.html#stop">stop</a></li></ul></li><li><a href="Client.html">Client</a><ul class='methods'><li data-type='method'><a href="Client.html#.create">create</a></li><li data-type='method'><a href="Client.html#.getRandom">getRandom</a></li><li data-type='method'><a href="Client.html#.updateById">updateById</a></li></ul></li><li><a href="ClientListPanel.html">ClientListPanel</a></li><li><a href="ClientListPanelContents.html">ClientListPanelContents</a></li><li><a href="ClientListPanelItem.html">ClientListPanelItem</a></li><li><a href="CreateClientGroup.html">CreateClientGroup</a></li><li><a href="CreateMatchGroup.html">CreateMatchGroup</a></li><li><a href="Db.html">Db</a><ul class='methods'><li data-type='method'><a href="Db.html#.newPgClient">newPgClient</a></li><li data-type='method'><a href="Db.html#.queryLots">queryLots</a></li><li data-type='method'><a href="Db.html#.queryLotsSeries">queryLotsSeries</a></li><li data-type='method'><a href="Db.html#.queryOnce">queryOnce</a></li><li data-type='method'><a href="Db.html#.reset">reset</a></li></ul></li><li><a href="Gamelogger.html">Gamelogger</a><ul class='methods'><li data-type='method'><a href="Gamelogger.html#load">load</a></li><li data-type='method'><a href="Gamelogger.html#reset">reset</a></li><li data-type='method'><a href="Gamelogger.html#save">save</a></li></ul></li><li><a href="GetClientGroup.html">GetClientGroup</a></li><li><a href="GetMatchGroup.html">GetMatchGroup</a></li><li><a href="Logger.html">Logger</a><ul class='methods'><li data-type='method'><a href="Logger.html#.create">create</a></li><li data-type='method'><a href="Logger.html#.getLatest">getLatest</a></li><li data-type='method'><a href="Logger.html#.updateById">updateById</a></li></ul></li><li><a href="Match.html">Match</a></li><li><a href="MatchListPanel.html">MatchListPanel</a></li><li><a href="MatchListPanelContents.html">MatchListPanelContents</a></li><li><a href="MatchListPanelItem.html">MatchListPanelItem</a></li><li><a href="Player.html">Player</a><ul class='methods'><li data-type='method'><a href="Player.html#init">init</a></li></ul></li></ul>
 </nav>
 
 <div id="main">
@@ -39,76 +39,101 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>var Db = require("./Db");
+var knex = require("knex")({
+    dialect: "pg"
+});
 
+/**
+ * Class to interface with log table in database
+ */
 class Logger {
 
-    /**
-     * Gets a single log from the database
-     * @param log_id
-     * @param callback function(err, log)
-     */
-    static get(log_id, callback) {
-
-        var pgclient = Db.newPgClient();
-
-        pgclient.connect(function(err) {
+    static getById(log_id, callback) {
+        var sql = knex("log").where("id", log_id).toString();
+        Db.queryOnce(sql, [], function (err, result) {
             if(err) return callback(err);
+            if(result.rows.length != 1) return callback("No match found");
 
-            pgclient.query("SELECT * FROM log WHERE id = $1::integer", [log_id], function(err, result) {
-                if(err) return callback(err);
-                if(result.rowCount != 1) return callback("No match found");
-
-                var data = {
-                    id: result.rows[0].id,
-                    message: result.rows[0].message,
-                    location: result.rows[0].location,
-                    severity: result.rows[0].severity,
-                    time_created: result.rows[0].time_created
-                };
-
-                pgclient.end(function (err) {
-                    if(err) return callback(err);
-                    callback(null, data);
-                });
-            });
+            callback(null, result.rows[0]);
         });
     }
 
     /**
-     * Create a log with the given parameters
-     * @param message
-     * @param location
-     * @param severity
-     * @param callback - function(err, created_log)
+     * @callback Logger~createCallback
+     * @param err
+     * @param log {Object} newly created log
      */
-    static create(message, location, severity, callback) {
-        var pgclient = Db.newPgClient();
 
-        pgclient.connect(function(err){
+    /**
+     * Creates a log from the given object
+     * @param log {Object}
+     * @param callback {Logger~createCallback}
+     */
+    static create(log, callback) {
+        if(log.hasOwnProperty("id")) return callback("log ids are created automatically");
+        if(log.hasOwnProperty("created_time")) return callback("Cannot create with created time");
+        if(log.hasOwnProperty("modified_time")) return callback("Cannot create with modified time");
+
+        log.created_time = "now()";
+        log.modified_time = "now()";
+
+        var sql = knex("log").insert(log, "*").toString();
+        Db.queryOnce(sql, [], function(err, result) {
             if(err) return callback(err);
-
-            pgclient.query("INSERT INTO log (message, location, severity, time_created) VALUES ($1::text, $2::text, $3, now() ) RETURNING *", [message, location, severity], function (err, result) {
-                if(err) return callback(err);
-                if(result.rowCount != 1) { callback("No match found"); return; }
-
-                var data = {
-                    id: result.rows[0].id,
-                    message: result.rows[0].message,
-                    location: result.rows[0].location,
-                    severity: result.rows[0].severity,
-                    time_created: result.rows[0].time_created
-                };
-
-                pgclient.end(function(err){
-                    if(err) return callback(err);
-                    callback(null, data);
-                });
-            });
+            if(result.rowCount != 1) return callback("Inserted row not returned");
+            callback(null, result.rows[0]);
         });
     }
-    static latest() {
-        return 1;
-        //TODO: latest() should get the 10 latest logs, based on creation timeim ba
+
+    /**
+     * @callback Logger~updateByIdCallback
+     * @param err
+     * @param log {Object} Updated log
+     */
+
+    /**
+     * Update log given the id and fields to update
+     * @param id {number} Logger database id
+     * @param fields {Object} JSON of fields to update
+     * @param callback {Logger~updateByIdCallback}
+     */
+    static updateById(id, fields, callback) {
+        if(fields.hasOwnProperty("id")) return callback("Cannot update id");
+        if(fields.hasOwnProperty("created_time")) return callback("Cannot update created time");
+        if(fields.hasOwnProperty("modified_time")) return callback("Cannot update modified time");
+
+        fields["modified_time"] = "now()";
+
+        var sql = knex("log").where({id: id}).update(fields, "*").toString();
+        Db.queryOnce(sql, [], (err, result) => {
+            if(err) return callback(err);
+            if(result.rows.length != 1) return callback("Query resulted in invalid number of rows");
+
+            callback(null, result.rows[0]);
+        });
+    }
+
+    /**
+     * Options for Logger.getLatest function
+     * @typedef Logger~getLatest~options
+     * @property limit {number} The max number of logs requested. Default = 10
+     * @property severity {string} The minimum severity log to get. Default = "warn"
+     */
+
+    /**
+     * Retrieve &lt;code>limit&lt;/code> latest number of logs
+     * @param options {Logger~getLatest~options} Options object for function
+     * @param callback
+     */
+    static getLatest(options, callback) {
+        if(!options.hasOwnProperty("limit")) options.limit = 10;
+        if(!options.hasOwnProperty("severity")) options.severity = "debug";
+        var sql = knex("log").where("severity", ">=", options.severity).orderBy("created_time").limit(options.limit).toString();
+        Db.queryOnce(sql, [], function(err, result) {
+            if(err) return callback(err);
+            if(result.rowCount > options.limit) return callback("Returned too many logs");
+            callback(null, result.rows);
+        });
     }
 }
 
@@ -128,7 +153,7 @@ module.exports = Logger;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Wed Sep 28 2016 01:44:22 GMT-0500 (CDT) using the Minami theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Thu Oct 13 2016 21:03:39 GMT-0500 (CDT) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
