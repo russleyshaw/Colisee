@@ -2,6 +2,8 @@ var Db = require("./Db");
 var knex = require("knex")({
     "dialect": "pg"
 });
+//var Logger = require("./logger");
+
 
 /**
  * Class to interface with match table in database
@@ -27,6 +29,12 @@ class Match {
         });
     }
 
+    /**
+     *
+     * @param {json} match holds a  ClientID array
+     * @param callback
+     * @returns nothing
+     */
     static create(match, callback) {
         if(match.hasOwnProperty("id")) return callback("Cannot create a match with a given id");
         if(match.hasOwnProperty("created_time")) return callback("Cannot create a match with a given created_time");
@@ -41,7 +49,7 @@ class Match {
 
         var sql = knex("match").insert(match, "*").toString();
         Db.queryOnce(sql, [], (err, result) => {
-            if(err) return callback(err);
+            if(err)return callback(err);
             if(result.rowCount != 1) return callback("No match found.");
             callback(null, result.rows[0]);
         });
