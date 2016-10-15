@@ -4,7 +4,7 @@ var Schedule = require("../../common/Schedule");
 var knex = require("knex")({
     dialect: "pg"
 });
-var Logger = require("../../common/logger");
+var Logger = require("../../common/Logger");
 
 class Scheduler {
 

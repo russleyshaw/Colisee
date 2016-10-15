@@ -7,7 +7,6 @@ DROP TYPE IF EXISTS "log_severity_enum" CASCADE;
 DROP TYPE IF EXISTS "schedule_type_enum" CASCADE;
 DROP TYPE IF EXISTS "client_language_enum" CASCADE;
 DROP TYPE IF EXISTS "match_status_enum" CASCADE;
-DROP TYPE IF EXISTS "schedule_status_enum" CASCADE;
 
 CREATE TYPE client_language_enum AS ENUM (
     'cpp', 'python', 'csharp', 'javascript', 'java'
@@ -17,16 +16,12 @@ CREATE TYPE log_severity_enum AS ENUM (
     'debug', 'info', 'warn', 'error', 'critical'
 );
 
-CREATE TYPE schedule_status_enum AS ENUM (
-    'playing','stopped','paused'
-);
-
 CREATE TYPE schedule_type_enum AS ENUM (
     'random', 'single_elimination', 'triple_elimination', 'swiss', 'test'
 );
 
 CREATE TYPE match_status_enum AS ENUM (
-    'playing', 'scheduled', 'sending', 'finished', 'failed', 'stopped'
+    'playing', 'scheduled', 'sending', 'finished', 'failed'
 );
 
 CREATE TABLE "log" (
@@ -48,7 +43,7 @@ CREATE TABLE "client" (
     language client_language_enum,
 
     needs_build boolean NOT NULL DEFAULT false,
-    build_success boolean NOT NULL DEFAULT true,
+    build_success boolean,
     attempt_time timestamp,
     success_time timestamp,
     failure_time timestamp,
@@ -61,7 +56,6 @@ CREATE TABLE "schedule" (
     id serial NOT NULL PRIMARY KEY,
     type schedule_type_enum NOT NULL,
 
-    status schedule_status_enum NOT NULL DEFAULT 'stopped',
     created_time timestamp NOT NULL DEFAULT now(),
     modified_time timestamp NOT NULL DEFAULT now()
 );

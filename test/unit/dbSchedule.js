@@ -1,3 +1,5 @@
+/* eslint-env node, mocha */
+
 var should = require("should");
 var Schedule = require("../../src/common/Schedule");
 var Db = require("../../src/common/Db");
