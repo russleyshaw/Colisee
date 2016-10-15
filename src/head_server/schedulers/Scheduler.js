@@ -1,5 +1,6 @@
 var Db = require("../../common/Db");
 var Match = require("../../common/Match");
+var Schedule = require("../../common/Schedule");
 var knex = require("knex")({
     dialect: "pg"
 });
@@ -33,16 +34,16 @@ class Scheduler {
      * creates a schedule of type "random" , with generated ID and status "stopped"
      * @callback Scheduler ~createScheduleCallback
      */
-    createSchedule(callback){
-        var sched1 = {
-            type: this.current_scheduler.getType()
-        };
-        var sql1 = knex("schedule").insert(sched1,"*").toString();
-        Db.queryOnce(sql1,[],function(err,scheduler){
-            if(err)return console.error("queryOnce in schedDbId returns an error");
-            callback(null,scheduler.id);
-        });
-    }
+    // createSchedule(callback){
+    //     var sched1 = {
+    //         type: this.current_scheduler.getType()
+    //     };
+    //     var sql1 = knex("schedule").insert(sched1,"*").toString();
+    //     Db.queryOnce(sql1,[],function(err,scheduler){
+    //         if(err)return console.error("queryOnce in schedDbId returns an error");
+    //         callback(null,scheduler.id);
+    //     });
+    // }
 
     /**
      * Starts a scheduler if MAX_SCHEDULED is not met.
@@ -55,15 +56,17 @@ class Scheduler {
      * @param callback
      */
     start() {
-        this.createSchedule((err,scheduleID) =>{
+        var sched1 = {
+            type: this.current_scheduler.getType()
+        };
+        Schedule.create(sched1,(err,scheduleID)=>{
             if(err) {
                 var log = {
-                    message: "schedDbId() error",
+                    message: "schedule.create() error",
                     severity: "error"
                 };
                 Logger.create(log, (err) => {
                     if (err) console.error("Logger.create() error");
-                    //callback(null, log);
                 });
                 this.schedId= scheduleID;
             }

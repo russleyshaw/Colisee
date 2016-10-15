@@ -4,7 +4,7 @@ var knex = require("knex")({
 });
 
 /**
- * Class to interface with client table in database
+ *
  */
 class Client {
 
