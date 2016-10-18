@@ -8,8 +8,48 @@ var knex = require("knex")({
  */
 class Client {
 
+    static getAll(callback) {
+        var sql = knex("client").toString();
+        Db.queryOnce(sql, [], function (err, result) {
+            if(err) return callback(err);
+            callback(null, result.rows);
+        });
+    }
+
+    static get(options, callback){
+        var sql = knex("client").select();
+
+        if(options.hasOwnProperty("id")) {
+            if(Array.isArray(options.id)) sql = sql.whereIn("id", options.id);
+            else sql = sql.where("id", options.id);
+        }
+        if(options.hasOwnProperty("name")) {
+            if(Array.isArray(options.name)) sql = sql.whereIn("name", options.name);
+            else sql = sql.where("name", options.name);
+        }
+        if(options.hasOwnProperty("repo")) {
+            if(Array.isArray(options.repo)) sql = sql.whereIn("repo", options.repo);
+            else sql = sql.where("repo", options.repo);
+        }
+        if(options.hasOwnProperty("hash")) {
+            if(Array.isArray(options.hash)) sql = sql.whereIn("hash", options.hash);
+            else sql = sql.where("hash", options.hash);
+        }
+        if(options.hasOwnProperty("needs_build")) {
+            if(Array.isArray(options.needs_build)) sql = sql.whereIn("needs_build", options.needs_build);
+            else sql = sql.where("needs_build", options.needs_build);
+        }
+
+        sql = sql.toString();
+        Db.queryOnce(sql, [], function (err, result) {
+            if(err) return callback(err);
+            callback(null, result.rows);
+        });
+
+    }
+
     static getById(client_id, callback) {
-        var sql = knex("client").where({id: client_id}).toString();
+        var sql = knex("client").where("id", client_id).toString();
         Db.queryOnce(sql, [], function (err, result) {
             if(err) return callback(err);
             if(result.rows.length != 1) return callback("No match found");
@@ -19,7 +59,7 @@ class Client {
     }
 
     static getByName(client_name, callback) {
-        var sql = knex("client").where({name: client_name}).toString();
+        var sql = knex("client").where("name", client_name).toString();
         Db.queryOnce(sql, [], function (err, result) {
             if(err) return callback(err);
             if(result.rows.length != 1) return callback("No match found");
@@ -37,7 +77,7 @@ class Client {
         var sql = knex("client").orderByRaw("random()").limit(limit).toString();
         Db.queryOnce(sql, [], function(err, result) {
             if(err) return callback(err);
-            if(result.rows.length != limit) return callback("Inserted rows not fully returned");
+            if(result.rowCount != limit) return callback("Inserted rows not fully returned");
             callback(null, result.rows);
         });
     }
@@ -55,11 +95,16 @@ class Client {
      */
     static create(client, callback) {
         if(client.hasOwnProperty("id")) return callback("client ids are created automatically");
+        if(client.hasOwnProperty("created_time")) return callback("Cannot create with created time");
+        if(client.hasOwnProperty("modified_time")) return callback("Cannot create with modified time");
+
+        client.created_time = "now()";
+        client.modified_time = "now()";
 
         var sql = knex("client").insert(client, "*").toString();
         Db.queryOnce(sql, [], function(err, result) {
             if(err) return callback(err);
-            if(result.rows.length != 1) return callback("Inserted row not returned");
+            if(result.rowCount != 1) return callback("Inserted row not returned");
             callback(null, result.rows[0]);
         });
     }
@@ -79,9 +124,9 @@ class Client {
     static updateById(id, fields, callback) {
         if(fields.hasOwnProperty("id")) return callback("Cannot update id");
         if(fields.hasOwnProperty("created_time")) return callback("Cannot update created time");
-        if(fields.hasOwnProperty("last_modified_time")) return callback("Cannot update modified time");
+        if(fields.hasOwnProperty("modified_time")) return callback("Cannot update modified time");
 
-        fields["last_modified_time"] = "now()";
+        fields["modified_time"] = "now()";
 
         var sql = knex("client").where({id: id}).update(fields, "*").toString();
         Db.queryOnce(sql, [], (err, result) => {

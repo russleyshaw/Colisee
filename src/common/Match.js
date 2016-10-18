@@ -1,13 +1,25 @@
 var Db = require("./Db");
+var knex = require("knex")({
+    "dialect": "pg"
+});
 
 /**
  * Class to interface with match table in database
  */
-
-
 class Match {
-    static getById(match_id, callback){
-        Db.queryOnce("SELECT * FROM match WHERE id = $1:integer", [match_id], function(err, result){
+
+    static getAll(callback) {
+        var sql = knex("match").toString();
+        Db.queryOnce(sql, [], function (err, result) {
+            if(err) return callback(err);
+
+            callback(null, result.rows);
+        });
+    }
+
+    static getById(match_id, callback) {
+        var sql = knex("match").where("id", match_id).toString();
+        Db.queryOnce(sql, [], function(err, result){
             if(err) return callback(err);
             if(result.rows.length != 1) return callback("No match found.");
 
@@ -15,16 +27,39 @@ class Match {
         });
     }
 
-    static getRandom(limit, callback){
-        Db.queryOnce("SELECT * FROM match ORDER BY RANDOM() LIMIT $1", [limit], function(err, result){
-            if(err) return callback(err);
+    static create(match, callback) {
+        if(match.hasOwnProperty("id")) return callback("Cannot create a match with a given id");
+        if(match.hasOwnProperty("created_time")) return callback("Cannot create a match with a given created_time");
+        if(match.hasOwnProperty("modified_time")) return callback("Cannot create a match with a given modified_time");
 
-            callback(null, result.rows);
+        if(match.hasOwnProperty("clients")) {
+            match.clients = `{${match.clients.toString()}}`;
+        }
+
+        match.created_time = "now()";
+        match.modified_time = "now()";
+
+        var sql = knex("match").insert(match, "*").toString();
+        Db.queryOnce(sql, [], (err, result) => {
+            if(err) return callback(err);
+            if(result.rowCount != 1) return callback("No match found.");
+            callback(null, result.rows[0]);
         });
     }
 
-    static create(clients, reason, gamelog, callback){
-        Db.queryOnce("INSERT INTO match(clients,  reason, gamelog) VALUES ($1, $2::text, $3::integer) RETURNING *", [clients, reason, gamelog], function(err, result){
+    static updateById(id, fields, callback) {
+        if(fields.hasOwnProperty("id")) return callback("Cannot update a match id");
+        if(fields.hasOwnProperty("created_time")) return callback("Cannot update a match created_time");
+        if(fields.hasOwnProperty("modified_time")) return callback("Cannot update a match modified_time");
+
+        if(fields.hasOwnProperty("clients")) {
+            fields.clients = `{${fields.clients.toString()}}`;
+        }
+
+        fields.modified_time = "now()";
+
+        var sql = knex("match").where("id", id).update(fields).toString();
+        Db.queryOnce(sql, [], function(err, result){
             if(err) return callback(err);
             if(result.rows.length != 1) return callback("No match found.");
 
@@ -33,5 +68,5 @@ class Match {
     }
 }
 
-module.export = Match;
+module.exports = Match;
 

@@ -38,19 +38,17 @@ describe("Builder", function() {
 
     describe("build", function(){
         it("should build a given good cpp client", function(done) {
-
-            //approx 64469ms
             this.timeout(0);
 
-            builder.build(1, function(err, built) {
+            builder.build(1, function(err, succeeded) {
                 should(err).not.be.ok();
-                should(built).be.true();
+                should(succeeded).be.true();
 
                 //Check client was updated
                 Client.getById(1, function(err, client){
                     should(err).not.be.ok();
                     should(client.build_success).be.true();
-                    should(client.last_success_time).be.ok();
+                    should(client.success_time).be.ok();
                     done();
                 });
             });
@@ -69,7 +67,7 @@ describe("Builder", function() {
                 Client.getById(2, function(err, client){
                     should(err).not.be.ok();
                     should(client.build_success).be.false();
-                    should(client.last_failure_time).be.ok();
+                    should(client.failure_time).be.ok();
                     done();
                 });
             });

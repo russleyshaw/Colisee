@@ -23,7 +23,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Builder.html">Builder</a><ul class='methods'><li data-type='method'><a href="Builder.html#build">build</a></li><li data-type='method'><a href="Builder.html#getLog">getLog</a></li><li data-type='method'><a href="Builder.html#getTar">getTar</a></li><li data-type='method'><a href="Builder.html#init">init</a></li></ul></li><li><a href="Client.html">Client</a><ul class='methods'><li data-type='method'><a href="Client.html#.create">create</a></li></ul></li><li><a href="Db.html">Db</a><ul class='methods'><li data-type='method'><a href="Db.html#.newPgClient">newPgClient</a></li><li data-type='method'><a href="Db.html#.queryLots">queryLots</a></li><li data-type='method'><a href="Db.html#.queryLotsSeries">queryLotsSeries</a></li><li data-type='method'><a href="Db.html#.queryOnce">queryOnce</a></li><li data-type='method'><a href="Db.html#.reset">reset</a></li></ul></li><li><a href="Gamelogger.html">Gamelogger</a><ul class='methods'><li data-type='method'><a href="Gamelogger.html#load">load</a></li><li data-type='method'><a href="Gamelogger.html#reset">reset</a></li><li data-type='method'><a href="Gamelogger.html#save">save</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="Builder.html">Builder</a><ul class='methods'><li data-type='method'><a href="Builder.html#build">build</a></li><li data-type='method'><a href="Builder.html#getLog">getLog</a></li><li data-type='method'><a href="Builder.html#getTar">getTar</a></li><li data-type='method'><a href="Builder.html#init">init</a></li><li data-type='method'><a href="Builder.html#start">start</a></li><li data-type='method'><a href="Builder.html#stop">stop</a></li></ul></li><li><a href="Client.html">Client</a><ul class='methods'><li data-type='method'><a href="Client.html#.create">create</a></li><li data-type='method'><a href="Client.html#.getRandom">getRandom</a></li><li data-type='method'><a href="Client.html#.updateById">updateById</a></li></ul></li><li><a href="ClientListPanel.html">ClientListPanel</a></li><li><a href="ClientListPanelContents.html">ClientListPanelContents</a></li><li><a href="ClientListPanelItem.html">ClientListPanelItem</a></li><li><a href="CreateClientGroup.html">CreateClientGroup</a></li><li><a href="CreateMatchGroup.html">CreateMatchGroup</a></li><li><a href="Db.html">Db</a><ul class='methods'><li data-type='method'><a href="Db.html#.newPgClient">newPgClient</a></li><li data-type='method'><a href="Db.html#.queryLots">queryLots</a></li><li data-type='method'><a href="Db.html#.queryLotsSeries">queryLotsSeries</a></li><li data-type='method'><a href="Db.html#.queryOnce">queryOnce</a></li><li data-type='method'><a href="Db.html#.reset">reset</a></li></ul></li><li><a href="Gamelogger.html">Gamelogger</a><ul class='methods'><li data-type='method'><a href="Gamelogger.html#load">load</a></li><li data-type='method'><a href="Gamelogger.html#reset">reset</a></li><li data-type='method'><a href="Gamelogger.html#save">save</a></li></ul></li><li><a href="GetClientGroup.html">GetClientGroup</a></li><li><a href="GetMatchGroup.html">GetMatchGroup</a></li><li><a href="Logger.html">Logger</a><ul class='methods'><li data-type='method'><a href="Logger.html#.create">create</a></li><li data-type='method'><a href="Logger.html#.getLatest">getLatest</a></li><li data-type='method'><a href="Logger.html#.updateById">updateById</a></li></ul></li><li><a href="Match.html">Match</a></li><li><a href="MatchListPanel.html">MatchListPanel</a></li><li><a href="MatchListPanelContents.html">MatchListPanelContents</a></li><li><a href="MatchListPanelItem.html">MatchListPanelItem</a></li><li><a href="Player.html">Player</a><ul class='methods'><li data-type='method'><a href="Player.html#init">init</a></li></ul></li></ul>
 </nav>
 
 <div id="main">
@@ -39,14 +39,27 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>var Db = require("./Db");
+var knex = require("knex")({
+    dialect: "pg"
+});
 
 /**
  * Class to interface with client table in database
  */
 class Client {
 
+    static getAll(callback) {
+        var sql = knex("client").toString();
+        Db.queryOnce(sql, [], function (err, result) {
+            if(err) return callback(err);
+
+            callback(null, result.rows);
+        });
+    }
+
     static getById(client_id, callback) {
-        Db.queryOnce("SELECT * FROM client WHERE id = $1::integer", [client_id], function (err, result) {
+        var sql = knex("client").where("id", client_id).toString();
+        Db.queryOnce(sql, [], function (err, result) {
             if(err) return callback(err);
             if(result.rows.length != 1) return callback("No match found");
 
@@ -55,41 +68,82 @@ class Client {
     }
 
     static getByName(client_name, callback) {
-
-        Db.queryOnce("SELECT * FROM client WHERE name = $1::text", [client_name], function (err, result) {
+        var sql = knex("client").where("name", client_name).toString();
+        Db.queryOnce(sql, [], function (err, result) {
             if(err) return callback(err);
-            if(result.rows.length != 1) return callback("No match found", undefined);
+            if(result.rows.length != 1) return callback("No match found");
 
             callback(null, result.rows[0]);
         });
     }
 
-
+    /**
+     * Retrieve &lt;code>limit&lt;/code> random number of clients
+     * @param limit {number} Number of random clients (without replacement) to select
+     * @param callback
+     */
     static getRandom(limit, callback) {
-        Db.queryOnce("SELECT * FROM client ORDER BY RANDOM() LIMIT $1", [limit], function(err, result) {
+        var sql = knex("client").orderByRaw("random()").limit(limit).toString();
+        Db.queryOnce(sql, [], function(err, result) {
             if(err) return callback(err);
-
+            if(result.rowCount != limit) return callback("Inserted rows not fully returned");
             callback(null, result.rows);
         });
     }
 
     /**
-     * Create a client with the given parameters
-     * @param name
-     * @param repo
-     * @param hash
-     * @param language
-     * @param callback function(err, created_client)
+     * @callback Client~createCallback
+     * @param err
+     * @param client {Object} newly created client
      */
-    static create(name, repo, hash, language, callback) {
 
-        Db.queryOnce("INSERT INTO client (name, repo, hash, language) VALUES ($1::text, $2::text, $3::text, $4) RETURNING *",
-            [name, repo, hash, language], function (err, result) {
-                if(err) return callback(err);
-                if(result.rows.length != 1) return callback("No match found");
+    /**
+     * Creates a client from the given object
+     * @param client {Object}
+     * @param callback {Client~createCallback}
+     */
+    static create(client, callback) {
+        if(client.hasOwnProperty("id")) return callback("client ids are created automatically");
+        if(client.hasOwnProperty("created_time")) return callback("Cannot create with created time");
+        if(client.hasOwnProperty("modified_time")) return callback("Cannot create with modified time");
 
-                callback(null, result.rows[0]);
-            });
+        client.created_time = "now()";
+        client.modified_time = "now()";
+
+        var sql = knex("client").insert(client, "*").toString();
+        Db.queryOnce(sql, [], function(err, result) {
+            if(err) return callback(err);
+            if(result.rowCount != 1) return callback("Inserted row not returned");
+            callback(null, result.rows[0]);
+        });
+    }
+
+    /**
+     * @callback Client~updateByIdCallback
+     * @param err
+     * @param client {Object} Updated client
+     */
+
+    /**
+     * Update client given the id and fields to update
+     * @param id {number} Client database id
+     * @param fields {Object} JSON of fields to update
+     * @param callback {Client~updateByIdCallback}
+     */
+    static updateById(id, fields, callback) {
+        if(fields.hasOwnProperty("id")) return callback("Cannot update id");
+        if(fields.hasOwnProperty("created_time")) return callback("Cannot update created time");
+        if(fields.hasOwnProperty("modified_time")) return callback("Cannot update modified time");
+
+        fields["modified_time"] = "now()";
+
+        var sql = knex("client").where({id: id}).update(fields, "*").toString();
+        Db.queryOnce(sql, [], (err, result) => {
+            if(err) return callback(err);
+            if(result.rows.length != 1) return callback("Query resulted in invalid number of rows");
+
+            callback(null, result.rows[0]);
+        });
     }
 }
 
@@ -107,7 +161,7 @@ module.exports = Client;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Wed Sep 28 2016 01:44:22 GMT-0500 (CDT) using the Minami theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Thu Oct 13 2016 21:08:13 GMT-0500 (CDT) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
