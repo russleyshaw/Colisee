@@ -12,8 +12,10 @@ router.use("/client/static/", express.static(path.join(__dirname, "static")));
 // GET
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 router.get("/api/v2/client/", (req, res) => {
-    Client.getAll((err, clients) => {
-        if(err) return res.sendStatus(404);
+    var options = req.query;
+    console.log(JSON.stringify(options));
+    Client.get(options, (err, clients) => {
+        if(err) return res.status(404).send(err);
         res.send(clients);
     });
 });
