@@ -19,6 +19,9 @@ CREATE TYPE log_severity_enum AS ENUM (
 CREATE TYPE schedule_type_enum AS ENUM (
     'random', 'single_elimination', 'triple_elimination', 'swiss', 'test'
 );
+CREATE TYPE  schedule_status_enum AS ENUM(
+  'running','stopped'
+);
 
 CREATE TYPE match_status_enum AS ENUM (
     'playing', 'scheduled', 'sending', 'finished', 'failed'
@@ -55,6 +58,7 @@ CREATE TABLE "client" (
 CREATE TABLE "schedule" (
     id serial NOT NULL PRIMARY KEY,
     type schedule_type_enum NOT NULL,
+    status schedule_status_enum NOT NULL DEFAULT 'stopped',
 
     created_time timestamp NOT NULL DEFAULT now(),
     modified_time timestamp NOT NULL DEFAULT now()

@@ -18,11 +18,19 @@ class Schedule{
      * @param scheduler type
      * @param callback {Schedule~createCallback}
      */
-    static create(scheduler_type, callback){
+    static create(schedule, callback){
+        if(schedule.hasOwnProperty("id")) return callback("schedule ids are created automatically");
+        if(schedule.hasOwnProperty("created_time")) return callback("Cannot create with created time");
+        if(schedule.hasOwnProperty("modified_time")) return callback("Cannot create with modified time");
+
+        schedule.created_time = "now()";
+        schedule.modified_time = "now()";
+
+
         var sql = knex("schedule").insert("scheduler_type","*").toString();
-        Db.queryOnce(sql,[],function(err,schedule){
+        Db.queryOnce(sql,[],function(err,result){
             if(err)return console.error("queryOnce in schedule.create() returns an error");
-            callback(null,schedule);
+            callback(null,result.id);
         });
 
     }
