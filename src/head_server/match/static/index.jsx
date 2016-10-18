@@ -18,55 +18,68 @@ class MatchListPanelItem extends React.Component {
 }
 
 /**
- * Dynamic contents of Match list panel
+ * Dynamic List of Matches
  */
-class MatchListPanelContents extends React.Component {
+class MatchListPanel extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            matches: []
+            matches: [],
+            filterQs: "",
         };
 
         this.updateMatches = this.updateMatches.bind(this);
+        this.onChangedFilter = this.onChangedFilter.bind(this);
 
         setInterval(this.updateMatches, 1000);
     }
     render() {
         return (
-            <span>
-                {this.state.matches.map(function(match) {
-                    return <MatchListPanelItem match={match}/>;
-                })}
-            </span>
+            <div className="panel panel-default">
+                <div className="panel-heading">
+                    <div className="panel-title">Match List</div>
+                    <div className="input-group">
+                        <span className="input-group-addon">&#123;</span>
+                        <input onChange={this.onChangedFilter} type="text" className="form-control" placeholder="JSON Filter..."/>
+                        <span className="input-group-addon">&#125;</span>
+                    </div>
+                </div>
+
+                <div className="panel-body">
+                    {this.state.matches.map(function(match) {
+                        return <MatchListPanelItem match={match}/>;
+                    })}
+                </div>
+            </div>
         );
+    }
+
+    onChangedFilter(e) {
+        try{
+            var val = e.target.value == null ? "" : e.target.value;
+            var qs = `{${val}}`;
+            console.log(qs);
+            qs = JSON.parse(qs);
+            qs = $.param(qs);
+            console.log(qs);
+            this.setState({filterQs: qs});
+        }
+        catch(e) {
+            console.warn(e);
+        }
     }
 
     updateMatches() {
         var self = this;
-        $.get("/api/v2/match/", function(matches) {
+
+        console.log(this.state.filterQs);
+        $.get(`/api/v2/match/?${this.state.filterQs}`, function(matches) {
             self.setState({"matches": matches});
 
         }).fail(function() {
             self.setState({"matches": []});
 
         });
-    }
-}
-
-/**
- * List of Matches panel
- */
-class MatchListPanel extends React.Component {
-    render() {
-        return (
-            <div className="panel panel-default">
-                <div className="panel-heading">Match List</div>
-
-                <div className="panel-body">
-                    <MatchListPanelContents/>
-                </div>
-            </div>
-        );
     }
 }
 
@@ -87,8 +100,9 @@ class GetMatchGroup extends React.Component {
     render() {
         return(
             <div className="panel panel-default">
+                <div className="panel-heading">
+                    Get a match</div>
                 <div className="panel-body">
-                    <label>Get a match</label>
                     <input onChange={this.handleMatchIdUpdate} type="number" className="form-control" placeholder="Id"/>
                     <button onClick={this.handleGetMatch} type="button" className="btn btn-default btn-block">Get!</button>
                     <div className="well">{this.state.output}</div>
@@ -138,8 +152,9 @@ class CreateMatchGroup extends React.Component {
     render() {
         return(
             <div className="panel panel-default">
+                <div className="panel-heading">
+                    Create a match</div>
                 <div className="panel-body">
-                    <label>Create a match</label>
                     <textarea onChange={this.handleChangedBody} rows="5" className="form-control">
                         {this.TEXT_AREA_DEFAULT_CONTENT}
                     </textarea>
@@ -156,7 +171,12 @@ class CreateMatchGroup extends React.Component {
     }
 
     handleSubmit(e) {
-        var body = JSON.parse( this.state.input );
+        try {
+            var body = JSON.parse( this.state.input );
+        } catch(err) {
+            this.setState({output: err.toString()});
+        }
+
         var self = this;
         $.post("api/v2/match/", body, function(newMatch){
             var out = Object.keys(newMatch).map(function(key){
@@ -181,15 +201,24 @@ class UpdateMatchGroup extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChangedId= this.handleChangedId.bind(this);
         this.handleChangedBody = this.handleChangedBody.bind(this);
+
+        this.TEXT_AREA_DEFAULT_CONTENT = JSON.stringify({
+            clients: [],
+            reason: "",
+            status: "",
+        }, null, 2);
+
+        this.TEXT_AREA_STYLE = {resize: "vertical"};
     }
     render() {
-        var textAreaStyle = {resize: "vertical"};
         return(
             <div className="panel panel-default">
+                <div className="panel-heading">
+                    Update a match</div>
                 <div className="panel-body">
-                    <label>Update a match</label>
                     <input onChange={this.handleChangedId} type="number" className="form-control" placeholder="Id"/>
-                    <textarea onChange={this.handleChangedBody} rows="5" className="form-control" placeholder="Enter JSON here..." style={textAreaStyle}/>
+                    <textarea onChange={this.handleChangedBody} rows="5" className="form-control" style={this.TEXT_AREA_STYLE}>
+                        {this.TEXT_AREA_DEFAULT_CONTENT}</textarea>
                     <button onClick={this.handleSubmit} type="button" className="btn btn-default btn-block">Update!</button>
                     <div className="well">{this.state.output}</div>
                 </div>
