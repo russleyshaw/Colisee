@@ -27,6 +27,30 @@ describe("Schedule", function() {
                 done();
             });
         });
+        it("Should create a new  single_elimination schedule ", (done)=> {
+            var schedule_type = {
+                type: "single_elimination"
+            };
+            Schedule.create(schedule_type, (err, schedule)=> {
+                should(err).not.be.ok();
+                should(schedule.id).equal(2);
+                should(schedule.type).equal("single_elimination");
+                should(schedule.status).equal("stopped");
+                done();
+            });
+        });
+        it("Should create a new  triple_elimination schedule ", (done)=> {
+            var schedule_type = {
+                type: "triple_elimination"
+            };
+            Schedule.create(schedule_type, (err, schedule)=> {
+                should(err).not.be.ok();
+                should(schedule.id).equal(3);
+                should(schedule.type).equal("triple_elimination");
+                should(schedule.status).equal("stopped");
+                done();
+            });
+        });
         it("Should not create a new schedule with an invalid id.", function (done) {
             var schedule_type = {
                 type: "random",
@@ -59,11 +83,23 @@ describe("Schedule", function() {
         });
     });
     describe("getByID", ()=> {
-        it("Should retrieve a schedule in the database by ID.", (done)=> {
+        it("Should retrieve a schedule by ID.", (done)=> {
             Schedule.getByID(1, (err, result) => {
                 should(err).not.be.ok();
                 should(result.id).equal(1);
                 should(result.type).equal("random");
+                should(result.status).equal("stopped");
+                done();
+            });
+        });
+    });
+    describe("getByType", ()=> {
+        it("Should retrieve a schedule by ID.", (done)=> {
+            Schedule.getByType("triple_elimination", (err, result) => {
+                should(err).not.be.ok();
+                should(result.id).equal(3);
+                should(result.type).equal("triple_elimination");
+                should(result.status).equal("stopped");
                 done();
             });
         });

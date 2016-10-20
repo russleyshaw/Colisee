@@ -32,17 +32,29 @@ class Schedule{
             if(err)return console.error("queryOnce in schedule.create() returns an error");
             callback(null,result.rows[0]);
         });
-
     }
     static getByID(schedule_id, callback){
         var sql = knex("schedule").where("id",schedule_id).toString();
         Db.queryOnce(sql,[],function(err,result){
-            if(err)return console.error("queryOnce in schedule.create() returns an error");
+            if(err)return console.error("queryOnce in schedule.getByID() returns an error");
             callback(null,result.rows[0]);
         });
     }
+    static getByType(schedule_type, callback){
+        var sql = knex("schedule").where("type",schedule_type).toString();
+        Db.queryOnce(sql,[],function(err,result){
+            if(err)return console.error("queryOnce in schedule.getByType() returns an error");
+            callback(null,result.rows[0]);
+        });
+    }
+    // static updateById(schedule_id, fields, callback){
+    //     var sql = knex("schedule")
+    // }
+    //
+    // static getAll(callback){
+    //     var sql = knex("schedule")
+    // }
 
- 
 
 
 }

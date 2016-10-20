@@ -45,7 +45,18 @@ describe("Scheduler", function() {
 
             });
         });
-
+        it("Should create a new  single_elimination schedule ", (done)=> {
+            var schedule_type = {
+                type: "single_elimination"
+            };
+            Schedule.create(schedule_type, (err, schedule)=> {
+                should(err).not.be.ok();
+                should(schedule.id).equal(2);
+                should(schedule.type).equal("single_elimination");
+                should(schedule.status).equal("stopped");
+                done();
+            });
+        });
         describe("start", function () {
             it("should begin scheduling games", function (done) {
                 var sched = new Scheduler();
