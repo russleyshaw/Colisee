@@ -15,11 +15,11 @@ describe("Schedule", function() {
     });
 
     describe("create", ()=> {
-        it("Should create a new schedule in the database",(done)=>{
+        it("Should create a new schedule in the database", (done)=> {
             var schedule_type = {
-                type:"random"
+                type: "random"
             };
-            Schedule.create(schedule_type,(err, schedule)=>{
+            Schedule.create(schedule_type, (err, schedule)=> {
                 should(err).not.be.ok();
                 should(schedule.id).equal(1);
                 should(schedule.type).equal("random");
@@ -27,6 +27,45 @@ describe("Schedule", function() {
                 done();
             });
         });
+        it("Should not create a new schedule with an invalid id.", function (done) {
+            var schedule_type = {
+                type: "random",
+                id: 1
+            };
+            Schedule.create(schedule_type, (err) => {
+                should(err).be.ok();
+                done();
+            });
+        });
+        it("Should not create a new schedule with an invalid created time.", function (done) {
+            var schedule_type = {
+                type: "random",
+                created_time: "now()"
+            };
+            Schedule.create(schedule_type, (err) => {
+                should(err).be.ok();
+                done();
+            });
+        });
+        it("Should not create a new schedule with an invalid modified time.", function (done) {
+            var schedule_type = {
+                type: "random",
+                modified_time: "now()"
+            };
+            Schedule.create(schedule_type, (err) => {
+                should(err).be.ok();
+                done();
+            });
+        });
     });
-
+    describe("getByID", ()=> {
+        it("Should retrieve a schedule in the database by ID.", (done)=> {
+            Schedule.getByID(1, (err, result) => {
+                should(err).not.be.ok();
+                should(result.id).equal(1);
+                should(result.type).equal("random");
+                done();
+            });
+        });
+    });
 });

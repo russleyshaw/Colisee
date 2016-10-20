@@ -34,7 +34,15 @@ class Schedule{
         });
 
     }
+    static getByID(schedule_id, callback){
+        var sql = knex("schedule").where("id",schedule_id).toString();
+        Db.queryOnce(sql,[],function(err,result){
+            if(err)return console.error("queryOnce in schedule.create() returns an error");
+            callback(null,result.rows[0]);
+        });
+    }
 
+ 
 
 
 }
