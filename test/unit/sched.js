@@ -3,6 +3,7 @@ var should = require("should");
 var RandomSchedulerType = require("../../src/head_server/schedulers/RandomSchedulerType");
 var Scheduler = require("../../src/head_server/schedulers/Scheduler");
 var Db = require("../../src/common/Db");
+var Schedule = require("../../src/common/Schedule");
 Db.DEBUG = false;
 
 describe("Scheduler", function() {
@@ -51,7 +52,7 @@ describe("Scheduler", function() {
             };
             Schedule.create(schedule_type, (err, schedule)=> {
                 should(err).not.be.ok();
-                should(schedule.id).equal(2);
+                should(schedule.id).equal(1);
                 should(schedule.type).equal("single_elimination");
                 should(schedule.status).equal("stopped");
                 done();
