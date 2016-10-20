@@ -27,41 +27,14 @@ class Schedule{
         schedule.modified_time = "now()";
 
 
-        var sql = knex("schedule").insert("scheduler_type","*").toString();
+        var sql = knex("schedule").insert(schedule,"*").toString();
         Db.queryOnce(sql,[],function(err,result){
             if(err)return console.error("queryOnce in schedule.create() returns an error");
-            callback(null,result.id);
+            callback(null,result.rows[0]);
         });
 
     }
 
-    // static getByID(schedule_id, callback){
-    //     var sql = knex("schedule").
-    // }
-    //
-    // static getTypeById(schedule_id, callback){
-    //     var sql = knex("schedule")
-    // }
-    //
-    // static getStatusById(schedule_id, callback){
-    //     var sql = knex("schedule")
-    // }
-    //
-    // static getCreatedTimeById(schedule_id, callback){
-    //     var sql = knex("schedule")
-    // }
-    //
-    // static getModifiedTimeById(schedule_id, callback){
-    //     var sql = knex("schedule")
-    // }
-    //
-    // static updateById(schedule_id, fields, callback){
-    //     var sql = knex("schedule")
-    // }
-    //
-    // static getAll(callback){
-    //     var sql = knex("schedule")
-    // }
 
 
 }

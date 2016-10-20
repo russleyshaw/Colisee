@@ -4,7 +4,6 @@ var should = require("should");
 var Schedule = require("../../src/common/Schedule");
 var Db = require("../../src/common/Db");
 
-
 describe("Schedule", function() {
 
     before("Reset database and initialize test data", function (done) {

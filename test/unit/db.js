@@ -7,6 +7,7 @@ var Db = require("../../src/common/Db");
 describe("Db", function() {
 
     before("initialize database with data", function(done){
+        this.timeout(8000);
         Db.reset(function(err){
             should(err).not.be.ok();
             done();

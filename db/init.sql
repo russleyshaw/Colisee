@@ -7,6 +7,7 @@ DROP TYPE IF EXISTS "log_severity_enum" CASCADE;
 DROP TYPE IF EXISTS "schedule_type_enum" CASCADE;
 DROP TYPE IF EXISTS "client_language_enum" CASCADE;
 DROP TYPE IF EXISTS "match_status_enum" CASCADE;
+DROP TYPE IF EXISTS "schedule_status_enum" CASCADE;
 
 CREATE TYPE client_language_enum AS ENUM (
     'cpp', 'python', 'csharp', 'javascript', 'java'

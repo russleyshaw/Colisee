@@ -9,7 +9,7 @@ var Logger = require("../../common/Logger");
 class Scheduler {
 
     constructor() {
-        this.MAX_SCHEDULED = 10;
+        this.MAX_SCHEDULED = 50;
         this.SCHEDULE_INTERVAL = 100;
 
         this.interval_ptr = undefined;
