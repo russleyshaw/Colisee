@@ -12,9 +12,40 @@ class Client {
         var sql = knex("client").toString();
         Db.queryOnce(sql, [], function (err, result) {
             if(err) return callback(err);
-
             callback(null, result.rows);
         });
+    }
+
+    static get(options, callback){
+        var sql = knex("client").select();
+
+        if(options.hasOwnProperty("id")) {
+            if(Array.isArray(options.id)) sql = sql.whereIn("id", options.id);
+            else sql = sql.where("id", options.id);
+        }
+        if(options.hasOwnProperty("name")) {
+            if(Array.isArray(options.name)) sql = sql.whereIn("name", options.name);
+            else sql = sql.where("name", options.name);
+        }
+        if(options.hasOwnProperty("repo")) {
+            if(Array.isArray(options.repo)) sql = sql.whereIn("repo", options.repo);
+            else sql = sql.where("repo", options.repo);
+        }
+        if(options.hasOwnProperty("hash")) {
+            if(Array.isArray(options.hash)) sql = sql.whereIn("hash", options.hash);
+            else sql = sql.where("hash", options.hash);
+        }
+        if(options.hasOwnProperty("needs_build")) {
+            if(Array.isArray(options.needs_build)) sql = sql.whereIn("needs_build", options.needs_build);
+            else sql = sql.where("needs_build", options.needs_build);
+        }
+
+        sql = sql.toString();
+        Db.queryOnce(sql, [], function (err, result) {
+            if(err) return callback(err);
+            callback(null, result.rows);
+        });
+
     }
 
     static getById(client_id, callback) {

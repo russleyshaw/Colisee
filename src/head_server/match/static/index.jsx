@@ -125,29 +125,37 @@ class CreateMatchGroup extends React.Component {
             output: "Create match output"
         };
 
-        this.handleCreateMatch = this.handleCreateMatch.bind(this);
-        this.handleChangedInput = this.handleChangedInput.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChangedBody = this.handleChangedBody.bind(this);
+
+        this.TEXT_AREA_STYLE = {resize: "vertical"};
+        this.TEXT_AREA_DEFAULT_CONTENT = JSON.stringify({
+            clients: [],
+            reason: "",
+            status: ""
+        }, null, 2);
     }
     render() {
-        var textAreaStyle = {resize: "vertical"};
         return(
             <div className="panel panel-default">
                 <div className="panel-body">
                     <label>Create a match</label>
-                    <textarea onChange={this.handleChangedInput} rows="5" className="form-control" placeholder="Enter JSON here..." style={textAreaStyle}/>
-                    <button onClick={this.handleCreateMatch} type="button" className="btn btn-default btn-block">Create!</button>
+                    <textarea onChange={this.handleChangedBody} rows="5" className="form-control">
+                        {this.TEXT_AREA_DEFAULT_CONTENT}
+                    </textarea>
+                    <button onClick={this.handleSubmit} type="button" className="btn btn-default btn-block">Create!</button>
                     <div className="well">{this.state.output}</div>
                 </div>
             </div>
         );
     }
 
-    handleChangedInput(e) {
+    handleChangedBody(e) {
         var val = e.target.value == null ? "{}" : e.target.value;
         this.setState({input: val});
     }
 
-    handleCreateMatch(e) {
+    handleSubmit(e) {
         var body = JSON.parse( this.state.input );
         var self = this;
         $.post("api/v2/match/", body, function(newMatch){

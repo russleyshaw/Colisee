@@ -92,7 +92,7 @@ describe("Logger", function() {
             var log = {
                 id: 1,
                 message: "test4",
-                severity: "critical"
+                severity: "error"
             };
             Logger.create(log, (err) => {
                 should(err).be.ok();

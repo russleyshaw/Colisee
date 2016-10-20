@@ -15,8 +15,8 @@ describe("Client", function() {
         });
     });
 
-    describe("create", () => {
-        it("should create a new client in the database", (done) => {
+    describe("create", function() {
+        it("should create a new client in the database", function(done) {
             var client = {
                 name: "test1",
                 build_success:true
@@ -29,7 +29,7 @@ describe("Client", function() {
             });
         });
 
-        it("should create a new client in the database", (done) => {
+        it("should create a new client in the database", function(done) {
             var client = {
                 name: "test2",
                 build_success:true
@@ -42,7 +42,7 @@ describe("Client", function() {
             });
         });
 
-        it("should create a new client in the database", (done) => {
+        it("should create a new client in the database", function(done) {
             var client = {
                 name: "test3",
                 build_success:true
@@ -55,7 +55,7 @@ describe("Client", function() {
             });
         });
 
-        it("should not create a client with an invalid language", (done) => {
+        it("should not create a client with an invalid language", function(done) {
             var client = {
                 name: "test4",
                 language: "cpp1"
@@ -66,7 +66,7 @@ describe("Client", function() {
             });
         });
 
-        it("should not create a client with a given id", (done) => {
+        it("should not create a client with a given id", function(done) {
             var client = {
                 id: 1,
                 name: "test4",
@@ -93,7 +93,7 @@ describe("Client", function() {
     });
 
     describe("getById", () => {
-        it("should retrieve a client by id", (done) => {
+        it("should retrieve a client by id", function(done) {
             Client.getById(1, (err, client) => {
                 should(err).not.be.ok();
                 should(client.id).be.equal(1);
@@ -104,7 +104,7 @@ describe("Client", function() {
     });
 
     describe("getByName", () => {
-        it("should retrieve a client by name", (done) => {
+        it("should retrieve a client by name", function(done) {
             Client.getByName("test2", (err, client) => {
                 should(err).not.be.ok();
 
@@ -116,15 +116,15 @@ describe("Client", function() {
         });
     });
 
-    describe("getRandom", () => {
-        it("should get a random client", (done) => {
+    describe("getRandom", function() {
+        it("should get a random client", function(done) {
             Client.getRandom(1, (err, clients) => {
                 should(err).not.be.ok();
                 should(clients.length).be.equal(1);
                 done();
             });
         });
-        it("should get multiple random clients", (done) =>{
+        it("should get multiple random clients", function(done) {
             Client.getRandom(2, (err, clients) => {
                 should(err).not.be.ok();
                 should(clients.length).be.equal(2);

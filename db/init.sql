@@ -14,7 +14,7 @@ CREATE TYPE client_language_enum AS ENUM (
 );
 
 CREATE TYPE log_severity_enum AS ENUM (
-    'debug', 'info', 'warn', 'error', 'critical'
+    'debug', 'info', 'warn', 'error'
 );
 
 CREATE TYPE schedule_type_enum AS ENUM (
