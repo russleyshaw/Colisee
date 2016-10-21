@@ -28,7 +28,6 @@ describe("Client", function() {
                 done();
             });
         });
-
         it("should create a new client in the database", function(done) {
             var client = {
                 name: "test2",

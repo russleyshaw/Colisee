@@ -104,4 +104,18 @@ describe("Schedule", function() {
             });
         });
     });
+    describe("get", ()=>{
+        it("Should retreive a schedule with given config.", (done)=>{
+            describe = {
+                type:"triple_elimination"
+            };
+            Schedule.get(describe,(err,result)=>{
+                should(err).not.be.ok();
+                should(result[0].id).equal(3);
+                should(result[0].type).equal("triple_elimination");
+                should(result[0].status).equal("stopped");
+                done();
+            });
+        });
+    });
 });

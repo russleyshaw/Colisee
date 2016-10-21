@@ -35,6 +35,44 @@ class Schedule{
     }
 
     /**
+     * @callback Schedule ~getCallback
+     * @param err
+     * @param schedule {Object}
+     *
+     */
+
+     /**
+     *
+     * Retreives a schedule with given config
+     * @param describe {Object}
+     * @callback {Schedule ~getCallback}
+     */
+    static get(describe,callback){
+        var sql =knex("schedule").select();
+
+        if(describe.hasOwnProperty("id")) {
+            if (Array.isArray(describe)) sql = sql.whereIn("id", describe.id);
+            else sql = sql.where("id", describe.id);
+        }
+        if(describe.hasOwnProperty("status")) {
+            if (Array.isArray(describe))sql = sql.whereIn("status", describe.status);
+            else sql  = sql.where("status", describe.status);
+        }
+        if(describe.hasOwnProperty("type")){
+            if(Array.isArray(describe))sql=sql.whereIn("type",describe.type);
+            else sql= sql.where("type",describe.type);
+        }
+        sql=sql.toString();
+        Db.queryOnce(sql,[],(err,result)=>{
+          if(err)callback(err);
+          callback(null,result.rows);
+        });
+
+
+
+    }
+
+    /**
      * @callback
      * @param err
      * @param Schedule {Object}
@@ -51,34 +89,6 @@ class Schedule{
             callback(null,result.rows[0]);
         });
     }
-
-    /**
-     * @callback
-     * @param err
-     * @param Schedule {Object}
-     *
-     *
-     *
-     * @param a schedule type
-     * @callback {Schedule ~getByTypeCallback}
-     */
-    static getByType(schedule_type, callback){
-        var sql = knex("schedule").where("type",schedule_type).toString();
-        Db.queryOnce(sql,[],function(err,result){
-            if(err)return console.error("queryOnce in schedule.getByType() returns an error");
-            callback(null,result.rows[0]);
-        });
-    }
-    // static updateById(schedule_id, fields, callback){
-    //     var sql = knex("schedule")
-    // }
-    //
-    // static getAll(callback){
-    //     var sql = knex("schedule")
-    // }
-
-
-
 }
 
 module.exports = Schedule;
