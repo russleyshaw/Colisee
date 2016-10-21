@@ -106,14 +106,28 @@ describe("Schedule", function() {
     });
     describe("get", ()=>{
         it("Should retreive a schedule with given config.", (done)=>{
-            describe = {
+            fields = {
                 type:"triple_elimination"
             };
-            Schedule.get(describe,(err,result)=>{
+            Schedule.get(fields,(err,result)=>{
                 should(err).not.be.ok();
                 should(result[0].id).equal(3);
                 should(result[0].type).equal("triple_elimination");
                 should(result[0].status).equal("stopped");
+                done();
+            });
+        });
+    });
+    describe("updateById",function(){
+        it("Should update status of existing schedule.", function(done){
+            Fields = {
+                status:"running",
+            };
+            this.timeout(8000);
+            Schedule.updateById(3,Fields,(err,result)=>{
+                should(err).not.be.ok();
+                should(result.status).equal("running");
+                should(result.type).equal("triple_elimination");
                 done();
             });
         });

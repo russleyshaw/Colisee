@@ -118,6 +118,31 @@ class Schedule{
             callback(null,result.rows[0]);
         });
     }
+
+    /**
+     *
+     * @param a schedule id
+     * @param schedStatus {Object}
+     * @param callback
+     * @returns  modified {Object}
+     */
+    static updateById(id,Fields,callback){
+        if(Fields.hasOwnProperty("id")) return callback("Cannot modify id.");
+        if(Fields.hasOwnProperty("type"))return callback("Cannot modify type.");
+        if(Fields.hasOwnProperty("modified_time"))return callback("Cannot modify the modified time.");
+        if(Fields.hasOwnProperty("created_time"))return callback("Canot modify the created time.");
+
+        Fields["modified_time"] = "now()";
+
+        var sql = knex("schedule").where({id:id}).update(Fields,"*").toString();
+        Db.queryOnce(sql,[],function(err,result){
+            if(err)return callback(err);
+            if(result.rows.length != 1) return callback(new Error(`Schedule with id ${schedule_id} not found.`));
+
+            callback(null,result.rows[0]);
+        });
+    }
 }
+
 
 module.exports = Schedule;

@@ -25,7 +25,7 @@ class Scheduler {
     getNumScheduled(callback){
         var sql = knex("match").where("status","scheduled").count("* as count").toString();
         Db.queryOnce(sql,[],function(err,result){
-            if(err)return console.error("queryOnce returns an error");//callback(err);
+            if(err)return callback(new Error("queryOnce returns an error"));
             callback(null,result.rows[0].count);
         });
     }
