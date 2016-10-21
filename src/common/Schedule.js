@@ -35,6 +35,18 @@ class Schedule{
     }
 
     /**
+     *
+     * @param callback
+     */
+    static getAll(callback) {
+        var sql = knex("schedule").toString();
+        Db.queryOnce(sql, [], function (err, result) {
+            if(err) return callback(err);
+            callback(null, result.rows);
+        });
+    }
+
+    /**
      * @callback Schedule ~getCallback
      * @param err
      * @param schedule {Object}
@@ -70,6 +82,23 @@ class Schedule{
 
 
 
+    }
+    /**
+     * @callback
+     * @param err
+     * @param Schedule {Object}
+     *
+     *
+     *
+     * @param a schedule type
+     * @callback {Schedule ~getByTypeCallback}
+     */
+    static getByType(schedule_type, callback){
+        var sql = knex("schedule").where("type",schedule_type).toString();
+        Db.queryOnce(sql,[],function(err,result){
+            if(err)return console.error("queryOnce in schedule.getByType() returns an error");
+            callback(null,result.rows[0]);
+        });
     }
 
     /**
