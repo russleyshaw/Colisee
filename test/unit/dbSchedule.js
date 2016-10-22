@@ -106,7 +106,7 @@ describe("Schedule", function() {
     });
     describe("get", ()=>{
         it("Should retreive a schedule with given config.", (done)=>{
-            fields = {
+            var fields = {
                 type:"triple_elimination"
             };
             Schedule.get(fields,(err,result)=>{
@@ -120,7 +120,7 @@ describe("Schedule", function() {
     });
     describe("updateById",function(){
         it("Should update status of existing schedule.", function(done){
-            Fields = {
+            var Fields = {
                 status:"running",
             };
             this.timeout(8000);

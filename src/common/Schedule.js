@@ -76,8 +76,8 @@ class Schedule{
         }
         sql=sql.toString();
         Db.queryOnce(sql,[],(err,result)=>{
-          if(err)callback(err);
-          callback(null,result.rows);
+            if(err)callback(err);
+            callback(null,result.rows);
         });
 
 
@@ -137,7 +137,7 @@ class Schedule{
         var sql = knex("schedule").where({id:id}).update(Fields,"*").toString();
         Db.queryOnce(sql,[],function(err,result){
             if(err)return callback(err);
-            if(result.rows.length != 1) return callback(new Error(`Schedule with id ${schedule_id} not found.`));
+            if(result.rows.length != 1) return callback(new Error(`Schedule with id ${id} not found.`));
 
             callback(null,result.rows[0]);
         });
