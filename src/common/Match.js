@@ -19,6 +19,37 @@ class Match {
         });
     }
 
+    static get(options, callback){
+        var sql = knex("match").select();
+
+        if(options.hasOwnProperty("id")){
+            if(Array.isArray(options.id)) sql = sql.whereIn("id", options.id);
+            else sql = sql.where("id", options.id);
+        }
+        if(options.hasOwnProperty("clients")){
+            if(Array.isArray(options.clients)) sql = sql.whereIn("clients", options.clients);
+            else sql = sql.where("clients", options.clients);
+        }
+        if(options.hasOwnProperty("reason")){
+            if(Array.isArray(options.reason)) sql = sql.whereIn("reason", options.reason);
+            else sql = sql.where("reason", options.reason);
+        }
+        if(options.hasOwnProperty("status")){
+            if(Array.isArray(options.status)) sql = sql.whereIn("status", options.status);
+            else sql = sql.where("status", options.status);
+        }
+        if(options.hasOwnProperty("gamelog")){
+            if(Array.isArray(options.gamelog)) sql = sql.whereIn("gamelog", options.gamelog);
+            else sql = sql.where("gamelog", options.gamelog);
+        }
+
+        sql = sql.toString();
+        Db.queryOnce(sql, [], function (err, result) {
+            if(err) return callback(err);
+            callback(null, result.rows);
+        });
+    }
+
     static getById(match_id, callback) {
         var sql = knex("match").where("id", match_id).toString();
         Db.queryOnce(sql, [], function(err, result){
