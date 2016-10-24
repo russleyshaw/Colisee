@@ -9,7 +9,7 @@ var fs = require("fs");
 var config = require("config");
 var async = require("async");
 
-var _DEBUG = true;
+var _DEBUG = false;
 
 /**
  * Database interaction and utilities class

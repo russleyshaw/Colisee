@@ -75,9 +75,9 @@ class Schedule{
             else sql= sql.where("type",describe.type);
         }
         sql=sql.toString();
-        Db.queryOnce(sql,[],(err,result)=>{
-            if(err)callback(err);
-            callback(null,result.rows);
+        Db.queryOnce(sql, [], function (err, result) {
+            if(err) return callback(err);
+            callback(null, result.rows);
         });
 
 
