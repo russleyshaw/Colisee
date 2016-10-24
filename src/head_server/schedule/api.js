@@ -1,15 +1,9 @@
-
 var express = require("express");
 var path = require("path");
 
 var Schedule = require("../../common/Schedule");
 
 var router = express.Router();
-
-
-
-
-
 
 router.use("/schedule/", express.static(path.join(__dirname, "static/index.html")));
 router.use("/schedule/static/", express.static(path.join(__dirname, "static")));
@@ -49,7 +43,7 @@ router.post("/api/v2/schedule/:id/update/", (req, res) => {
     });
 });
 
-router.post("/api/v2/client/", function(req, res){
+router.post("/api/v2/schedule/", function(req, res){
     Schedule.create(req.body, (err, schedule) => {
         if(err) return res.sendStatus(400);
         res.send(schedule);

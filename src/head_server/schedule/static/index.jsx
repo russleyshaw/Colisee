@@ -1,5 +1,5 @@
 /**
- * Individual client in Client list panel
+ * Individual schedule in Schedule list panel
  */
 class ScheduleListPanelItem extends React.Component {
     constructor(props) {
@@ -21,14 +21,14 @@ class ScheduleListPanel extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            schedule: [],
+            schedules: [],
             filterQs: "",
         };
 
         this.onChangedFilter = this.onChangedFilter.bind(this);
-        this.updateSchedule = this.updateSchedule.bind(this);
+        this.updateSchedules = this.updateSchedules.bind(this);
 
-        setInterval(this.updateSchedule, 1000);
+        setInterval(this.updateSchedules, 1000);
     }
 
     render() {
@@ -71,7 +71,7 @@ class ScheduleListPanel extends React.Component {
         var self = this;
 
         console.log(this.state.filterQs);
-        $.get(`/api/v2/schedule/?${this.state.filterQs}`, function(schedule) {
+        $.get(`/api/v2/schedule/?${this.state.filterQs}`, function(schedules) {
             self.setState({"schedules": schedules});
 
         }).fail(function() {
@@ -82,7 +82,7 @@ class ScheduleListPanel extends React.Component {
 
 }
 
-class GetScheduleroup extends React.Component {
+class GetScheduleGroup extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -135,10 +135,8 @@ class CreateScheduleGroup extends React.Component {
 
 
         this.TEXT_AREA_DEFAULT_CONTENT = JSON.stringify({
-            name: "",
-            repo: "",
-            hash: "",
-            language: "",
+            type: "",
+            status: "",
         }, null, 2);
         this.TEXT_AREA_STYLE = {resize: "vertical"};
 
@@ -199,9 +197,8 @@ class UpdateScheduleGroup extends React.Component {
         this.handleChangedBody = this.handleChangedBody.bind(this);
 
         this.TEXT_AREA_DEFAULT_CONTENT = JSON.stringify({
-            repo: "",
-            hash: "",
-            language: ""
+            type: "",
+            status: ""
         }, null, 2);
 
         this.TEXT_AREA_STYLE = {resize: "vertical"};
@@ -234,7 +231,7 @@ class UpdateScheduleGroup extends React.Component {
         var body = JSON.parse( this.state.inputBody );
         var id = this.state.inputId;
         var self = this;
-        $.post(`api/v2/schedule/${id}/update/`, body, function(newClient){
+        $.post(`api/v2/schedule/${id}/update/`, body, function(newSchedule){
             var out = Object.keys(newSchedule).map(function(key){
                 return <span><strong>{key}</strong>: {JSON.stringify(newSchedule[key])}<br/></span>;
             });
