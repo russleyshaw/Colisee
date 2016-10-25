@@ -8,6 +8,11 @@ var Builder = require("./Builder");
 var app = express();
 var builder = new Builder();
 
+builder.init((err) => {
+    if(err) return console.error(err);
+    builder.start();
+});
+
 app.use( body_parser.json() );
 app.use( body_parser.urlencoded({ extended: true }) );
 app.use( function(req, res, next) {
@@ -16,10 +21,6 @@ app.use( function(req, res, next) {
     res.header("Access-Control-Allow-Headers", "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept");
     next();
 });
-
-/***********************************************************************************************************************
- * GET
- */
 
 /**
  * @apiGroup Builder
