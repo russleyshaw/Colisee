@@ -4,7 +4,7 @@ var knex = require("knex")({
 });
 
 /**
- * Class to interface with client table in database
+ *
  */
 class Client {
 
@@ -74,10 +74,10 @@ class Client {
      * @param callback
      */
     static getRandom(limit, callback) {
-        var sql = knex("client").orderByRaw("random()").limit(limit).toString();
+        var sql = knex("client").where("build_success" ,"=","true").orderByRaw("random()").limit(limit).toString();
         Db.queryOnce(sql, [], function(err, result) {
             if(err) return callback(err);
-            if(result.rowCount != limit) return callback("Inserted rows not fully returned");
+            if(result.rowCount > limit) return callback("Inserted rows not fully returned");
             callback(null, result.rows);
         });
     }
