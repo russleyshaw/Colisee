@@ -24,6 +24,9 @@
     "run:head": "node src/head_server/main.js",
     "watch:head": "nodemon --watch src/head_server/ --ext html,js,jsx --exec 'npm run run:head'",
 
+    "run:build": "node src/build_server/main.js",
+    "watch:build": "nodemon --watch src/build_server/ --ext html,js,jsx --exec 'npm run run:build'",
+
     "run:play": "node src/play_server/main.js",
     "watch:play": "nodemon --watch src/play_server/ --ext html,js --exec 'npm run run:play'"
   },

@@ -18,6 +18,8 @@ class Builder {
         this._build_interval_time = 1000;
         this._num_building = 0;
         this.MAX_BUILDING = 1;
+
+        this.status = "Not Initialized";
     }
 
     /**
@@ -32,6 +34,7 @@ class Builder {
      * @param callback {Builder~initCallback}
      */
     init(callback) {
+        console.log(`Initializing...`);
         //TODO: Add other docker base images
         var cmds = [
             `docker build -t base_cpp -f ${ path.join(__dirname, "dockerfiles/base_cpp.dockerfile")} . > ${path.join(__dirname, "log/base_cpp.log")}`,
@@ -45,6 +48,7 @@ class Builder {
             });
         }, function(err){
             if(err) return callback(err);
+            console.log(`Initialized`);
             callback();
         });
     }
@@ -53,6 +57,7 @@ class Builder {
      * Start checking for clients flagged as needing builds
      */
     start() {
+        console.log(`Starting build service...`);
         clearInterval(this._build_interval);
         this._build_interval = setInterval(() => {
             //Don't build more if at max
@@ -82,7 +87,9 @@ class Builder {
      * Stop checking for clients flagged as needing builds
      */
     stop() {
+        console.log(`Stopping build service...`);
         clearInterval(this._build_interval);
+        console.log(`Stopped build service`);
     }
 
     _unsetNeedsBuild(client_id, callback) {
@@ -106,6 +113,7 @@ class Builder {
      * @param callback {Builder~buildCallback}
      */
     build(client_id, callback) {
+        console.log(`Building client ${client_id}...`);
 
         Client.getById(client_id, (err, client) => {
             if(err) return callback(err);
@@ -129,6 +137,7 @@ class Builder {
                             }, "*").toString();
                             Db.queryOnce(sql, [], (err) => {
                                 if(err) return callback(err);
+                                console.log(`Built client ${client_id} with success`);
                                 callback(null, true);
                             });
                         });
@@ -148,6 +157,7 @@ class Builder {
                             }, "*").toString();
                             Db.queryOnce(sql, [], (err) => {
                                 if(err) return callback(err);
+                                console.log(`Built client ${client_id} with failure`);
                                 callback(null, false);
                             });
                         });
