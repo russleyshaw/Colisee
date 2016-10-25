@@ -9,7 +9,7 @@ var Logger = require("../../common/Logger");
 class Scheduler {
 
     constructor() {
-        this.MAX_SCHEDULED = 10;
+        this.MAX_SCHEDULED = 50;
         this.SCHEDULE_INTERVAL = 100;
 
         this.interval_ptr = undefined;
@@ -25,7 +25,7 @@ class Scheduler {
     getNumScheduled(callback){
         var sql = knex("match").where("status","scheduled").count("* as count").toString();
         Db.queryOnce(sql,[],function(err,result){
-            if(err)return console.error("queryOnce returns an error");//callback(err);
+            if(err)return callback(new Error("queryOnce returns an error"));
             callback(null,result.rows[0].count);
         });
     }

@@ -18,7 +18,8 @@ describe("Client", function() {
     describe("create", function() {
         it("should create a new client in the database", function(done) {
             var client = {
-                name: "test1"
+                name: "test1",
+                build_success:true
             };
             Client.create(client, (err, client) => {
                 should(err).not.be.ok();
@@ -27,10 +28,10 @@ describe("Client", function() {
                 done();
             });
         });
-
         it("should create a new client in the database", function(done) {
             var client = {
-                name: "test2"
+                name: "test2",
+                build_success:true
             };
             Client.create(client, (err, client) => {
                 should(err).not.be.ok();
@@ -42,7 +43,8 @@ describe("Client", function() {
 
         it("should create a new client in the database", function(done) {
             var client = {
-                name: "test3"
+                name: "test3",
+                build_success:true
             };
             Client.create(client, (err, client) => {
                 should(err).not.be.ok();
