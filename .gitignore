@@ -8,3 +8,6 @@ npm-debug.log
 
 # TypeScript Stuff
 typings/
+
+# Temporary Files
+tmp/

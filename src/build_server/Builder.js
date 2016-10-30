@@ -3,6 +3,7 @@ var fs = require("fs");
 var path = require("path");
 var async = require("async");
 var Client = require("../common/Client");
+var Logger = require("../common/Logger");
 var Db = require("../common/Db");
 var knex = require("knex")({
     dialect: "pg"
@@ -19,7 +20,9 @@ class Builder {
         this._num_building = 0;
         this.MAX_BUILDING = 1;
 
-        this.status = "Not Initialized";
+        this.log_dir = path.join(__dirname, "../../", config.build_server.log_dir);
+        this.tar_dir = path.join(__dirname, "../../", config.build_server.tar_dir);
+        this.hash_dir = path.join(__dirname, "../../", config.build_server.hash_dir);
     }
 
     /**
@@ -37,10 +40,11 @@ class Builder {
         console.log("Initializing...");
         //TODO: Add other docker base images
         var cmds = [
-            `docker build -t base_cpp -f ${ path.join(__dirname, "dockerfiles/base_cpp.dockerfile")} . > ${path.join(__dirname, "log/base_cpp.log")}`,
-            `docker build -t base_js -f ${path.join(__dirname, "dockerfiles/base_js.dockerfile")} . > ${path.join(__dirname, "log/base_js.log")}`,
+            `docker build -t base_cpp -f ${ path.join(__dirname, "dockerfiles/base_cpp.dockerfile")} . > ${path.join(this.log_dir, "base_cpp.log")}`,
+            `docker build -t base_js -f ${path.join(__dirname, "dockerfiles/base_js.dockerfile")} . > ${path.join(this.log_dir, "base_js.log")}`,
         ];
 
+        //Build each base image
         async.map(cmds, function(cmd, cb) {
             child_process.exec(cmd, function(err) {
                 if(err) return cb(err);
@@ -63,8 +67,8 @@ class Builder {
             //Don't build more if at max
             if(this._num_building >= this._MAX_BUILDING) return;
 
-            //Select oldest client needing build
-            var sql = knex("client").select().where({needs_build: true}).orderBy("attempt_time").limit(1).returning().toString();
+            //Select oldest client needing build, with
+            var sql = knex("client").where({needs_build: true}).whereNotNull(["repo", "hash", "language"]).orderBy("attempt_time").limit(1).toString();
             Db.queryOnce(sql, [], (err, result) => {
                 if(err) return console.warn(`Error: ${JSON.stringify(err)}`);
                 if(result.rows.length < 1) return; //None needing building
@@ -212,11 +216,12 @@ class Builder {
         });
     }
 
+    //TODO: Document
     _buildImageAndTmpLog(client, callback) {
 
         var cmds = {
-            "cpp": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_cpp.dockerfile")} . > ${path.join(__dirname, `log/client_${client.id}.log.tmp`)}`,
-            "js": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_js.dockerfile")} . > ${path.join(__dirname, `log/client_${client.id}.log.tmp`)}`,
+            "cpp": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_cpp.dockerfile")} . > ${path.join(this.log_dir, `${client.id}.log.tmp`)}`,
+            "js": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_js.dockerfile")} . > ${path.join(this.log_dir, `${client.id}.log.tmp`)}`,
         };
 
         if(!(client.language in cmds)) return callback("Language not supported!");
@@ -228,22 +233,25 @@ class Builder {
         });
     }
 
+    //TODO: Document
     _saveTarTmp(client_id, callback) {
-        var cmd = `docker save -o ${path.join(__dirname, `tar/client_${client_id}.tar.tmp`)} client_${client_id}`;
+        var cmd = `docker save -o ${path.join(this.tar_dir, `client_${client_id}.tar.tmp`)} client_${client_id}`;
         child_process.exec(cmd, (err) => {
             if(err) return callback(err);
             callback();
         });
     }
 
+    //TODO: Document
     _saveHashTmp(client_id, callback) {
-        var cmd = `sha256sum ${path.join(__dirname, `tar/client_${client_id}.tar.tmp`)} > ${path.join(__dirname, `hash/client_${client_id}.sha256.tmp`)}`;
+        var cmd = `sha256sum ${path.join(this.tar_dir, `client_${client_id}.tar.tmp`)} > ${path.join(__dirname, `hash/client_${client_id}.sha256.tmp`)}`;
         child_process.exec(cmd, (err) =>{
             if(err) return callback(err);
             callback();
         });
     }
 
+    //TODO: Document
     _applyTmpFiles(client_id, callback) {
         var cmds = [
             `mv -f ${path.join(__dirname, `tar/client_${client_id}.tar.tmp`)} ${path.join(__dirname, `tar/client_${client_id}.tar`)}`,
