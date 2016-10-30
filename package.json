@@ -11,8 +11,8 @@
     "fix": "eslint --fix src/ test/",
 
     "docs": "npm-run-all docs:*",
-    "docs:js": "jsdoc src/ -t node_modules/minami -r -c doc.json -d docs/js/",
-    "docs:api": "apidoc -i src/ -o docs/api/",
+    "docs:js": "rm -rf docs/js/ && jsdoc src/ -t node_modules/minami -r -c doc.json -d docs/js/",
+    "docs:api": "rm -rf docs/api/ && apidoc -i src/ -o docs/api/",
 
     "test": "npm-run-all lint test:*",
     "test:unit": "NODE_ENV=test mocha --recursive test/unit",

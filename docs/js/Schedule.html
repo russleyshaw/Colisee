@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Gamelogger - Documentation</title>
+    <title>Schedule - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,7 +28,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Gamelogger</h1>
+    <h1 class="page-title">Schedule</h1>
     
 
     
@@ -41,8 +41,10 @@
 <header>
     
         <h2>
-        Gamelogger
+        Schedule
         </h2>
+        
+            <div class="class-description">Interface for schedule table in database</div>
         
     
 </header>
@@ -53,16 +55,14 @@
         
 
     
+    <h2>Constructor</h2>
+    
 
-    <h4 class="name" id="Gamelogger"><span class="type-signature"></span>new Gamelogger<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Schedule"><span class="type-signature"></span>new Schedule<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
-
-<div class="description">
-    Initializes a new Gamelogger
-</div>
 
 
 
@@ -105,7 +105,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="gamelog_server_Gamelogger.js.html">gamelog_server/Gamelogger.js</a>, <a href="gamelog_server_Gamelogger.js.html#line10">line 10</a>
+        <a href="common_Schedule.js.html">common/Schedule.js</a>, <a href="common_Schedule.js.html#line9">line 9</a>
     </li></ul></dd>
     
 
@@ -154,14 +154,322 @@
 
     
 
-    <h4 class="name" id="load"><span class="type-signature"></span>load<span class="signature">(id, callback)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".create"><span class="type-signature">(static) </span>create<span class="signature">(schedule, callback)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Retrieves a saved gamelog
+    Creates a schedule when given a scheduler type
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>schedule</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Schedule.html#~createCallback">Schedule~createCallback</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="common_Schedule.js.html">common/Schedule.js</a>, <a href="common_Schedule.js.html#line21">line 21</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".get"><span class="type-signature">(static) </span>get<span class="signature">(options, callback)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Gets an array of clients that satisfies the given options parameters
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Schedule.html#~getCallback">Schedule~getCallback</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="common_Schedule.js.html">common/Schedule.js</a>, <a href="common_Schedule.js.html#line56">line 56</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".updateById"><span class="type-signature">(static) </span>updateById<span class="signature">(id, fields, callback)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Update a Schedule by its id
 </div>
 
 
@@ -202,8 +510,26 @@
 
             <td class="type">
             
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fields</code></td>
+            
+
+            <td class="type">
+            
                 
-<span class="param-type">number</span>
+<span class="param-type">Object</span>
 
 
             
@@ -213,7 +539,7 @@
 
             
 
-            <td class="description last">The id of the requested gamelog</td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -226,7 +552,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="Gamelogger.html#~loadCallback">Gamelogger~loadCallback</a></span>
+<span class="param-type"><a href="Schedule.html#~updateById">Schedule~updateById</a></span>
 
 
             
@@ -277,292 +603,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="gamelog_server_Gamelogger.js.html">gamelog_server/Gamelogger.js</a>, <a href="gamelog_server_Gamelogger.js.html#line62">line 62</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="reset"><span class="type-signature"></span>reset<span class="signature">(callback)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Resets the Gamelogger by deleting all saved gamelogs and resetting id
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Gamelogger.html#~resetCallback">Gamelogger~resetCallback</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="gamelog_server_Gamelogger.js.html">gamelog_server/Gamelogger.js</a>, <a href="gamelog_server_Gamelogger.js.html#line23">line 23</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="save"><span class="type-signature"></span>save<span class="signature">(glog_data, callback)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Saves a gamelog to the system
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>glog_data</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Gamelogger.html#~saveCallback">Gamelogger~saveCallback</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="gamelog_server_Gamelogger.js.html">gamelog_server/Gamelogger.js</a>, <a href="gamelog_server_Gamelogger.js.html#line42">line 42</a>
+        <a href="common_Schedule.js.html">common/Schedule.js</a>, <a href="common_Schedule.js.html#line108">line 108</a>
     </li></ul></dd>
     
 
@@ -599,7 +640,7 @@
 
     
 
-    <h4 class="name" id="~loadCallback"><span class="type-signature"></span>loadCallback<span class="signature">(err, data)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~createCallback"><span class="type-signature"></span>createCallback<span class="signature">(err, schedule)</span><span class="type-signature"></span></h4>
 
     
 
@@ -656,10 +697,15 @@
 
         <tr>
             
-                <td class="name"><code>data</code></td>
+                <td class="name"><code>schedule</code></td>
             
 
             <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
             
             </td>
 
@@ -667,7 +713,7 @@
 
             
 
-            <td class="description last">Contents of the requested gamelog</td>
+            <td class="description last">Updated schedule</td>
         </tr>
 
     
@@ -708,7 +754,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="gamelog_server_Gamelogger.js.html">gamelog_server/Gamelogger.js</a>, <a href="gamelog_server_Gamelogger.js.html#line51">line 51</a>
+        <a href="common_Schedule.js.html">common/Schedule.js</a>, <a href="common_Schedule.js.html#line10">line 10</a>
     </li></ul></dd>
     
 
@@ -739,7 +785,7 @@
 
     
 
-    <h4 class="name" id="~resetCallback"><span class="type-signature"></span>resetCallback<span class="signature">(err)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~getCallback"><span class="type-signature"></span>getCallback<span class="signature">(err, schedule)</span><span class="type-signature"></span></h4>
 
     
 
@@ -793,6 +839,29 @@
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>schedule</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -830,7 +899,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="gamelog_server_Gamelogger.js.html">gamelog_server/Gamelogger.js</a>, <a href="gamelog_server_Gamelogger.js.html#line14">line 14</a>
+        <a href="common_Schedule.js.html">common/Schedule.js</a>, <a href="common_Schedule.js.html#line45">line 45</a>
     </li></ul></dd>
     
 
@@ -861,7 +930,7 @@
 
     
 
-    <h4 class="name" id="~saveCallback"><span class="type-signature"></span>saveCallback<span class="signature">(err, id)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~updateById"><span class="type-signature"></span>updateById<span class="signature">(err, schedule)</span><span class="type-signature"></span></h4>
 
     
 
@@ -918,13 +987,13 @@
 
         <tr>
             
-                <td class="name"><code>id</code></td>
+                <td class="name"><code>schedule</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Object</span>
 
 
             
@@ -934,7 +1003,7 @@
 
             
 
-            <td class="description last">The id of the saved gamelog</td>
+            <td class="description last">Updated schedule</td>
         </tr>
 
     
@@ -975,7 +1044,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="gamelog_server_Gamelogger.js.html">gamelog_server/Gamelogger.js</a>, <a href="gamelog_server_Gamelogger.js.html#line31">line 31</a>
+        <a href="common_Schedule.js.html">common/Schedule.js</a>, <a href="common_Schedule.js.html#line96">line 96</a>
     </li></ul></dd>
     
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>head_server/client/static/index.jsx - Documentation</title>
+    <title>head_server/schedule/static/index.jsx - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,7 +28,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">head_server/client/static/index.jsx</h1>
+    <h1 class="page-title">head_server/schedule/static/index.jsx</h1>
     
 
     
@@ -39,9 +39,9 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * Individual client in Client list panel
+ * Individual schedule in Schedule list panel
  */
-class ClientListPanelItem extends React.Component {
+class ScheduleListPanelItem extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -49,33 +49,33 @@ class ClientListPanelItem extends React.Component {
         var self = this;
         return(
             &lt;div className="well">
-                {Object.keys(this.props.client).map(function(key){
-                    return &lt;span>&lt;strong>{key}&lt;/strong>:  {JSON.stringify(self.props.client[key])}&lt;br/>&lt;/span>;
+                {Object.keys(this.props.schedule).map(function(key){
+                    return &lt;span>&lt;strong>{key}&lt;/strong>:  {JSON.stringify(self.props.schedule[key])}&lt;br/>&lt;/span>;
                 })}
             &lt;/div>
         )
     }
 }
 
-class ClientListPanel extends React.Component {
+class ScheduleListPanel extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            clients: [],
+            schedules: [],
             filterQs: "",
         };
 
         this.onChangedFilter = this.onChangedFilter.bind(this);
-        this.updateClients = this.updateClients.bind(this);
+        this.updateSchedules = this.updateSchedules.bind(this);
 
-        setInterval(this.updateClients, 1000);
+        setInterval(this.updateSchedules, 1000);
     }
 
     render() {
         return (
             &lt;div className="panel panel-default">
                 &lt;div className="panel-heading">
-                    &lt;div className="panel-title">Client List&lt;/div>
+                    &lt;div className="panel-title">Schedule List&lt;/div>
                     &lt;div className="input-group">
                         &lt;span className="input-group-addon">&amp;#123;&lt;/span>
                         &lt;input onChange={this.onChangedFilter} type="text" className="form-control" placeholder="JSON Filter..."/>
@@ -84,8 +84,8 @@ class ClientListPanel extends React.Component {
                 &lt;/div>
 
                 &lt;div className="panel-body">
-                    {this.state.clients.map(function(client) {
-                        return &lt;ClientListPanelItem client={client}/>;
+                    {this.state.schedules.map(function(schedule) {
+                        return &lt;ScheduleListPanelItem schedule={schedule}/>;
                     })}
                 &lt;/div>
             &lt;/div>
@@ -107,26 +107,26 @@ class ClientListPanel extends React.Component {
         }
     }
 
-    updateClients() {
+    updateSchedules() {
         var self = this;
 
         console.log(this.state.filterQs);
-        $.get(`/api/v2/client/?${this.state.filterQs}`, function(clients) {
-            self.setState({"clients": clients});
+        $.get(`/api/v2/schedule/?${this.state.filterQs}`, function(schedules) {
+            self.setState({"schedules": schedules});
 
         }).fail(function() {
-            self.setState({"clients": []});
+            self.setState({"schedules": []});
 
         });
     }
 
 }
 
-class GetClientGroup extends React.Component {
+class GetScheduleGroup extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            output: "Get client output",
+            output: "Get schedule output",
             clientId: 0
         };
         this.handleChangedId = this.handleChangedId.bind(this);
@@ -135,7 +135,7 @@ class GetClientGroup extends React.Component {
     render() {
         return(
             &lt;div className="panel panel-default">
-                &lt;div className="panel panel-heading">Get a client&lt;/div>
+                &lt;div className="panel panel-heading">Get a schedule&lt;/div>
                 &lt;div className="panel-body">
                     &lt;input onChange={this.handleChangedId} type="number" className="form-control" placeholder="Id"/>
                     &lt;button onClick={this.handleSubmit} type="button" className="btn btn-default btn-block">Get!&lt;/button>
@@ -147,27 +147,27 @@ class GetClientGroup extends React.Component {
 
     handleChangedId(e) {
         var val = e.target.value == null ? -1 : e.target.value;
-        this.setState({clientId: val});
+        this.setState({scheduleId: val});
     }
     handleSubmit(e) {
         var self = this;
-        $.get(`/api/v2/client/${self.state.clientId}/`, function(client){
-            var out = Object.keys(client).map(function(key){
-                return &lt;span>&lt;strong>{key}&lt;/strong> {JSON.stringify(client[key])}&lt;br/>&lt;/span>;
+        $.get(`/api/v2/schedule/${self.state.scheduleId}/`, function(schedule){
+            var out = Object.keys(schedule).map(function(key){
+                return &lt;span>&lt;strong>{key}&lt;/strong> {JSON.stringify(schedule[key])}&lt;br/>&lt;/span>;
             });
             self.setState({output: out});
         }).fail(function(){
-            self.setState({output: "Failed to get client!"});
+            self.setState({output: "Failed to get schedule!"});
         });
     }
 }
 
-class CreateClientGroup extends React.Component {
+class CreateScheduleGroup extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             inputBody: "{}",
-            output: "Create client output"
+            output: "Create schedule output"
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -175,10 +175,8 @@ class CreateClientGroup extends React.Component {
 
 
         this.TEXT_AREA_DEFAULT_CONTENT = JSON.stringify({
-            name: "",
-            repo: "",
-            hash: "",
-            language: "",
+            type: "",
+            status: "",
         }, null, 2);
         this.TEXT_AREA_STYLE = {resize: "vertical"};
 
@@ -186,7 +184,7 @@ class CreateClientGroup extends React.Component {
     render() {
         return(
             &lt;div className="panel panel-default">
-                &lt;div className="panel panel-heading">Create a client&lt;/div>
+                &lt;div className="panel panel-heading">Create a schedule&lt;/div>
                 &lt;div className="panel-body">
                     &lt;textarea onChange={this.handleChangedBody} rows="6" className="form-control" style={this.TEXT_AREA_STYLE}>
                         {this.TEXT_AREA_DEFAULT_CONTENT}
@@ -212,26 +210,26 @@ class CreateClientGroup extends React.Component {
         }
 
         var self = this;
-        $.post("api/v2/client/", body, function(newClient){
-            var out = Object.keys(newClient).map(function(key){
-                return &lt;span>&lt;strong>{key}&lt;/strong> {JSON.stringify(newClient[key])}&lt;br/>&lt;/span>;
+        $.post("api/v2/schedule/", body, function(newSchedule){
+            var out = Object.keys(newSchedule).map(function(key){
+                return &lt;span>&lt;strong>{key}&lt;/strong> {JSON.stringify(newSchedule[key])}&lt;br/>&lt;/span>;
             });
             self.setState({output: out});
 
         }).fail(function(){
-            self.setState({output: "Failed to create client!"});
+            self.setState({output: "Failed to create a schedule!"});
 
         });
     }
 }
 
-class UpdateClientGroup extends React.Component {
+class UpdateScheduleGroup extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             inputId: -1,
             inputBody: "{}",
-            output: "Update client output"
+            output: "Update schedule output"
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -239,9 +237,8 @@ class UpdateClientGroup extends React.Component {
         this.handleChangedBody = this.handleChangedBody.bind(this);
 
         this.TEXT_AREA_DEFAULT_CONTENT = JSON.stringify({
-            repo: "",
-            hash: "",
-            language: ""
+            type: "",
+            status: ""
         }, null, 2);
 
         this.TEXT_AREA_STYLE = {resize: "vertical"};
@@ -249,7 +246,7 @@ class UpdateClientGroup extends React.Component {
     render() {
         return(
             &lt;div className="panel panel-default">
-                &lt;div className="panel-heading">Update a client&lt;/div>
+                &lt;div className="panel-heading">Update a schedule&lt;/div>
                 &lt;div className="panel-body">
                     &lt;input onChange={this.handleChangedId} type="number" className="form-control" placeholder="Id"/>
                     &lt;textarea onChange={this.handleChangedBody} rows="6" className="form-control" style={this.TEXT_AREA_STYLE}>
@@ -274,13 +271,13 @@ class UpdateClientGroup extends React.Component {
         var body = JSON.parse( this.state.inputBody );
         var id = this.state.inputId;
         var self = this;
-        $.post(`api/v2/client/${id}/update/`, body, function(newClient){
-            var out = Object.keys(newClient).map(function(key){
-                return &lt;span>&lt;strong>{key}&lt;/strong>: {JSON.stringify(newClient[key])}&lt;br/>&lt;/span>;
+        $.post(`api/v2/schedule/${id}/update/`, body, function(newSchedule){
+            var out = Object.keys(newSchedule).map(function(key){
+                return &lt;span>&lt;strong>{key}&lt;/strong>: {JSON.stringify(newSchedule[key])}&lt;br/>&lt;/span>;
             });
             self.setState({output: out});
         }).fail(function(){
-            self.setState({output: "Failed to create client!"});
+            self.setState({output: "Failed to create schedule!"});
         });
     }
 }
@@ -297,16 +294,16 @@ class App extends React.Component {
         return (
             &lt;span>
                 &lt;div className="row">
-                    &lt;div className="col-md-12">&lt;h1>Client Manager&lt;/h1>&lt;/div>
+                    &lt;div className="col-md-12">&lt;h1>Schedule Manager&lt;/h1>&lt;/div>
                 &lt;/div>
                 &lt;div className="row">
                     &lt;div className="col-md-6">
-                        &lt;GetClientGroup/>
-                        &lt;CreateClientGroup/>
-                        &lt;UpdateClientGroup/>
+                        &lt;GetScheduleGroup/>
+                        &lt;CreateScheduleGroup/>
+                        &lt;UpdateScheduleGroup/>
                     &lt;/div>
                     &lt;div className="col-md-6">
-                        &lt;ClientListPanel/>
+                        &lt;ScheduleListPanel/>
                     &lt;/div>
                 &lt;/div>
             &lt;/span>
