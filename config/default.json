@@ -9,9 +9,9 @@
   "build_server": {
     "url": "localhost",
     "port": 3001,
-    "tar_dir": "tmp/builder/tar/",
-    "log_dir": "tmp/builder/log/",
-    "hash_dir": "tmp/builder/hash/"
+    "tar_dir": "tmp/build/tar/",
+    "log_dir": "tmp/build/log/",
+    "hash_dir": "tmp/build/hash/"
   },
   "play_server": {
     "urls": [

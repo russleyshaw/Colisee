@@ -1,3 +1,4 @@
+var config = require("config");
 var child_process = require("child_process");
 var fs = require("fs");
 var path = require("path");
@@ -60,6 +61,7 @@ class Builder {
     /**
      * Start checking for clients flagged as needing builds
      */
+
     start() {
         console.log("Starting build service...");
         clearInterval(this._build_interval);
@@ -68,7 +70,12 @@ class Builder {
             if(this._num_building >= this._MAX_BUILDING) return;
 
             //Select oldest client needing build, with
-            var sql = knex("client").where({needs_build: true}).whereNotNull(["repo", "hash", "language"]).orderBy("attempt_time").limit(1).toString();
+            var sql = knex("client")
+                .where("needs_build", true)
+                .whereNotNull("repo").whereNotNull("hash").whereNotNull("language")
+                .orderBy("attempt_time")
+                .limit(1)
+            .toString();
             Db.queryOnce(sql, [], (err, result) => {
                 if(err) return console.warn(`Error: ${JSON.stringify(err)}`);
                 if(result.rows.length < 1) return; //None needing building
@@ -81,9 +88,7 @@ class Builder {
                     if(err) return console.warn(`Error: ${JSON.stringify(err)}`);
                     this._num_building--;
                 });
-
             });
-
         }, this._build_interval_time);
     }
 
@@ -201,8 +206,8 @@ class Builder {
      */
     _buildImageBad(client_id, callback) {
         var cmds = [
-            `rm -f ${path.join(__dirname, `tar/client_${client_id}.tar`)} ${path.join(__dirname, `hash/client_${client_id}.sha256`)}`,
-            `mv -f ${path.join(__dirname, `log/client_${client_id}.log.tmp`)} ${path.join(__dirname, `log/client_${client_id}.log`)}`,
+            `rm -f ${path.join(this.tar_dir, `client_${client_id}.tar`)} ${path.join(this.hash_dir, `client_${client_id}.sha256`)}`,
+            `mv -f ${path.join(this.log_dir, `client_${client_id}.log.tmp`)} ${path.join(this.log_dir, `client_${client_id}.log`)}`,
         ];
 
         async.map(cmds, (cmd, cb) => {
@@ -244,7 +249,7 @@ class Builder {
 
     //TODO: Document
     _saveHashTmp(client_id, callback) {
-        var cmd = `sha256sum ${path.join(this.tar_dir, `client_${client_id}.tar.tmp`)} > ${path.join(__dirname, `hash/client_${client_id}.sha256.tmp`)}`;
+        var cmd = `sha256sum ${path.join(this.tar_dir, `client_${client_id}.tar.tmp`)} > ${path.join(this.hash_dir, `client_${client_id}.sha256.tmp`)}`;
         child_process.exec(cmd, (err) =>{
             if(err) return callback(err);
             callback();
@@ -254,9 +259,9 @@ class Builder {
     //TODO: Document
     _applyTmpFiles(client_id, callback) {
         var cmds = [
-            `mv -f ${path.join(__dirname, `tar/client_${client_id}.tar.tmp`)} ${path.join(__dirname, `tar/client_${client_id}.tar`)}`,
-            `mv -f ${path.join(__dirname, `log/client_${client_id}.log.tmp`)} ${path.join(__dirname, `log/client_${client_id}.log`)}`,
-            `mv -f ${path.join(__dirname, `hash/client_${client_id}.sha256.tmp`)} ${path.join(__dirname, `hash/client_${client_id}.sha256`)}`
+            `mv -f ${path.join(this.tar_dir, `client_${client_id}.tar.tmp`)} ${path.join(this.tar_dir, `client_${client_id}.tar`)}`,
+            `mv -f ${path.join(this.log_dir, `client_${client_id}.log.tmp`)} ${path.join(this.log_dir, `client_${client_id}.log`)}`,
+            `mv -f ${path.join(this.hash_dir, `client_${client_id}.sha256.tmp`)} ${path.join(this.hash_dir, `client_${client_id}.sha256`)}`
         ];
 
         async.map(cmds, (cmd, cb) => {
@@ -283,7 +288,7 @@ class Builder {
      * @param callback {Builder~getTarCallback}
      */
     getTar(client_id, callback) {
-        fs.readFile( path.join(__dirname, `tar/client_${client_id}.tar`), (err, data) => {
+        fs.readFile( path.join(this.tar_dir, `client_${client_id}.tar`), (err, data) => {
             if(err) return callback(err);
             callback(null, data);
         });
@@ -302,14 +307,14 @@ class Builder {
      * @param callback {Builder~getLogCallback}
      */
     getLog(client_id, callback) {
-        fs.readFile( path.join(__dirname, `log/client_${client_id}.log`), (err, data) => {
+        fs.readFile( path.join(this.log_dir, `client_${client_id}.log`), (err, data) => {
             if(err) return callback(err);
             callback(null, data);
         });
     }
 
     getHash(client_id, callback) {
-        fs.readFile( path.join(__dirname, `hash/client_${client_id}.sha256`), (err, data) => {
+        fs.readFile( path.join(this.hash_dir, `client_${client_id}.sha256`), (err, data) => {
             if(err) return callback(err);
             callback(null, data);
         });
