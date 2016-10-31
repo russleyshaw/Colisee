@@ -50,7 +50,7 @@
       }
     },
     "version": "0.0.0",
-    "filename": "src/build_server/main.js",
+    "filename": "src/build_server/api.js",
     "groupTitle": "Builder"
   },
   {
@@ -98,7 +98,7 @@
       }
     },
     "version": "0.0.0",
-    "filename": "src/build_server/main.js",
+    "filename": "src/build_server/api.js",
     "groupTitle": "Builder"
   },
   {
@@ -146,7 +146,7 @@
       }
     },
     "version": "0.0.0",
-    "filename": "src/build_server/main.js",
+    "filename": "src/build_server/api.js",
     "groupTitle": "Builder"
   },
   {
@@ -194,7 +194,7 @@
       }
     },
     "version": "0.0.0",
-    "filename": "src/build_server/main.js",
+    "filename": "src/build_server/api.js",
     "groupTitle": "Builder"
   },
   {
@@ -218,7 +218,7 @@
       }
     },
     "version": "0.0.0",
-    "filename": "src/build_server/main.js",
+    "filename": "src/build_server/api.js",
     "groupTitle": "Builder"
   },
   {

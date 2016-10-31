@@ -9,4 +9,4 @@ RUN git clone ${REPO} client
 WORKDIR client/
 
 RUN git reset --hard ${HASH}
-RUN make
+RUN make -j4
