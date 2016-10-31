@@ -58,11 +58,11 @@ class Schedule{
 
         if(options.hasOwnProperty("id")) {
             if (Array.isArray(options.id)) sql = sql.whereIn("id", options.id);
-            else sql = sql.where("id", describe.id);
+            else sql = sql.where("id", options.id);
         }
         if(options.hasOwnProperty("status")) {
             if (Array.isArray(options.status))sql = sql.whereIn("status", options.status);
-            else sql  = sql.where("status", describe.status);
+            else sql  = sql.where("status", options.status);
         }
         if(options.hasOwnProperty("type")){
             if(Array.isArray(options.type)) sql = sql.whereIn("type", options.type);

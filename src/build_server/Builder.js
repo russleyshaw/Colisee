@@ -4,7 +4,6 @@ var fs = require("fs");
 var path = require("path");
 var async = require("async");
 var Client = require("../common/Client");
-var Logger = require("../common/Logger");
 var Db = require("../common/Db");
 var knex = require("knex")({
     dialect: "pg"
@@ -58,15 +57,15 @@ class Builder {
         });
     }
 
-    /**
-     * Start checking for clients flagged as needing builds
-     */
 
+    /**
+     * Starts the building service
+     */
     start() {
         console.log("Starting build service...");
         clearInterval(this._build_interval);
         this._build_interval = setInterval(() => {
-            //Don't build more if at max
+            //Don't build more if at maSx
             if(this._num_building >= this._MAX_BUILDING) return;
 
             //Select oldest client needing build, with
@@ -101,8 +100,8 @@ class Builder {
         console.log("Stopped build service");
     }
 
-    _unsetNeedsBuild(client_id, callback) {
-        var sql = knex("client").where({id: client_id}).update({needs_build: false}, "*").toString();
+    _unsetNeedsBuild(client, callback) {
+        var sql = knex("client").where({id: client.id}).update({needs_build: false}, "*").toString();
         Db.queryOnce(sql, [], (err) => {
             if(err) return callback(err);
             callback();
@@ -124,17 +123,17 @@ class Builder {
     build(client_id, callback) {
         console.log(`Building client ${client_id}...`);
 
-        Client.getById(client_id, (err, client) => {
+        Client.getById(client_id, (err, client)=>{
             if(err) return callback(err);
 
-            this._unsetNeedsBuild(client.id, (err) => {
+            this._unsetNeedsBuild(client, (err)=>{
                 if(err) return callback(err);
 
-                this._buildImageAndTmpLog(client, (err, built) => {
+                this._buildImageAndTmpLog(client,(err, built)=>{
                     if(err) return callback(err);
 
                     if(built) {
-                        this._buildImageGood(client.id, (err) => {
+                        this._buildImageGood(client, (err)=>{
                             if(err) return callback(err);
 
                             //Write to db
@@ -153,7 +152,7 @@ class Builder {
                         return;
                     }
                     else {
-                        this._buildImageBad(client.id, (err) => {
+                        this._applyTmpFilesBad(client, (err)=>{
                             if(err) return callback(err);
 
                             //Write to db
@@ -166,7 +165,7 @@ class Builder {
                             }, "*").toString();
                             Db.queryOnce(sql, [], (err) => {
                                 if(err) return callback(err);
-                                console.log(`Built client ${client_id} with failure`);
+                                console.log(`Built client ${client.id} with failure`);
                                 callback(null, false);
                             });
                         });
@@ -179,18 +178,18 @@ class Builder {
 
     /**
      * Image built successfully. Save tar and hash temporarily, then apply tmp files. Update db
-     * @param client_id
+     * @param client {Object}
      * @param callback
      * @private
      */
-    _buildImageGood(client_id, callback) {
-        this._saveTarTmp(client_id, (err) => {
+    _buildImageGood(client, callback) {
+        this._saveTarTmp(client, (err) => {
             if(err) return callback(err);
 
-            this._saveHashTmp(client_id, (err) => {
+            this._saveHashTmp(client, (err) => {
                 if(err) return callback(err);
 
-                this._applyTmpFiles(client_id, (err) => {
+                this._applyTmpFilesGood(client, (err) => {
                     if(err) return callback(err);
                     callback();
                 });
@@ -199,15 +198,78 @@ class Builder {
     }
 
     /**
-     * Image failed building. Delete .tar and .log, update db
-     * @param client_id
-     * @param callback
+     * @callback Builder~_buildImageAndTmpCallback
+     * @param err
+     * @param build_success {boolean} Whether the build suceeded or not
+     */
+
+    /**
+     * Builds docker image from a given Client
+     * @param client {Object}
+     * @param callback {Builder~_buildImageAndTmpCallback}
      * @private
      */
-    _buildImageBad(client_id, callback) {
+    _buildImageAndTmpLog(client, callback) {
+
+        var cmds = {
+            "cpp": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_cpp.dockerfile")} . > ${path.join(this.log_dir, `${client.id}.log.tmp`)}`,
+            "js": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_js.dockerfile")} . > ${path.join(this.log_dir, `${client.id}.log.tmp`)}`,
+        };
+
+        if(!(client.language in cmds)) return callback(new Error("Language not supported!"));
+
+        var cmd = cmds[client.language];
+        child_process.exec(cmd, (err)=>{
+            //Failure to build is a build failure, not an error
+            if(err) return callback(null, false);
+            callback(null, true);
+        });
+    }
+
+    /**
+     * @callback Builder~_saveTarTmp
+     * @param err
+     */
+
+    /**
+     * Save image to temporary tar
+     * @param client {Object}
+     * @param callback {Builder~_saveTarTmp}
+     * @private
+     */
+    _saveTarTmp(client, callback) {
+        var cmd = `docker save -o ${path.join(this.tar_dir, `client_${client.id}.tar.tmp`)} client_${client.id}`;
+        child_process.exec(cmd, (err) => {
+            if(err) return callback(err);
+            callback();
+        });
+    }
+
+    /**
+     * @callback Builder~_saveHashTmp
+     * @param err
+     */
+
+    /**
+     * Save tar hash to temporary file
+     * @param client {Object}
+     * @param callback {Builder~_saveHashTmp}
+     * @private
+     */
+    _saveHashTmp(client, callback) {
+        var cmd = `sha256sum ${path.join(this.tar_dir, `client_${client.id}.tar.tmp`)} > ${path.join(this.hash_dir, `client_${client.id}.sha256.tmp`)}`;
+        child_process.exec(cmd, (err) =>{
+            if(err) return callback(err);
+            callback();
+        });
+    }
+
+    //TODO: Document
+    _applyTmpFilesGood(client, callback) {
         var cmds = [
-            `rm -f ${path.join(this.tar_dir, `client_${client_id}.tar`)} ${path.join(this.hash_dir, `client_${client_id}.sha256`)}`,
-            `mv -f ${path.join(this.log_dir, `client_${client_id}.log.tmp`)} ${path.join(this.log_dir, `client_${client_id}.log`)}`,
+            `mv -f ${path.join(this.tar_dir, `client_${client.id}.tar.tmp`)} ${path.join(this.tar_dir, `client_${client.id}.tar`)}`,
+            `mv -f ${path.join(this.log_dir, `client_${client.id}.log.tmp`)} ${path.join(this.log_dir, `client_${client.id}.log`)}`,
+            `mv -f ${path.join(this.hash_dir, `client_${client.id}.sha256.tmp`)} ${path.join(this.hash_dir, `client_${client.id}.sha256`)}`
         ];
 
         async.map(cmds, (cmd, cb) => {
@@ -221,51 +283,20 @@ class Builder {
         });
     }
 
-    //TODO: Document
-    _buildImageAndTmpLog(client, callback) {
-
-        var cmds = {
-            "cpp": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_cpp.dockerfile")} . > ${path.join(this.log_dir, `${client.id}.log.tmp`)}`,
-            "js": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_js.dockerfile")} . > ${path.join(this.log_dir, `${client.id}.log.tmp`)}`,
-        };
-
-        if(!(client.language in cmds)) return callback("Language not supported!");
-
-        var cmd = cmds[client.language];
-        child_process.exec(cmd, (err) => {
-            if(err) return callback(null, false);
-            callback(null, true);
-        });
-    }
-
-    //TODO: Document
-    _saveTarTmp(client_id, callback) {
-        var cmd = `docker save -o ${path.join(this.tar_dir, `client_${client_id}.tar.tmp`)} client_${client_id}`;
-        child_process.exec(cmd, (err) => {
-            if(err) return callback(err);
-            callback();
-        });
-    }
-
-    //TODO: Document
-    _saveHashTmp(client_id, callback) {
-        var cmd = `sha256sum ${path.join(this.tar_dir, `client_${client_id}.tar.tmp`)} > ${path.join(this.hash_dir, `client_${client_id}.sha256.tmp`)}`;
-        child_process.exec(cmd, (err) =>{
-            if(err) return callback(err);
-            callback();
-        });
-    }
-
-    //TODO: Document
-    _applyTmpFiles(client_id, callback) {
+    /**
+     * Image failed building. Delete .tar and .log, update db
+     * @param client {Object}
+     * @param callback
+     * @private
+     */
+    _applyTmpFilesBad(client, callback) {
         var cmds = [
-            `mv -f ${path.join(this.tar_dir, `client_${client_id}.tar.tmp`)} ${path.join(this.tar_dir, `client_${client_id}.tar`)}`,
-            `mv -f ${path.join(this.log_dir, `client_${client_id}.log.tmp`)} ${path.join(this.log_dir, `client_${client_id}.log`)}`,
-            `mv -f ${path.join(this.hash_dir, `client_${client_id}.sha256.tmp`)} ${path.join(this.hash_dir, `client_${client_id}.sha256`)}`
+            `rm -f ${path.join(this.tar_dir, `client_${client.id}.tar`)} ${path.join(this.hash_dir, `client_${client.id}.sha256`)}`,
+            `mv -f ${path.join(this.log_dir, `client_${client.id}.log.tmp`)} ${path.join(this.log_dir, `client_${client.id}.log`)}`,
         ];
 
-        async.map(cmds, (cmd, cb) => {
-            child_process.exec(cmd, (err) => {
+        async.map(cmds, (cmd, cb)=>{
+            child_process.exec(cmd, (err)=>{
                 if(err) return cb(err);
                 cb();
             });
@@ -288,7 +319,7 @@ class Builder {
      * @param callback {Builder~getTarCallback}
      */
     getTar(client_id, callback) {
-        fs.readFile( path.join(this.tar_dir, `client_${client_id}.tar`), (err, data) => {
+        fs.readFile( path.join(this.tar_dir, `client_${client_id}.tar`), (err, data)=>{
             if(err) return callback(err);
             callback(null, data);
         });
@@ -307,14 +338,14 @@ class Builder {
      * @param callback {Builder~getLogCallback}
      */
     getLog(client_id, callback) {
-        fs.readFile( path.join(this.log_dir, `client_${client_id}.log`), (err, data) => {
+        fs.readFile( path.join(this.log_dir, `client_${client_id}.log`), (err, data)=>{
             if(err) return callback(err);
             callback(null, data);
         });
     }
 
     getHash(client_id, callback) {
-        fs.readFile( path.join(this.hash_dir, `client_${client_id}.sha256`), (err, data) => {
+        fs.readFile( path.join(this.hash_dir, `client_${client_id}.sha256`), (err, data)=>{
             if(err) return callback(err);
             callback(null, data);
         });
