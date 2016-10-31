@@ -4,7 +4,7 @@ sudo: required
 language: node_js
   
 node_js:
-  - "v6.6.0"
+  - "v6.9.0"
   
 services:
   - postgresql
@@ -18,6 +18,7 @@ before_script:
   - cp config/travis_test.json config/test.json
   - psql -c 'create database colisee_test;' -U postgres
   - psql -U postgres -d colisee_test -a -f db/init.sql
+  - npm run setup:tmp
   
 # Build steps
 script:
