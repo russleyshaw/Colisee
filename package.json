@@ -19,8 +19,8 @@
     "test:integration": "NODE_ENV=test mocha --recursive test/integration",
 
     "setup": "npm run setup:npm && npm run setup:bower && npm run setup:db",
-    "setup:npm": "npm install",
-    "setup:bower": "bower install",
+    "setup:npm": "rm -rf node_modules/ && npm install",
+    "setup:bower": "rm -rf bower_components/ && bower install",
     "setup:db": "./db/setupDevelopmentDb.sh",
     "setup:tmp": "./setupTmpDirs.sh",
 
