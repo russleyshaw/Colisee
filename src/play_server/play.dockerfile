@@ -17,6 +17,6 @@ WORKDIR server/
 RUN git reset --hard ${HASH}
 RUN npm install
 
-CMD ["node", "./main.js"]
+CMD ["node", "./api.js"]
 
 EXPOSE 3000

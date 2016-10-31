@@ -9,20 +9,26 @@
   "scripts": {
     "lint": "eslint src/ test/",
     "fix": "eslint --fix src/ test/",
+
     "docs": "npm-run-all docs:*",
-    "docs:js": "jsdoc src/ -t node_modules/minami -r -c doc.json -d docs/js/",
-    "docs:api": "apidoc -i src/ -o docs/api/",
+    "docs:js": "rm -rf docs/js/ && jsdoc src/ -t node_modules/minami -r -c doc.json -d docs/js/",
+    "docs:api": "rm -rf docs/api/ && apidoc -i src/ -o docs/api/",
+
     "test": "npm-run-all lint test:*",
     "test:unit": "NODE_ENV=test mocha --recursive test/unit",
     "test:integration": "NODE_ENV=test mocha --recursive test/integration",
 
-    "setup": "npm-run-all setup:*",
-    "setup:npm": "npm install",
-    "setup:bower": "bower install",
+    "setup": "npm run setup:npm && npm run setup:bower && npm run setup:db && npm run setup:tmp",
+    "setup:npm": "rm -rf node_modules/ && npm install",
+    "setup:bower": "rm -rf bower_components/ && bower install",
     "setup:db": "./db/setupDevelopmentDb.sh",
+    "setup:tmp": "./setupTmpDirs.sh",
 
     "run:head": "node src/head_server/main.js",
     "watch:head": "nodemon --watch src/head_server/ --ext html,js,jsx --exec 'npm run run:head'",
+
+    "run:build": "node src/build_server/api.js",
+    "watch:build": "nodemon --watch src/build_server/ --ext html,js,jsx --exec 'npm run run:build'",
 
     "run:play": "node src/play_server/main.js",
     "watch:play": "nodemon --watch src/play_server/ --ext html,js --exec 'npm run run:play'"
