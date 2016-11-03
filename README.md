@@ -48,6 +48,9 @@ npm test
 lint                - Run javascript linting
 fix                 - Attempt to fix trivial linter errors
 docs                - Run javascript & API documentation generator
+
+portainer           - Run docker web admin at http://localhost:9000
+
 test                - Run all tests and linter
 test:unit           - Run unit tests
 test:integration    - Run integration tests
