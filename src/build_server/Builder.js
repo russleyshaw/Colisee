@@ -210,16 +210,18 @@ class Builder {
      * @private
      */
     _buildImageAndTmpLog(client, callback) {
+        console.log(`Building image and tmp log for client ${client.id}...`);
 
         var cmds = {
-            "cpp": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_cpp.dockerfile")} . > ${path.join(this.log_dir, `${client.id}.log.tmp`)}`,
-            "js": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_js.dockerfile")} . > ${path.join(this.log_dir, `${client.id}.log.tmp`)}`,
+            "cpp": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_cpp.dockerfile")} . > ${path.join(this.log_dir, `client_${client.id}.log.tmp`)}`,
+            "js": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_js.dockerfile")} . > ${path.join(this.log_dir, `client_${client.id}.log.tmp`)}`,
         };
 
         if(!(client.language in cmds)) return callback(new Error("Language not supported!"));
 
         var cmd = cmds[client.language];
         child_process.exec(cmd, (err)=>{
+            console.warn(err);
             //Failure to build is a build failure, not an error
             if(err) return callback(null, false);
             callback(null, true);
@@ -238,6 +240,7 @@ class Builder {
      * @private
      */
     _saveTarTmp(client, callback) {
+        console.log(`Saving temporary tar for client ${client.id}...`);
         var cmd = `docker save -o ${path.join(this.tar_dir, `client_${client.id}.tar.tmp`)} client_${client.id}`;
         child_process.exec(cmd, (err) => {
             if(err) return callback(err);
@@ -257,6 +260,7 @@ class Builder {
      * @private
      */
     _saveHashTmp(client, callback) {
+        console.log(`Saving temporary hash for client ${client.id}...`);
         var cmd = `sha256sum ${path.join(this.tar_dir, `client_${client.id}.tar.tmp`)} > ${path.join(this.hash_dir, `client_${client.id}.sha256.tmp`)}`;
         child_process.exec(cmd, (err) =>{
             if(err) return callback(err);
@@ -264,8 +268,19 @@ class Builder {
         });
     }
 
-    //TODO: Document
+    /**
+     * @callback Builder~_applyTmpFilesGood
+     * @param err
+     */
+
+    /**
+     * Applies generated temporary files to normal file pool
+     * @param client {Object}
+     * @param callback {Builder~_applyTmpFilesGood}
+     * @private
+     */
     _applyTmpFilesGood(client, callback) {
+        console.log(`Applying temporary files for good client ${client.id}...`);
         var cmds = [
             `mv -f ${path.join(this.tar_dir, `client_${client.id}.tar.tmp`)} ${path.join(this.tar_dir, `client_${client.id}.tar`)}`,
             `mv -f ${path.join(this.log_dir, `client_${client.id}.log.tmp`)} ${path.join(this.log_dir, `client_${client.id}.log`)}`,
@@ -284,12 +299,18 @@ class Builder {
     }
 
     /**
+     * @callback Builder~_applyTmpFilesBad
+     * @param err
+     */
+
+    /**
      * Image failed building. Delete .tar and .log, update db
      * @param client {Object}
-     * @param callback
+     * @param callback {Builder~_applyTmpFilesBad}
      * @private
      */
     _applyTmpFilesBad(client, callback) {
+        console.log(`Applying temporary files for bad client ${client.id}...`);
         var cmds = [
             `rm -f ${path.join(this.tar_dir, `client_${client.id}.tar`)} ${path.join(this.hash_dir, `client_${client.id}.sha256`)}`,
             `mv -f ${path.join(this.log_dir, `client_${client.id}.log.tmp`)} ${path.join(this.log_dir, `client_${client.id}.log`)}`,
