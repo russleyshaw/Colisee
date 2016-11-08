@@ -1,3 +1,159 @@
+class StartSchedule extends  React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            output: "Start running the scheduler",
+        };
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+    render() {
+        return(
+            <div className="panel panel-default">
+                <div className="panel-body">
+                    <button onClick={this.handleSubmit} type="button" className="btn btn-default btn-block">Start</button>
+                    <div className="well">{this.state.output}</div>
+                </div>
+            </div>
+        );
+    }
+
+    handleSubmit(e) {
+        var self = this;
+        /* Temporary Placeholder - Figure out how to change if statement to actually do stuff */
+        if(true)
+            self.setState({output: "Successfully started the scheduler"});
+        else
+            self.setState({output: "Failed to start the scheduler"});
+    }
+}
+
+class StopSchedule extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            output: "Stop running the scheduler",
+        };
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+    render() {
+        return(
+            <div className="panel panel-default">
+                <div className="panel-body">
+                    <button onClick={this.handleSubmit} type="button" className="btn btn-default btn-block">Stop</button>
+                    <div className="well">{this.state.output}</div>
+                </div>
+            </div>
+        );
+    }
+
+    handleSubmit(e) {
+        var self = this;
+        /* Temporary Placeholder - Figure out how to change if statement to actually do stuff */
+        if(true)
+            self.setState({output: "Successfully stopped the scheduler"});
+        else
+            self.setState({output: "Failed to stop the scheduler"});
+    }
+}
+
+class PauseSchedule extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            output: "Pause the currently running scheduler",
+        };
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+    render() {
+        return(
+            <div className="panel panel-default">
+                <div className="panel-body">
+                    <button onClick={this.handleSubmit} type="button" className="btn btn-default btn-block">Pause</button>
+                    <div className="well">{this.state.output}</div>
+                </div>
+            </div>
+        );
+    }
+
+    handleSubmit(e) {
+        var self = this;
+        /* Temporary Placeholder - Figure out how to change if statement to actually do stuff */
+        if(true)
+            self.setState({output: "Successfully paused the scheduler"});
+        else
+            self.setState({output: "Failed to pause the scheduler"});
+    }
+}
+
+class ResumeSchedule extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            output: "Resume running a currently paused scheduler",
+        };
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+    render() {
+        return(
+            <div className="panel panel-default">
+                <div className="panel-body">
+                    <button onClick={this.handleSubmit} type="button" className="btn btn-default btn-block">Resume</button>
+                    <div className="well">{this.state.output}</div>
+                </div>
+            </div>
+        );
+    }
+
+    handleSubmit(e) {
+        var self = this;
+        /* Temporary Placeholder - Figure out how to change if statement to actually do stuff */
+        if(true)
+            self.setState({output: "Successfully resumed running the scheduler"});
+        else
+            self.setState({output: "Failed to resume running the scheduler"});
+    }
+}
+
+class ScheduleType extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            output: "The current schedule type is: ",
+        };
+        this.onChangedFilter = this.onChangedFilter.bind(this);
+    }
+    render() {
+        return (
+            <div className="panel panel-default">
+                <div className="panel-body">
+                    <input onChange={this.onChangedFilter} type="text" className="form-control" placeholder="type"/>
+                    <div className="dropdown">
+                        <button onClick={this.onChangedFilter} className="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Type
+                            <span className="caret"></span></button>
+                        <u1 className="dropdown-menu">
+                            <li><a role="menuitem" href="#">Type1</a></li>
+                            <li><a role="menuitem" href="#">Type2</a></li>
+                            <li><a role="menuitem" href="#">Type3</a></li>
+                        </u1>
+                    </div>
+                    <div className="well">{this.state.output}</div>
+                </div>
+            </div>
+        )
+    }
+    onChangedFilter(e) {
+        try {
+            var val = e.target.value == null ? "" : e.target.value;
+            var qs = `${val}`;
+            console.log(qs);
+            this.setState({output: "The current schedule type is: " + qs});
+        }
+        catch(e) {
+            console.warn(e);
+        }
+    }
+}
+
 /**
  * Individual schedule in Schedule list panel
  */
@@ -256,6 +412,20 @@ class App extends React.Component {
                 <div className="row">
                     <div className="col-md-12"><h1>Schedule Manager</h1></div>
                 </div>
+                <div className="row">
+                    <div className="col-md-4">
+                        <StartSchedule/>
+                        <StopSchedule/>
+                    </div>
+                    <div className="col-md-4">
+                        <PauseSchedule/>
+                        <ResumeSchedule/>
+                    </div>
+                    <div className="col-md-4">
+                        <ScheduleType/>
+                    </div>
+                </div>
+                <br></br>
                 <div className="row">
                     <div className="col-md-6">
                         <GetScheduleGroup/>
