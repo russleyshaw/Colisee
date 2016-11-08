@@ -2,6 +2,8 @@ var Db = require("./Db");
 var knex = require("knex")({
     "dialect": "pg"
 });
+// Load the full build.
+var _ = require('lodash');
 //var Logger = require("./logger");
 
 
@@ -67,23 +69,36 @@ class Match {
      * @returns nothing
      */
     static create(match, callback) {
-        if(match.hasOwnProperty("id")) return callback("Cannot create a match with a given id");
-        if(match.hasOwnProperty("created_time")) return callback("Cannot create a match with a given created_time");
-        if(match.hasOwnProperty("modified_time")) return callback("Cannot create a match with a given modified_time");
+        if(match.hasOwnProperty("id")) return callback(new Error("Cannot create a match with a given id"));
+        if(match.hasOwnProperty("created_time")) return callback(new Error("Cannot create a match with a given created_time"));
+        if(match.hasOwnProperty("modified_time")) return callback(new Error("Cannot create a match with a given modified_time"));
+        if(match.clients.length < 2) return callback(new Error("Cannot create a match with less than 2 clients"));
 
-        if(match.hasOwnProperty("clients")) {
-            match.clients = `{${match.clients.toString()}}`;
-        }
+        var uniqClients = _.uniq(match.clients);
+        var sql1 = knex("client").whereIn("id",uniqClients).toString();
 
-        match.created_time = "now()";
-        match.modified_time = "now()";
+        Db.queryOnce(sql1, [], (err, result1) => {
+            if(err)return callback(new Error("Query failed"));
+          if(result1.rows.length == uniqClients.length) {
 
-        var sql = knex("match").insert(match, "*").toString();
-        Db.queryOnce(sql, [], (err, result) => {
-            if(err)return callback(err);
-            if(result.rowCount != 1) return callback("No match found.");
-            callback(null, result.rows[0]);
+                if (match.hasOwnProperty("clients")) {
+                    match.clients = `{${match.clients.toString()}}`;
+                }
+
+                match.created_time = "now()";
+                match.modified_time = "now()";
+
+                var sql = knex("match").insert(match, "*").toString();
+                Db.queryOnce(sql, [], (err, result) => {
+                    if (err)return callback(err);
+                    if (result.rowCount != 1) return callback("No match found.");
+                    callback(null, result.rows[0]);
+                });
+            }
+            else return callback(new Error("The clients must exist in the databse to be used in a match."));
         });
+
+
     }
 
     static updateById(id, fields, callback) {
