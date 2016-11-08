@@ -66,6 +66,7 @@
     "fs-extra": "^0.30.0",
     "handlebars": "^4.0.5",
     "knex": "^0.12.2",
+    "lodash": "^4.16.6",
     "mocha": "^3.0.2",
     "pg": "^6.1.0",
     "querystring": "^0.2.0",
