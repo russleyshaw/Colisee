@@ -4,7 +4,7 @@ var should = require("should");
 
 var Db = require("../../src/common/Db");
 var Client = require("../../src/common/Client");
-var Builder = require("../../src/build_server/Builder");
+var Builder = require(".././Builder");
 
 describe("Builder", function() {
     var builder = new Builder();

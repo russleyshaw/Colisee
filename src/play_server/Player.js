@@ -10,7 +10,7 @@ class Player {
      * @param id
      * @param port
      */
-    constructor(id, port) {
+    constructor() {
         this.id = (typeof id !== "undefined") ? id : 0;
         this.port = (typeof port !== "undefined") ? port : config.play_server.ports[this.id];
     }

@@ -1,24 +1,23 @@
-var express = require("express");
-var config = require("config");
+let express = require("express");
+let config = require("config");
+let commandLineArgs = require('command-line-args');
 
-function main() {
-    if( process.argv.length < 3 ) {
-        console.error("Must give Play Server ID as argument!");
-        return;
-    }
-    var play_server_id = process.argv[2];
+let Player = require("./Player");
 
-    var app = express();
+const options_definitions = [
+    { name: "port", alias: "p", type: Number },
+    { name: "head_server", alias: "h", type: String }
+];
+const options = commandLineArgs(options_definitions);
 
-    app.use( function(req, res, next) {
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
-        res.header("Access-Control-Allow-Headers", "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept");
-        next();
-    });
+let app = express();
+let player = Player();
 
-    console.log("Play Server " + play_server_id + " listening on port " + config.play_server.ports[play_server_id]);
-    app.listen(config.play_server.ports[play_server_id]);
-}
+app.use( function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept");
+    next();
+});
 
-main();
+app.listen(options.port);

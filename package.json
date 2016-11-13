@@ -32,8 +32,7 @@
     "run:build": "node src/build_server/api.js",
     "watch:build": "nodemon --watch src/build_server/ --ext html,js,jsx --exec 'npm run run:build'",
 
-    "run:play": "node src/play_server/main.js",
-    "watch:play": "nodemon --watch src/play_server/ --ext html,js --exec 'npm run run:play'"
+    "player": "node src/play_server/main.js"
   },
   "repository": {
     "type": "git",
@@ -61,6 +60,7 @@
     "async": "^2.0.1",
     "body-parser": "^1.15.2",
     "child_process": "^1.0.2",
+    "command-line-args": "^3.0.3",
     "config": "^1.21.0",
     "express": "^4.14.0",
     "fs-extra": "^0.30.0",
@@ -70,6 +70,7 @@
     "mocha": "^3.0.2",
     "pg": "^6.1.0",
     "querystring": "^0.2.0",
-    "request": "^2.74.0"
+    "request": "^2.74.0",
+    "tar": "^2.2.1"
   }
 }
