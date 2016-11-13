@@ -10,8 +10,6 @@
     "lint": "eslint src/ test/",
     "fix": "eslint --fix src/ test/",
 
-    "portainer": "./runPortainer.sh",
-
     "docs": "npm-run-all docs:*",
     "docs:js": "rm -rf docs/js/ && jsdoc src/ -t node_modules/minami -r -c doc.json -d docs/js/",
     "docs:api": "rm -rf docs/api/ && apidoc -i src/ -o docs/api/",
