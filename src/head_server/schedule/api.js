@@ -2,8 +2,14 @@ var express = require("express");
 var path = require("path");
 
 var Schedule = require("../../common/Schedule");
+var Scheduler = require("../schedulers/Scheduler");
+var RandomSchedulerType = require("../schedulers/RandomSchedulerType");
 
 var router = express.Router();
+
+var scheduler =  new Scheduler();
+
+scheduler.switchTo(new RandomSchedulerType());
 
 router.use("/schedule/", express.static(path.join(__dirname, "static/index.html")));
 router.use("/schedule/static/", express.static(path.join(__dirname, "static")));
@@ -27,12 +33,7 @@ router.get("/api/v2/schedule/:id/", (req, res) => {
     });
 });
 
-router.get("/api/v2/schedule/:id/", (req, res) => {
-    Schedule.getByType(req.params.id, (err, schedule) => {
-        if(err) return res.sendStatus(404);
-        res.send(schedule);
-    });
-});
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // POST
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,6 +49,15 @@ router.post("/api/v2/schedule/", function(req, res){
         if(err) return res.sendStatus(400);
         res.send(schedule);
     });
+});
+router.post("/api/v2/schedule/start", (req, res )=>{
+
+   scheduler.start();
+    res.send(200);
+});
+router.post("/api/v2/schedule/stop",(req,res) =>{
+   scheduler.stop();
+    res.send(200);
 });
 
 module.exports = router;

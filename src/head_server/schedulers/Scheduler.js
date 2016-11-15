@@ -88,18 +88,12 @@ class Scheduler {
     /**
      * clears match objects for new tournament.
      */
-    // stop(callback) {
-    //     var sql= knex.select().table(schedule).where("match_status_enum","scheduled").update("match_status_enum","stopped").toString;
-    //     Db.queryOnce(sql,args,(err)=>{
-    //         if(err)return callback(err);
-    //         clearInterval(this.interval_ptr);
-    //         console.log(this.interval_ptr);
-    //     });
-    //
-    //
-    // }
-    stop(){
-        console.log("");
+    stop(callback) {
+        var sql= knex("schedule").where("match_status_enum","scheduled").update("match_status_enum","stopped").toString();
+        Db.queryOnce(sql,[],(err)=>{
+            if(err)return callback(err);
+            clearInterval(this.interval_ptr);
+        });
     }
     pause() {}
     resume() {}
