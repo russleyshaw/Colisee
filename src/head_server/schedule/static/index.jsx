@@ -19,11 +19,11 @@ class StartSchedule extends  React.Component {
 
     handleSubmit(e) {
         var self = this;
-        /* Temporary Placeholder - Figure out how to change if statement to actually do stuff */
-        if(true)
+        $.post(`/api/v2/schedule/start/`, function(){
             self.setState({output: "Successfully started the scheduler"});
-        else
+        }).fail(function(){
             self.setState({output: "Failed to start the scheduler"});
+        });
     }
 }
 
@@ -48,11 +48,11 @@ class StopSchedule extends React.Component {
 
     handleSubmit(e) {
         var self = this;
-        /* Temporary Placeholder - Figure out how to change if statement to actually do stuff */
-        if(true)
+        $.post(`/api/v2/schedule/stop/`, function(){
             self.setState({output: "Successfully stopped the scheduler"});
-        else
+        }).fail(function(){
             self.setState({output: "Failed to stop the scheduler"});
+        });
     }
 }
 
@@ -128,12 +128,14 @@ class ScheduleType extends React.Component {
                 <div className="panel-body">
                     <input onChange={this.onChangedFilter} type="text" className="form-control" placeholder="type"/>
                     <div className="dropdown">
-                        <button onClick={this.onChangedFilter} className="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Type
+                        <button className="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Type
                             <span className="caret"></span></button>
-                        <u1 className="dropdown-menu">
-                            <li><a role="menuitem" href="#">Type1</a></li>
-                            <li><a role="menuitem" href="#">Type2</a></li>
-                            <li><a role="menuitem" href="#">Type3</a></li>
+                        <u1 onClick={this.onChangedFilter} className="dropdown-menu">
+                            <li><a role="menuitem" href="#">Random</a></li>
+                            <li><a role="menuitem" href="#">Single_elimination</a></li>
+                            <li><a role="menuitem" href="#">Triple_elimination</a></li>
+                            <li><a role="menuitem" href="#">Swiss</a></li>
+                            <li><a role="menuitem" href="#">Test</a></li>
                         </u1>
                     </div>
                     <div className="well">{this.state.output}</div>

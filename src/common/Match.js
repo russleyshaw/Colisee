@@ -3,7 +3,7 @@ var knex = require("knex")({
     "dialect": "pg"
 });
 // Load the full build.
-var _ = require('lodash');
+var _ = require("lodash");
 //var Logger = require("./logger");
 
 
@@ -79,7 +79,7 @@ class Match {
 
         Db.queryOnce(sql1, [], (err, result1) => {
             if(err)return callback(new Error("Query failed"));
-          if(result1.rows.length == uniqClients.length) {
+            if(result1.rows.length == uniqClients.length) {
 
                 if (match.hasOwnProperty("clients")) {
                     match.clients = `{${match.clients.toString()}}`;
@@ -95,7 +95,7 @@ class Match {
                     callback(null, result.rows[0]);
                 });
             }
-            else return callback(new Error("The clients must exist in the databse to be used in a match."));
+            else return callback(new Error("The clients must exist in the database to be used in a match."));
         });
 
 

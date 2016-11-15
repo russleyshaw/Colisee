@@ -2,7 +2,7 @@
 
 var should = require("should");
 // Load the full build.
-var _ = require('lodash');
+// var _ = require("lodash");
 var Db = require("../../src/common/Db");
 var Match = require("../../src/common/Match");
 var Client= require("../../src/common/Client");
