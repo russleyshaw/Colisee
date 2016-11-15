@@ -39,6 +39,12 @@ class Client {
             if(Array.isArray(options.needs_build)) sql = sql.whereIn("needs_build", options.needs_build);
             else sql = sql.where("needs_build", options.needs_build);
         }
+        if(options.hasOwnProperty("order_by")) {
+            if(options.order_by==="random") sql = sql.orderByRaw("RANDOM()");
+        }
+        if(options.hasOwnProperty("limit")) {
+            sql = sql.limit(options.limit);
+        }
 
         sql = sql.toString();
         Db.queryOnce(sql, [], function (err, result) {
@@ -73,14 +79,6 @@ class Client {
      * @param limit {number} Number of random clients (without replacement) to select
      * @param callback
      */
-    static getRandom(limit, callback) {
-        var sql = knex("client").where("build_success" ,"=","true").orderByRaw("random()").limit(limit).toString();
-        Db.queryOnce(sql, [], function(err, result) {
-            if(err) return callback(err);
-            if(result.rowCount > limit) return callback("Inserted rows not fully returned");
-            callback(null, result.rows);
-        });
-    }
 
     /**
      * @callback Client~createCallback
