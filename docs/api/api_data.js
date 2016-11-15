@@ -50,13 +50,13 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "src/build_server/main.js",
+    "filename": "src/build_server/api.js",
     "groupTitle": "Builder"
   },
   {
     "group": "Builder",
     "type": "get",
-    "url": "/api/v2/build/:id",
+    "url": "/api/v2/build/:id/tar",
     "title": "",
     "name": "Get_Build",
     "description": "<p>Gets the tarred build of the most recent build for a client's code</p>",
@@ -98,7 +98,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "src/build_server/main.js",
+    "filename": "src/build_server/api.js",
     "groupTitle": "Builder"
   },
   {
@@ -146,7 +146,79 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "src/build_server/main.js",
+    "filename": "src/build_server/api.js",
+    "groupTitle": "Builder"
+  },
+  {
+    "group": "Builder",
+    "type": "get",
+    "url": "/api/v2/build/:id/log",
+    "title": "",
+    "name": "Get_Build_Log",
+    "description": "<p>Gets the build log of the client's most recent build</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Database client id</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "optional": false,
+            "field": "200",
+            "description": "<p>The build log for the most recent build of the specified client id</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "404",
+            "description": "<p>The build log for the build was not found</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "src/build_server/api.js",
+    "groupTitle": "Builder"
+  },
+  {
+    "group": "Builder",
+    "type": "get",
+    "url": "/api/v2/build/:id",
+    "title": "",
+    "name": "Get_build_information_location",
+    "description": "<p>Gets the URLs for the requested information locations</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Integer representing the id of the client in the database</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "src/build_server/api.js",
     "groupTitle": "Builder"
   },
   {

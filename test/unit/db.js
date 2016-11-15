@@ -7,6 +7,7 @@ var Db = require("../../src/common/Db");
 describe("Db", function() {
 
     before("initialize database with data", function(done){
+        this.timeout(8000);
         Db.reset(function(err){
             should(err).not.be.ok();
             done();
@@ -22,7 +23,7 @@ describe("Db", function() {
                     ["SELECT COUNT(*) FROM client AS count", []],
                     ["SELECT COUNT(*) FROM match AS count", []],
                     ["SELECT COUNT(*) FROM log AS count", []],
-                    ["SELECT COUNT(*) FROM tournament AS count", []]
+                    ["SELECT COUNT(*) FROM schedule AS count", []]
                 ], function (err, results) {
                     should(err).not.be.ok();
                     should(results).be.length(4);

@@ -11,21 +11,31 @@ https://russleyshaw.github.io/Colisee/
 1) Install NVM - https://github.com/creationix/nvm/blob/master/README.markdown  
 2) Install Docker - https://docs.docker.com/engine/installation/linux/ubuntulinux/
 
-3) Install NodeJS v6.5.0
+3) Install NodeJS v6.7.0
 ```
-nvm install v6.5.0
-OR
-nvm install    (uses node version described in .nvmrc)
+nvm install
 ```
 
-4) Install package.json dependencies
+4a) Install package.json dependencies
 ```
 npm install
 ```
 
-5) Setup normal and test databases
+4b) Install bower.json dependencies
 ```
-npm run db:setup
+bower install
+```
+
+4c) Setup normal and test databases
+```
+npm run setup:db
+```
+
+OR
+
+4abc) Run setup script
+```
+npm run setup
 ```
 
 ### Running tests
@@ -33,42 +43,21 @@ npm run db:setup
 npm test
 ```
 
-### Running services
-```
-npm run serve
-npm run mock
-```
-
 ### Other Important Scripts (not all of them though)
 ```
-lint                    - runs linter on source code
-fix                     - attempt to automatically fix some linting errors
-doc                     - generates documentation pages from jsdoc comments
+lint                - Run javascript linting
+fix                 - Attempt to fix trivial linter errors
+docs                - Run javascript & API documentation generator
 
-test                    - run all tests
+portainer           - Run docker web admin at http://localhost:9000
 
-db:setup                - reset, rebuild and rerun the normal and test databases
+test                - Run all tests and linter
+test:unit           - Run unit tests
+test:integration    - Run integration tests
 
-db:start                - start the normal database
-testdb:start            - start the testing database
+setup               - Run npm, bower and db setup
+setup:db            - Run database setup script
 
-serve:head              - run the head server
-serve:build             - run the build server
-serve:gamelog           - run the gamelog server
-
-serve:play              - run play server with id of 0
-serve:play1             - run play server with id of 1
-serve:play1             - run play server with id of 2
-
-mock:vis                - run mock visualizer
-mock:web                - run mock web server
-```
-
-### Saving NPM Packages
-If the package is used in actual code:  
-```
-npm install <package> --save
-
-EXAMPLE:
-npm install express --save
+run:head            - Run head server
+watch:head          - Run head server and restart on file changes
 ```

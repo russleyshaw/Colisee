@@ -3,8 +3,12 @@
 
 # Node Stuff
 node_modules/
+bower_components/
 npm-debug.log
 bower_components/
 
 # TypeScript Stuff
 typings/
+
+# Temporary Files
+tmp/
