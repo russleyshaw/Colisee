@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>head_server/schedule/static/index.jsx - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="Builder.html">Builder</a><ul class='methods'><li data-type='method'><a href="Builder.html#build">build</a></li><li data-type='method'><a href="Builder.html#getLog">getLog</a></li><li data-type='method'><a href="Builder.html#getTar">getTar</a></li><li data-type='method'><a href="Builder.html#init">init</a></li><li data-type='method'><a href="Builder.html#start">start</a></li><li data-type='method'><a href="Builder.html#stop">stop</a></li></ul></li><li><a href="Client.html">Client</a><ul class='methods'><li data-type='method'><a href="Client.html#.create">create</a></li><li data-type='method'><a href="Client.html#.getRandom">getRandom</a></li><li data-type='method'><a href="Client.html#.updateById">updateById</a></li></ul></li><li><a href="ClientListPanelItem.html">ClientListPanelItem</a></li><li><a href="CreateMatchGroup.html">CreateMatchGroup</a></li><li><a href="Db.html">Db</a><ul class='methods'><li data-type='method'><a href="Db.html#.newPgClient">newPgClient</a></li><li data-type='method'><a href="Db.html#.queryLots">queryLots</a></li><li data-type='method'><a href="Db.html#.queryLotsSeries">queryLotsSeries</a></li><li data-type='method'><a href="Db.html#.queryOnce">queryOnce</a></li><li data-type='method'><a href="Db.html#.reset">reset</a></li></ul></li><li><a href="Gamelogger.html">Gamelogger</a><ul class='methods'><li data-type='method'><a href="Gamelogger.html#load">load</a></li><li data-type='method'><a href="Gamelogger.html#reset">reset</a></li><li data-type='method'><a href="Gamelogger.html#save">save</a></li></ul></li><li><a href="GetMatchGroup.html">GetMatchGroup</a></li><li><a href="Logger.html">Logger</a><ul class='methods'><li data-type='method'><a href="Logger.html#.create">create</a></li><li data-type='method'><a href="Logger.html#.getLatest">getLatest</a></li><li data-type='method'><a href="Logger.html#.updateById">updateById</a></li></ul></li><li><a href="Match.html">Match</a><ul class='methods'><li data-type='method'><a href="Match.html#.create">create</a></li></ul></li><li><a href="MatchListPanel.html">MatchListPanel</a></li><li><a href="MatchListPanelItem.html">MatchListPanelItem</a></li><li><a href="Player.html">Player</a><ul class='methods'><li data-type='method'><a href="Player.html#init">init</a></li></ul></li><li><a href="Schedule.html">Schedule</a><ul class='methods'><li data-type='method'><a href="Schedule.html#.create">create</a></li><li data-type='method'><a href="Schedule.html#.get">get</a></li><li data-type='method'><a href="Schedule.html#.updateById">updateById</a></li></ul></li><li><a href="ScheduleListPanelItem.html">ScheduleListPanelItem</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">head_server/schedule/static/index.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Individual schedule in Schedule list panel
+ */
+class ScheduleListPanelItem extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        var self = this;
+        return(
+            &lt;div className="well">
+                {Object.keys(this.props.schedule).map(function(key){
+                    return &lt;span>&lt;strong>{key}&lt;/strong>:  {JSON.stringify(self.props.schedule[key])}&lt;br/>&lt;/span>;
+                })}
+            &lt;/div>
+        )
+    }
+}
+
+class ScheduleListPanel extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            schedules: [],
+            filterQs: "",
+        };
+
+        this.onChangedFilter = this.onChangedFilter.bind(this);
+        this.updateSchedules = this.updateSchedules.bind(this);
+
+        setInterval(this.updateSchedules, 1000);
+    }
+
+    render() {
+        return (
+            &lt;div className="panel panel-default">
+                &lt;div className="panel-heading">
+                    &lt;div className="panel-title">Schedule List&lt;/div>
+                    &lt;div className="input-group">
+                        &lt;span className="input-group-addon">&amp;#123;&lt;/span>
+                        &lt;input onChange={this.onChangedFilter} type="text" className="form-control" placeholder="JSON Filter..."/>
+                        &lt;span className="input-group-addon">&amp;#125;&lt;/span>
+                    &lt;/div>
+                &lt;/div>
+
+                &lt;div className="panel-body">
+                    {this.state.schedules.map(function(schedule) {
+                        return &lt;ScheduleListPanelItem schedule={schedule}/>;
+                    })}
+                &lt;/div>
+            &lt;/div>
+        );
+    }
+
+    onChangedFilter(e) {
+        try {
+            var val = e.target.value == null ? "" : e.target.value;
+            var qs = `{${val}}`;
+            console.log(qs);
+            qs = JSON.parse(qs);
+            qs = $.param(qs);
+            console.log(qs);
+            this.setState({filterQs: qs});
+        }
+        catch(e) {
+            console.warn(e);
+        }
+    }
+
+    updateSchedules() {
+        var self = this;
+
+        console.log(this.state.filterQs);
+        $.get(`/api/v2/schedule/?${this.state.filterQs}`, function(schedules) {
+            self.setState({"schedules": schedules});
+
+        }).fail(function() {
+            self.setState({"schedules": []});
+
+        });
+    }
+
+}
+
+class GetScheduleGroup extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            output: "Get schedule output",
+            clientId: 0
+        };
+        this.handleChangedId = this.handleChangedId.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+    render() {
+        return(
+            &lt;div className="panel panel-default">
+                &lt;div className="panel panel-heading">Get a schedule&lt;/div>
+                &lt;div className="panel-body">
+                    &lt;input onChange={this.handleChangedId} type="number" className="form-control" placeholder="Id"/>
+                    &lt;button onClick={this.handleSubmit} type="button" className="btn btn-default btn-block">Get!&lt;/button>
+                    &lt;div className="well">{this.state.output}&lt;/div>
+                &lt;/div>
+            &lt;/div>
+        );
+    }
+
+    handleChangedId(e) {
+        var val = e.target.value == null ? -1 : e.target.value;
+        this.setState({scheduleId: val});
+    }
+    handleSubmit(e) {
+        var self = this;
+        $.get(`/api/v2/schedule/${self.state.scheduleId}/`, function(schedule){
+            var out = Object.keys(schedule).map(function(key){
+                return &lt;span>&lt;strong>{key}&lt;/strong> {JSON.stringify(schedule[key])}&lt;br/>&lt;/span>;
+            });
+            self.setState({output: out});
+        }).fail(function(){
+            self.setState({output: "Failed to get schedule!"});
+        });
+    }
+}
+
+class CreateScheduleGroup extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            inputBody: "{}",
+            output: "Create schedule output"
+        };
+
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChangedBody = this.handleChangedBody.bind(this);
+
+
+        this.TEXT_AREA_DEFAULT_CONTENT = JSON.stringify({
+            type: "",
+            status: "",
+        }, null, 2);
+        this.TEXT_AREA_STYLE = {resize: "vertical"};
+
+    }
+    render() {
+        return(
+            &lt;div className="panel panel-default">
+                &lt;div className="panel panel-heading">Create a schedule&lt;/div>
+                &lt;div className="panel-body">
+                    &lt;textarea onChange={this.handleChangedBody} rows="6" className="form-control" style={this.TEXT_AREA_STYLE}>
+                        {this.TEXT_AREA_DEFAULT_CONTENT}
+                    &lt;/textarea>
+                    &lt;button onClick={this.handleSubmit} type="button" className="btn btn-default btn-block">Create!&lt;/button>
+                    &lt;div className="well">{this.state.output}&lt;/div>
+                &lt;/div>
+            &lt;/div>
+        );
+    }
+
+    handleChangedBody(e) {
+        var val = e.target.value == null ? "{}" : e.target.value;
+        this.setState({input: val});
+    }
+
+    handleSubmit(e) {
+        try {
+            var body = JSON.parse( this.state.input );
+        } catch(err) {
+            this.setState({output: err.toString()});
+            return
+        }
+
+        var self = this;
+        $.post("api/v2/schedule/", body, function(newSchedule){
+            var out = Object.keys(newSchedule).map(function(key){
+                return &lt;span>&lt;strong>{key}&lt;/strong> {JSON.stringify(newSchedule[key])}&lt;br/>&lt;/span>;
+            });
+            self.setState({output: out});
+
+        }).fail(function(){
+            self.setState({output: "Failed to create a schedule!"});
+
+        });
+    }
+}
+
+class UpdateScheduleGroup extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            inputId: -1,
+            inputBody: "{}",
+            output: "Update schedule output"
+        };
+
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChangedId = this.handleChangedId.bind(this);
+        this.handleChangedBody = this.handleChangedBody.bind(this);
+
+        this.TEXT_AREA_DEFAULT_CONTENT = JSON.stringify({
+            type: "",
+            status: ""
+        }, null, 2);
+
+        this.TEXT_AREA_STYLE = {resize: "vertical"};
+    }
+    render() {
+        return(
+            &lt;div className="panel panel-default">
+                &lt;div className="panel-heading">Update a schedule&lt;/div>
+                &lt;div className="panel-body">
+                    &lt;input onChange={this.handleChangedId} type="number" className="form-control" placeholder="Id"/>
+                    &lt;textarea onChange={this.handleChangedBody} rows="6" className="form-control" style={this.TEXT_AREA_STYLE}>
+                        {this.TEXT_AREA_DEFAULT_CONTENT}
+                    &lt;/textarea>
+                    &lt;button onClick={this.handleSubmit} type="button" className="btn btn-default btn-block">Update!&lt;/button>
+                    &lt;div className="well">{this.state.output}&lt;/div>
+                &lt;/div>
+            &lt;/div>
+        );
+    }
+
+    handleChangedId(e) {
+        var val = e.target.value == null ? -1 : e.target.value;
+        this.setState({inputId: val});
+    }
+    handleChangedBody(e) {
+        var val = e.target.value == null ? "{}" : e.target.value;
+        this.setState({inputBody: val});
+    }
+    handleSubmit(e) {
+        var body = JSON.parse( this.state.inputBody );
+        var id = this.state.inputId;
+        var self = this;
+        $.post(`api/v2/schedule/${id}/update/`, body, function(newSchedule){
+            var out = Object.keys(newSchedule).map(function(key){
+                return &lt;span>&lt;strong>{key}&lt;/strong>: {JSON.stringify(newSchedule[key])}&lt;br/>&lt;/span>;
+            });
+            self.setState({output: out});
+        }).fail(function(){
+            self.setState({output: "Failed to create schedule!"});
+        });
+    }
+}
+
+/**
+ * Main Application
+ */
+class App extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+            &lt;span>
+                &lt;div className="row">
+                    &lt;div className="col-md-12">&lt;h1>Schedule Manager&lt;/h1>&lt;/div>
+                &lt;/div>
+                &lt;div className="row">
+                    &lt;div className="col-md-6">
+                        &lt;GetScheduleGroup/>
+                        &lt;CreateScheduleGroup/>
+                        &lt;UpdateScheduleGroup/>
+                    &lt;/div>
+                    &lt;div className="col-md-6">
+                        &lt;ScheduleListPanel/>
+                    &lt;/div>
+                &lt;/div>
+            &lt;/span>
+        );
+    }
+}
+
+ReactDOM.render(
+    &lt;App/>,
+    document.getElementById("mainContainer")
+);</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Sun Oct 30 2016 15:52:15 GMT-0500 (CDT) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

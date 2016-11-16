@@ -1,4 +1,4 @@
-FROM library/postgres
+FROM library/postgres:9.4
 
 ENV POSTGRES_USER colisee
 ENV POSTGRES_PASSWORD colisee

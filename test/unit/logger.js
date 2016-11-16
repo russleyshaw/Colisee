@@ -3,9 +3,9 @@
 var should = require("should");
 
 var Db = require("../../src/common/Db");
-var Logger = require("../../src/common/logger");
+var Logger = require("../../src/common/Logger");
 
-describe("Logger",function() {
+describe("Logger", function() {
 
     before("Reset database and initialize test data", function(done){
         //Db.DEBUG = true;
@@ -16,7 +16,7 @@ describe("Logger",function() {
         });
     });
 
-    describe("create", () => {
+    describe("create", function() {
         it("should create a new log in the database", function(done) {
             this.timeout(525);
             var log = {
@@ -92,7 +92,7 @@ describe("Logger",function() {
             var log = {
                 id: 1,
                 message: "test4",
-                severity: "critical"
+                severity: "error"
             };
             Logger.create(log, (err) => {
                 should(err).be.ok();
@@ -116,7 +116,7 @@ describe("Logger",function() {
         });
     });
 
-    describe("getById", () => {
+    describe("getById", function() {
         it("should retrieve a log by id", function(done) {
             this.timeout(525);
             Logger.getById(1, (err, log) => {
@@ -128,7 +128,7 @@ describe("Logger",function() {
         });
     });
 
-    describe("getLatest", () => {
+    describe("getLatest", function() {
         it("should get most recent log", function(done) {
             this.timeout(525);
             Logger.getLatest({limit:1}, (err, logs) => {

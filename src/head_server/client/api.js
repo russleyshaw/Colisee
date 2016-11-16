@@ -2,33 +2,35 @@ var express = require("express");
 var path = require("path");
 
 var Client = require("../../common/Client");
-var HandlebarLoader = require("../../common/HandlebarLoader");
-
 
 var router = express.Router();
 
 router.use("/client/", express.static(path.join(__dirname, "static/index.html")));
 router.use("/client/static/", express.static(path.join(__dirname, "static")));
 
-/////////////WEB
-
-
-////////////API
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// GET
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 router.get("/api/v2/client/", (req, res) => {
-    Client.getAll((err, clients) => {
-        if(err) return res.sendStatus(404);
+    var options = req.query;
+    console.log(JSON.stringify(options));
+    Client.get(options, (err, clients) => {
+        if(err) return res.status(404).send(err);
         res.send(clients);
     });
 });
 
-router.get("/api/v2/client/:id", (req, res) => {
+router.get("/api/v2/client/:id/", (req, res) => {
     Client.getById(req.params.id, (err, client) => {
         if(err) return res.sendStatus(404);
         res.send(client);
     });
 });
 
-router.patch("/api/v2/client/:id", (req, res) => {
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// POST
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+router.post("/api/v2/client/:id/update/", (req, res) => {
     Client.updateById(req.params.id, req.body, (err, client) => {
         if(err) return res.sendStatus(404);
         res.send(client);

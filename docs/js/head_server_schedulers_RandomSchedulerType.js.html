@@ -23,7 +23,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Builder.html">Builder</a><ul class='methods'><li data-type='method'><a href="Builder.html#build">build</a></li><li data-type='method'><a href="Builder.html#getLog">getLog</a></li><li data-type='method'><a href="Builder.html#getTar">getTar</a></li><li data-type='method'><a href="Builder.html#init">init</a></li></ul></li><li><a href="Client.html">Client</a><ul class='methods'><li data-type='method'><a href="Client.html#.create">create</a></li></ul></li><li><a href="Db.html">Db</a><ul class='methods'><li data-type='method'><a href="Db.html#.newPgClient">newPgClient</a></li><li data-type='method'><a href="Db.html#.queryLots">queryLots</a></li><li data-type='method'><a href="Db.html#.queryLotsSeries">queryLotsSeries</a></li><li data-type='method'><a href="Db.html#.queryOnce">queryOnce</a></li><li data-type='method'><a href="Db.html#.reset">reset</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="Builder.html">Builder</a><ul class='methods'><li data-type='method'><a href="Builder.html#build">build</a></li><li data-type='method'><a href="Builder.html#getLog">getLog</a></li><li data-type='method'><a href="Builder.html#getTar">getTar</a></li><li data-type='method'><a href="Builder.html#init">init</a></li><li data-type='method'><a href="Builder.html#start">start</a></li><li data-type='method'><a href="Builder.html#stop">stop</a></li></ul></li><li><a href="Client.html">Client</a><ul class='methods'><li data-type='method'><a href="Client.html#.create">create</a></li><li data-type='method'><a href="Client.html#.getRandom">getRandom</a></li><li data-type='method'><a href="Client.html#.updateById">updateById</a></li></ul></li><li><a href="ClientListPanelItem.html">ClientListPanelItem</a></li><li><a href="CreateMatchGroup.html">CreateMatchGroup</a></li><li><a href="Db.html">Db</a><ul class='methods'><li data-type='method'><a href="Db.html#.newPgClient">newPgClient</a></li><li data-type='method'><a href="Db.html#.queryLots">queryLots</a></li><li data-type='method'><a href="Db.html#.queryLotsSeries">queryLotsSeries</a></li><li data-type='method'><a href="Db.html#.queryOnce">queryOnce</a></li><li data-type='method'><a href="Db.html#.reset">reset</a></li></ul></li><li><a href="Gamelogger.html">Gamelogger</a><ul class='methods'><li data-type='method'><a href="Gamelogger.html#load">load</a></li><li data-type='method'><a href="Gamelogger.html#reset">reset</a></li><li data-type='method'><a href="Gamelogger.html#save">save</a></li></ul></li><li><a href="GetMatchGroup.html">GetMatchGroup</a></li><li><a href="Logger.html">Logger</a><ul class='methods'><li data-type='method'><a href="Logger.html#.create">create</a></li><li data-type='method'><a href="Logger.html#.getLatest">getLatest</a></li><li data-type='method'><a href="Logger.html#.updateById">updateById</a></li></ul></li><li><a href="Match.html">Match</a><ul class='methods'><li data-type='method'><a href="Match.html#.create">create</a></li></ul></li><li><a href="MatchListPanel.html">MatchListPanel</a></li><li><a href="MatchListPanelItem.html">MatchListPanelItem</a></li><li><a href="Player.html">Player</a><ul class='methods'><li data-type='method'><a href="Player.html#init">init</a></li></ul></li><li><a href="Schedule.html">Schedule</a><ul class='methods'><li data-type='method'><a href="Schedule.html#.create">create</a></li><li data-type='method'><a href="Schedule.html#.get">get</a></li><li data-type='method'><a href="Schedule.html#.updateById">updateById</a></li></ul></li><li><a href="ScheduleListPanelItem.html">ScheduleListPanelItem</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <div id="main">
@@ -39,39 +39,39 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>var BaseScheduler = require("./BaseSchedulerType");
-var Client = require("../../src/common/client");
+var Client = require("../../common/Client");
 
 
-class RandomScheduler extends BaseScheduler {
+
+class RandomSchedulerType extends BaseScheduler {
     constructor() {
         super();
     }
 
     /**
-     * Generate the next match to be played
+     * calls the Clients getRandom() and returns thier parsed IDs in an array.
+     * @callback RandomSchedulerType ~genNextCallback
      */
+    
     genNext(callback) {
-        //TODO: get 2 random client IDs from the database
-            var clients = Client.getRandom(2, function(err, clients){
-                if(err) return callback(err);
-
-                callback(null, clients);
-            })
-        }
-
-    }
-    getMatch(clients)
-            //get clients ID
-{
-            var client_id_array = clients.map(function (client) {
+        Client.getRandom(2, (err, clients) => {
+            if(err) return callback(err);
+            var client_ids = clients.map(function (client) {
                 return client.id;
             });
+            callback(null, client_ids);
+        });
+
+    }
+    getType(){
+        return "random";
+    }
 }
 
 
 
 
-module.exports = RandomScheduler;
+module.exports = RandomSchedulerType;
 </code></pre>
         </article>
     </section>
@@ -84,7 +84,7 @@ module.exports = RandomScheduler;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Tue Sep 27 2016 01:07:40 GMT-0500 (CDT) using the Minami theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Sun Oct 30 2016 15:52:15 GMT-0500 (CDT) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
