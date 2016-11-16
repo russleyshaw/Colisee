@@ -44,7 +44,10 @@ class Match {
             if(Array.isArray(options.gamelog)) sql = sql.whereIn("gamelog", options.gamelog);
             else sql = sql.where("gamelog", options.gamelog);
         }
-
+        if(options.hasOwnProperty("schedule_id")){
+            if(Array.isArray(options.schedule_id)) sql = sql.whereIn("schedule_id", options.schedule_id);
+            else sql = sql.where("schedule_id", options.schedule_id);
+        }
         sql = sql.toString();
         Db.queryOnce(sql, [], function (err, result) {
             if(err) return callback(err);
@@ -72,6 +75,7 @@ class Match {
         if(match.hasOwnProperty("id")) return callback(new Error("Cannot create a match with a given id"));
         if(match.hasOwnProperty("created_time")) return callback(new Error("Cannot create a match with a given created_time"));
         if(match.hasOwnProperty("modified_time")) return callback(new Error("Cannot create a match with a given modified_time"));
+
         if(match.clients.length < 2) return callback(new Error("Cannot create a match with less than 2 clients"));
 
         var uniqClients = _.uniq(match.clients);
@@ -84,7 +88,9 @@ class Match {
                 if (match.hasOwnProperty("clients")) {
                     match.clients = `{${match.clients.toString()}}`;
                 }
-
+                if(match.hasOwnProperty("schedule_id")) {
+                    match.schedule_id = `{${match.schedule_id.toString()}}`;
+                }//return callback(new Error("Cannot create a match with a given schedule_id"));
                 match.created_time = "now()";
                 match.modified_time = "now()";
 
@@ -105,6 +111,7 @@ class Match {
         if(fields.hasOwnProperty("id")) return callback("Cannot update a match id");
         if(fields.hasOwnProperty("created_time")) return callback("Cannot update a match created_time");
         if(fields.hasOwnProperty("modified_time")) return callback("Cannot update a match modified_time");
+        if(fields.hasOwnProperty("schedule_id")) return callback("Cannot update a match schedule_id");
 
         if(fields.hasOwnProperty("clients")) {
             fields.clients = `{${fields.clients.toString()}}`;
