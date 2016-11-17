@@ -75,7 +75,7 @@ class Match {
         if(match.hasOwnProperty("id")) return callback(new Error("Cannot create a match with a given id"));
         if(match.hasOwnProperty("created_time")) return callback(new Error("Cannot create a match with a given created_time"));
         if(match.hasOwnProperty("modified_time")) return callback(new Error("Cannot create a match with a given modified_time"));
-
+        //if(match.hasOwnProperty("schedule_id")) return callback(new Error("Cannot create a match with a given schedule_id"));
         if(match.clients.length < 2) return callback(new Error("Cannot create a match with less than 2 clients"));
 
         var uniqClients = _.uniq(match.clients);
@@ -88,9 +88,7 @@ class Match {
                 if (match.hasOwnProperty("clients")) {
                     match.clients = `{${match.clients.toString()}}`;
                 }
-                if(match.hasOwnProperty("schedule_id")) {
-                    match.schedule_id = `{${match.schedule_id.toString()}}`;
-                }//return callback(new Error("Cannot create a match with a given schedule_id"));
+
                 match.created_time = "now()";
                 match.modified_time = "now()";
 
