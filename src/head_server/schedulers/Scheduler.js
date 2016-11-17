@@ -100,7 +100,8 @@ class Scheduler {
      */
     stop(callback) {
         if(callback===undefined) callback=defaultErrorCallback;
-        var sql= knex("schedule").where("match_status_enum","scheduled").update("match_status_enum","stopped").toString();
+        //was: var sql= knex("schedule").where("match_status_enum","scheduled").update("match_status_enum","stopped").toString();
+        var sql= knex("schedule").where("status","running").update("status","stopped").toString();// I assume you meant this? - Tyler K.
         Db.queryOnce(sql,[],(err)=>{
             if(err)return callback(err);
             clearInterval(this.interval_ptr);
@@ -124,7 +125,8 @@ class Scheduler {
         this.current_scheduler.genNext( (err, clientIDs) => {
             if(err)return callback(err);
             var match = {
-                clients:clientIDs
+                clients:clientIDs,
+                schedule_id: 1
             };
             Match.create(match, (err) => {
                 if (err){
