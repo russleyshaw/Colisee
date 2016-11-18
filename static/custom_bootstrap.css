@@ -1,8 +1,13 @@
-body {
-    background-color: lightblue;
-}
 
-h1 {
-    color: navy;
-    margin-left: 20px;
+/*
+ Rounded borders should be square
+ It should follow an actual color scheme (molokai for example). For example, rarely when there are dark themes, is the background actually BLACK (0x000000). It is usually a sort of dark grey. Similarly with whites, very rarely are they truely white. I highly recommend finding color scheme and sticking to it
+ Thinner borders
+ Thinner margins
+ Thinner padding
+ Dark theme
+ */
+
+.btn {
+
 }
