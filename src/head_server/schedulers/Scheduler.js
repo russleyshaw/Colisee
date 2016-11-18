@@ -6,11 +6,15 @@ var knex = require("knex")({
 });
 var Logger = require("../../common/Logger");
 
+function defaultErrorCallback(err) {
+    console.error(err);
+}
+
 class Scheduler {
 
     constructor() {
         this.MAX_SCHEDULED = 50;
-        this.SCHEDULE_INTERVAL = 100;
+        this.SCHEDULE_INTERVAL = 1000;
 
         this.interval_ptr = undefined;
         this.current_scheduler = undefined;
@@ -55,7 +59,12 @@ class Scheduler {
      * Logs any errors in the log table as a message.
      * @param callback
      */
-    start() {
+    start(callback) {
+        if(callback===undefined) callback=defaultErrorCallback;
+        if(this.current_scheduler===undefined||this.current_scheduler===null) {
+            callback(new Error("Schedule type not set yet."));
+            return;
+        }
         var sched1 = {
             type: this.current_scheduler.getType()
         };
@@ -68,8 +77,9 @@ class Scheduler {
                 Logger.create(log, (err) => {
                     if (err) console.error("Logger.create() error");
                 });
-                this.schedId= scheduleID;
+                return callback(err);
             }
+            this.schedId= scheduleID;
         });
         this.interval_ptr = setInterval(() => {
             this.getNumScheduled((err,numScheduled)=>{
@@ -77,7 +87,7 @@ class Scheduler {
                 if (numScheduled < this.MAX_SCHEDULED){
 
                     this.scheduleOnce(function(err){
-                        if(err)return console.error("Error calling scheduleOnce().");
+                        if(err)return console.error(err);
                     });
                 }
             });
@@ -89,7 +99,9 @@ class Scheduler {
      * clears match objects for new tournament.
      */
     stop(callback) {
-        var sql= knex("schedule").where("match_status_enum","scheduled").update("match_status_enum","stopped").toString();
+        if(callback===undefined) callback=defaultErrorCallback;
+        //was: var sql= knex("schedule").where("match_status_enum","scheduled").update("match_status_enum","stopped").toString();
+        var sql= knex("schedule").where("status","running").update("status","stopped").toString();// I assume you meant this? - Tyler K.
         Db.queryOnce(sql,[],(err)=>{
             if(err)return callback(err);
             clearInterval(this.interval_ptr);
@@ -113,7 +125,8 @@ class Scheduler {
         this.current_scheduler.genNext( (err, clientIDs) => {
             if(err)return callback(err);
             var match = {
-                clients:clientIDs
+                clients:clientIDs,
+                schedule_id: 1
             };
             Match.create(match, (err) => {
                 if (err){

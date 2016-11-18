@@ -2,10 +2,11 @@
 
 var should = require("should");
 // Load the full build.
-var _ = require('lodash');
+// var _ = require("lodash");
 var Db = require("../../src/common/Db");
 var Match = require("../../src/common/Match");
 var Client= require("../../src/common/Client");
+//var Schedule= require("../../src/common/Schedule");
 
 describe("Match", function() {
 
@@ -16,8 +17,15 @@ describe("Match", function() {
             Db.queryLots([
                 [ "INSERT INTO  client(name, build_success) VALUES($1::text, $2::boolean)  RETURNING*",["Team_1", true]],
                 [ "INSERT INTO  client(name, build_success) VALUES($1::text, $2::boolean)  RETURNING*",["Team_2", true]],
-                [ "INSERT INTO match (clients,  reason, gamelog) VALUES ($1,  $2::text, $3::integer) RETURNING *", [[1,2],  "Random_reason_1", 1]],
-                [ "INSERT INTO match (clients, reason, gamelog) VALUES ($1,  $2::text, $3::integer) RETURNING *", [[1,2],  "Random reason 2", 2]]
+                [ "INSERT INTO  client(name, build_success) VALUES($1::text, $2::boolean)  RETURNING*",["Team_3", true]],
+                [ "INSERT INTO  client(name, build_success) VALUES($1::text, $2::boolean)  RETURNING*",["Team_4", true]],
+                [ "INSERT INTO  schedule(type, status)      VALUES($1, $2)     RETURNING*",["single_elimination", "stopped"]],
+                [ "INSERT INTO  schedule(type, status)      VALUES($1, $2)     RETURNING*",["single_elimination", "stopped"]],
+                [ "INSERT INTO  schedule(type, status)      VALUES($1, $2)     RETURNING*",["single_elimination", "stopped"]],
+                [ "INSERT INTO  schedule(type, status)      VALUES($1, $2)     RETURNING*",["single_elimination", "stopped"]],
+                [ "INSERT INTO  schedule(type, status)      VALUES($1, $2)     RETURNING*",["single_elimination", "stopped"]],
+                [ "INSERT INTO match (clients, reason, gamelog,schedule_id) VALUES ($1,  $2::text, $3::integer,$4::integer) RETURNING *", [[1,2],  "Random_reason_1", 1,1]],
+                [ "INSERT INTO match (clients, reason, gamelog,schedule_id) VALUES ($1,  $2::text, $3::integer,$4::integer) RETURNING *", [[1,2],  "Random reason 2", 2,2]]
             ], function(err) {
                 should(err).not.be.ok();
                 done();
@@ -33,6 +41,7 @@ describe("Match", function() {
                 should(match.id).be.equal(1);
                 should(match.reason).be.equal("Random_reason_1");
                 should(match.gamelog).be.equal(1);
+                should(match.schedule_id).be.equal(1);
 
                 done();
             });
@@ -93,14 +102,33 @@ describe("Match", function() {
             var match = {
                 clients: [1, 2],
                 reason: "Random reason 3",
-                gamelog: 3
+                gamelog: 3,
+                schedule_id: 3
             };
             Match.create(match, (err, match) => {
                 should(err).not.be.ok();
                 should(match.id).equal(3);
                 should(match.reason).equal("Random reason 3");
                 should(match.gamelog).equal(3);
+                should(match.schedule_id).equal(3);
+                done();
+            });
 
+        });
+
+        it("should create a new match in the database", function(done) {
+            var match = {
+                clients: [1, 2],
+                reason: "Random reason 4",
+                gamelog: 4,
+                schedule_id: 4
+            };
+            Match.create(match, (err, match) => {
+                should(err).not.be.ok();
+                should(match.id).equal(4);
+                should(match.reason).equal("Random reason 4");
+                should(match.gamelog).equal(4);
+                should(match.schedule_id).equal(4);
                 done();
             });
 
@@ -109,8 +137,32 @@ describe("Match", function() {
         it("should not create a match with an invalid gamelog", function(done) {
             var match = {
                 clients: [1, 2],
-                reason: "Random reason 4",
-                gamelog: "Random gamelog"
+                reason: "Random reason 5",
+                gamelog: "Random gamelog",
+                schedule_id: 5
+            };
+            Match.create(match, (err) => {
+                should(err).be.ok();
+                done();
+            });
+        });
+        it("should not create a match with a non-existent schedule reference", function(done) {
+            var match = {
+                clients: [1, 2],
+                reason: "Random reason 5",
+                gamelog: "5",
+                schedule_id: 6
+            };
+            Match.create(match, (err) => {
+                should(err).be.ok();
+                done();
+            });
+        });
+        it("should not create a match without a schedule_id", function(done) {
+            var match = {
+                clients: [1, 2],
+                reason: "Random reason 5",
+                gamelog: "5"
             };
             Match.create(match, (err) => {
                 should(err).be.ok();

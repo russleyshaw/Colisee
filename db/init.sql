@@ -75,7 +75,8 @@ CREATE TABLE "match" (
     gamelog integer UNIQUE,
 
     created_time timestamp NOT NULL DEFAULT now(),
-    modified_time timestamp NOT NULL DEFAULT now()
+    modified_time timestamp NOT NULL DEFAULT now(),
+    schedule_id integer NOT NULL REFERENCES schedule(id)
 );
 
 DELETE FROM "log";

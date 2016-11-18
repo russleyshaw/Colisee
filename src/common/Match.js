@@ -3,7 +3,7 @@ var knex = require("knex")({
     "dialect": "pg"
 });
 // Load the full build.
-var _ = require('lodash');
+var _ = require("lodash");
 //var Logger = require("./logger");
 
 
@@ -44,7 +44,10 @@ class Match {
             if(Array.isArray(options.gamelog)) sql = sql.whereIn("gamelog", options.gamelog);
             else sql = sql.where("gamelog", options.gamelog);
         }
-
+        if(options.hasOwnProperty("schedule_id")){
+            if(Array.isArray(options.schedule_id)) sql = sql.whereIn("schedule_id", options.schedule_id);
+            else sql = sql.where("schedule_id", options.schedule_id);
+        }
         sql = sql.toString();
         Db.queryOnce(sql, [], function (err, result) {
             if(err) return callback(err);
@@ -72,6 +75,7 @@ class Match {
         if(match.hasOwnProperty("id")) return callback(new Error("Cannot create a match with a given id"));
         if(match.hasOwnProperty("created_time")) return callback(new Error("Cannot create a match with a given created_time"));
         if(match.hasOwnProperty("modified_time")) return callback(new Error("Cannot create a match with a given modified_time"));
+        //if(match.hasOwnProperty("schedule_id")) return callback(new Error("Cannot create a match with a given schedule_id"));
         if(match.clients.length < 2) return callback(new Error("Cannot create a match with less than 2 clients"));
 
         var uniqClients = _.uniq(match.clients);
@@ -79,7 +83,7 @@ class Match {
 
         Db.queryOnce(sql1, [], (err, result1) => {
             if(err)return callback(new Error("Query failed"));
-          if(result1.rows.length == uniqClients.length) {
+            if(result1.rows.length == uniqClients.length) {
 
                 if (match.hasOwnProperty("clients")) {
                     match.clients = `{${match.clients.toString()}}`;
@@ -95,7 +99,7 @@ class Match {
                     callback(null, result.rows[0]);
                 });
             }
-            else return callback(new Error("The clients must exist in the databse to be used in a match."));
+            else return callback(new Error("The clients must exist in the database to be used in a match."));
         });
 
 
@@ -105,6 +109,7 @@ class Match {
         if(fields.hasOwnProperty("id")) return callback("Cannot update a match id");
         if(fields.hasOwnProperty("created_time")) return callback("Cannot update a match created_time");
         if(fields.hasOwnProperty("modified_time")) return callback("Cannot update a match modified_time");
+        if(fields.hasOwnProperty("schedule_id")) return callback("Cannot update a match schedule_id");
 
         if(fields.hasOwnProperty("clients")) {
             fields.clients = `{${fields.clients.toString()}}`;
