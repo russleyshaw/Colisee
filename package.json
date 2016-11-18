@@ -25,6 +25,7 @@
     "setup:bower": "rm -rf bower_components/ && bower install",
     "setup:db": "./db/setupDevelopmentDb.sh",
     "setup:tmp": "./setupTmpDirs.sh",
+    "setup:webpack": "webpack",
 
     "run:head": "node src/head_server/main.js",
     "watch:head": "nodemon --watch src/head_server/ --ext html,js,jsx --exec 'npm run run:head'",
