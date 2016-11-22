@@ -14,8 +14,13 @@ class RandomSchedulerType extends BaseScheduler {
      */
     
     genNext(callback) {
-        Client.getRandom(2, (err, clients) => {
+        var options = {
+            order_by : "random",
+            limit : 2
+        };
+        Client.get(options, (err, clients) => {
             if(err) return callback(err);
+            if(clients.length < 2) console.warn("Got less than two clients.");
             var client_ids = clients.map(function (client) {
                 return client.id;
             });
