@@ -115,20 +115,4 @@ describe("Client", function() {
         });
     });
 
-    describe("getRandom", function() {
-        it("should get a random client", function(done) {
-            Client.getRandom(1, (err, clients) => {
-                should(err).not.be.ok();
-                should(clients.length).be.equal(1);
-                done();
-            });
-        });
-        it("should get multiple random clients", function(done) {
-            Client.getRandom(2, (err, clients) => {
-                should(err).not.be.ok();
-                should(clients.length).be.equal(2);
-                done();
-            });
-        });
-    });
 });

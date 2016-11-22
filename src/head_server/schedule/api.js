@@ -52,12 +52,12 @@ router.post("/api/v2/schedule/", function(req, res){
 });
 router.post("/api/v2/schedule/start", (req, res )=>{
 
-   scheduler.start();
-    res.send(200);
+    scheduler.start();
+    res.sendStatus(200);
 });
 router.post("/api/v2/schedule/stop",(req,res) =>{
-   scheduler.stop();
-    res.send(200);
+    scheduler.stop();
+    res.sendStatus(200);
 });
 
 module.exports = router;
