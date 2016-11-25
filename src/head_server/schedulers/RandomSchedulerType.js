@@ -1,6 +1,6 @@
 var BaseScheduler = require("./BaseSchedulerType");
 var Client = require("../../common/Client");
-
+var config = require("config");
 
 
 class RandomSchedulerType extends BaseScheduler {
@@ -16,7 +16,7 @@ class RandomSchedulerType extends BaseScheduler {
     genNext(callback) {
         var options = {
             order_by : "random",
-            limit : 2
+            limit : config.mock_web.num_clients
         };
         Client.get(options, (err, clients) => {
             if(err) return callback(err);

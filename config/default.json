@@ -36,7 +36,10 @@
   },
   "mock_web": {
     "url": "localhost",
-    "port": 3007
+    "port": 3007,
+    "min_clients": 2,
+    "max_clients": 2,
+    "num_clients":2
   },
   "database": {
     "host": "localhost",
