@@ -18,6 +18,8 @@ services:
       DB_HOST: "db"
       DB_PORT: "5432"
     build: build-server/
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
     ports:
     - "3002:3000"
 
