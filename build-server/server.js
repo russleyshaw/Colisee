@@ -1,15 +1,15 @@
-var express = require("express");
-var config = require("config");
-var path = require("path");
-var bodyParser = require("body-parser");
+let express = require("express");
+const config = require("config");
+const path = require("path");
+const bodyParser = require("body-parser");
 let winston = require("winston");
 
 winston.level = config.logging;
 
-var Builder = require("./Builder");
+let Builder = require("./Builder");
 
-var app = express();
-var builder = new Builder();
+let app = express();
+let builder = new Builder();
 
 builder.init((err) => {
     if(err) return console.error(err);
