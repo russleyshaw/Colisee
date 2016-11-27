@@ -1,25 +1,20 @@
-var Db = require("./Db");
-var knex = require("knex")({
-    "dialect": "pg"
+let knex = require("knex")({
+    client: "pg",
+    connection: {
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME
+    }
 });
-// Load the full build.
+
 var _ = require("lodash");
-//var Logger = require("./logger");
 
 
 /**
  * Class to interface with match table in database
  */
 class Match {
-
-    static getAll(callback) {
-        var sql = knex("match").toString();
-        Db.queryOnce(sql, [], function (err, result) {
-            if(err) return callback(err);
-
-            callback(null, result.rows);
-        });
-    }
 
     static get(options, callback){
         var sql = knex("match").select();
@@ -48,20 +43,18 @@ class Match {
             if(Array.isArray(options.schedule_id)) sql = sql.whereIn("schedule_id", options.schedule_id);
             else sql = sql.where("schedule_id", options.schedule_id);
         }
-        sql = sql.toString();
-        Db.queryOnce(sql, [], function (err, result) {
+        sql.asCallback( (err, rows) => {
             if(err) return callback(err);
-            callback(null, result.rows);
+            callback(null, rows);
         });
     }
 
     static getById(match_id, callback) {
-        var sql = knex("match").where("id", match_id).toString();
-        Db.queryOnce(sql, [], function(err, result){
+        knex("match").where("id", match_id).asCallback( (err, rows) => {
             if(err) return callback(err);
-            if(result.rows.length != 1) return callback("No match found.");
+            if(rows.length != 1) return callback( new Error("No match found.") );
 
-            callback(null, result.rows[0]);
+            callback(null, rows[0]);
         });
     }
 
@@ -79,11 +72,9 @@ class Match {
         if(match.clients.length < 2) return callback(new Error("Cannot create a match with less than 2 clients"));
 
         var uniqClients = _.uniq(match.clients);
-        var sql1 = knex("client").whereIn("id",uniqClients).toString();
-
-        Db.queryOnce(sql1, [], (err, result1) => {
+        knex("client").whereIn("id",uniqClients).asCallback( (err, rows) => {
             if(err)return callback(new Error("Query failed"));
-            if(result1.rows.length == uniqClients.length) {
+            if(rows.length == uniqClients.length) {
 
                 if (match.hasOwnProperty("clients")) {
                     match.clients = `{${match.clients.toString()}}`;
@@ -92,11 +83,10 @@ class Match {
                 match.created_time = "now()";
                 match.modified_time = "now()";
 
-                var sql = knex("match").insert(match, "*").toString();
-                Db.queryOnce(sql, [], (err, result) => {
-                    if (err)return callback(err);
-                    if (result.rowCount != 1) return callback("No match found.");
-                    callback(null, result.rows[0]);
+                knex("match").insert(match, "*").asCallback( (err, rows) => {
+                    if(err)return callback(err);
+                    if(rows.length != 1) return callback( new Error("No match found.") );
+                    callback(null, rows[0]);
                 });
             }
             else return callback(new Error("The clients must exist in the database to be used in a match."));
@@ -117,12 +107,11 @@ class Match {
 
         fields.modified_time = "now()";
 
-        var sql = knex("match").where("id", id).update(fields).toString();
-        Db.queryOnce(sql, [], function(err, result){
+        knex("match").where("id", id).update(fields).asCallback( (err, rows) => {
             if(err) return callback(err);
-            if(result.rows.length != 1) return callback("No match found.");
+            if(rows.length != 1) return callback( new Error("No match found.") );
 
-            callback(null, result.rows[0]);
+            callback(null, rows[0]);
         });
     }
 }

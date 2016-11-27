@@ -1,23 +1,17 @@
-var Db = require("./Db");
-var knex = require("knex")({
-    dialect: "pg"
+let knex = require("knex")({
+    client: "pg",
+    connection: {
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME
+    }
 });
 
-/**
- *
- */
 class Client {
 
-    static getAll(callback) {
-        var sql = knex("client").toString();
-        Db.queryOnce(sql, [], function (err, result) {
-            if(err) return callback(err);
-            callback(null, result.rows);
-        });
-    }
-
     static get(options, callback){
-        var sql = knex("client").select();
+        let sql = knex("client").select();
 
         if(options.hasOwnProperty("id")) {
             if(Array.isArray(options.id)) sql = sql.whereIn("id", options.id);
@@ -46,32 +40,11 @@ class Client {
             sql = sql.limit(options.limit);
         }
 
-        sql = sql.toString();
-        Db.queryOnce(sql, [], function (err, result) {
+        sql.asCallback((err, rows) => {
             if(err) return callback(err);
-            callback(null, result.rows);
+            callback(null, rows);
         });
 
-    }
-
-    static getById(client_id, callback) {
-        var sql = knex("client").where("id", client_id).toString();
-        Db.queryOnce(sql, [], function (err, result) {
-            if(err) return callback(err);
-            if(result.rows.length != 1) return callback("No match found");
-
-            callback(null, result.rows[0]);
-        });
-    }
-
-    static getByName(client_name, callback) {
-        var sql = knex("client").where("name", client_name).toString();
-        Db.queryOnce(sql, [], function (err, result) {
-            if(err) return callback(err);
-            if(result.rows.length != 1) return callback("No match found");
-
-            callback(null, result.rows[0]);
-        });
     }
 
     /**
@@ -92,18 +65,14 @@ class Client {
      * @param callback {Client~createCallback}
      */
     static create(client, callback) {
-        if(client.hasOwnProperty("id")) return callback("client ids are created automatically");
-        if(client.hasOwnProperty("created_time")) return callback("Cannot create with created time");
-        if(client.hasOwnProperty("modified_time")) return callback("Cannot create with modified time");
+        if(client.hasOwnProperty("id")) return callback( new Error("client ids are created automatically") );
+        if(client.hasOwnProperty("created_time")) return callback( new Error("Cannot create with created time") );
+        if(client.hasOwnProperty("modified_time")) return callback( new Error("Cannot create with modified time") );
 
-        client.created_time = "now()";
-        client.modified_time = "now()";
-
-        var sql = knex("client").insert(client, "*").toString();
-        Db.queryOnce(sql, [], function(err, result) {
+        knex("client").insert(client, "*").asCallback((err, rows) => {
             if(err) return callback(err);
-            if(result.rowCount != 1) return callback("Inserted row not returned");
-            callback(null, result.rows[0]);
+            if(rows.length != 1) return callback( new Error("Inserted row not returned") );
+            callback(null, rows[0]);
         });
     }
 
@@ -120,18 +89,17 @@ class Client {
      * @param callback {Client~updateByIdCallback}
      */
     static updateById(id, fields, callback) {
-        if(fields.hasOwnProperty("id")) return callback("Cannot update id");
-        if(fields.hasOwnProperty("created_time")) return callback("Cannot update created time");
-        if(fields.hasOwnProperty("modified_time")) return callback("Cannot update modified time");
+        if(fields.hasOwnProperty("id")) return callback(new Error("Cannot update id") );
+        if(fields.hasOwnProperty("created_time")) return callback( new Error("Cannot update created time") );
+        if(fields.hasOwnProperty("modified_time")) return callback( new Error("Cannot update modified time") );
 
         fields["modified_time"] = "now()";
 
-        var sql = knex("client").where({id: id}).update(fields, "*").toString();
-        Db.queryOnce(sql, [], (err, result) => {
+        knex("client").where({id: id}).update(fields, "*").asCallback((err, rows) => {
             if(err) return callback(err);
-            if(result.rows.length != 1) return callback("Query resulted in invalid number of rows");
+            if(rows.length != 1) return callback( new Error("Query resulted in invalid number of rows") );
 
-            callback(null, result.rows[0]);
+            callback(null, rows[0]);
         });
     }
 }
