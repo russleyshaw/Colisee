@@ -1,13 +1,21 @@
-var config = require("config");
-var child_process = require("child_process");
-var fs = require("fs");
-var path = require("path");
-var async = require("async");
-var Client = require("../common/Client");
-var Db = require("../common/Db");
-var knex = require("knex")({
-    dialect: "pg"
+const config = require("config");
+const child_process = require("child_process");
+const fs = require("fs");
+const path = require("path");
+const async = require("async");
+let knex = require("knex")({
+    client: "pg",
+    connection: {
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME
+    }
 });
+
+const log_dir = path.join(__dirname, config.log_dir);
+const tar_dir = path.join(__dirname, config.tar_dir);
+const hash_dir = path.join(__dirname, config.hash_dir);
 
 /**
  * Manager of building and accessing client docker images
@@ -20,9 +28,7 @@ class Builder {
         this._num_building = 0;
         this.MAX_BUILDING = 1;
 
-        this.log_dir = path.join(__dirname, "../../", config.build_server.log_dir);
-        this.tar_dir = path.join(__dirname, "../../", config.build_server.tar_dir);
-        this.hash_dir = path.join(__dirname, "../../", config.build_server.hash_dir);
+
     }
 
     /**
@@ -39,9 +45,9 @@ class Builder {
     init(callback) {
         console.log("Initializing...");
         //TODO: Add other docker base images
-        var cmds = [
-            `docker build -t base_cpp -f ${ path.join(__dirname, "dockerfiles/base_cpp.dockerfile")} . > ${path.join(this.log_dir, "base_cpp.log")}`,
-            `docker build -t base_js -f ${path.join(__dirname, "dockerfiles/base_js.dockerfile")} . > ${path.join(this.log_dir, "base_js.log")}`,
+        const cmds = [
+            `docker build -t base_cpp -f ${ path.join(__dirname, "dockerfiles/base_cpp.dockerfile")} . > ${path.join(log_dir, "base_cpp.log")}`,
+            `docker build -t base_js -f ${path.join(__dirname, "dockerfiles/base_js.dockerfile")} . > ${path.join(log_dir, "base_js.log")}`,
         ];
 
         //Build each base image
@@ -69,19 +75,13 @@ class Builder {
             if(this._num_building >= this._MAX_BUILDING) return;
 
             //Select oldest client needing build, with
-            var sql = knex("client")
-                .where("needs_build", true)
-                .whereNotNull("repo").whereNotNull("hash").whereNotNull("language")
-                .orderBy("attempt_time")
-                .limit(1)
-            .toString();
-            Db.queryOnce(sql, [], (err, result) => {
+            knex("client").where("needs_build", true).whereNotNull("repo").whereNotNull("hash").whereNotNull("language").orderBy("attempt_time").limit(1).asCallback((err, rows) => {
                 if(err) return console.warn(`Error: ${JSON.stringify(err)}`);
-                if(result.rows.length < 1) return; //None needing building
+                if(rows.length < 1) return; //None needing building
 
                 this._num_building++;
 
-                var client = result.rows[0];
+                var client = rows[0];
 
                 this.build(client.id, (err) => {
                     if(err) return console.warn(`Error: ${JSON.stringify(err)}`);
@@ -101,8 +101,7 @@ class Builder {
     }
 
     _unsetNeedsBuild(client, callback) {
-        var sql = knex("client").where({id: client.id}).update({needs_build: false}, "*").toString();
-        Db.queryOnce(sql, [], (err) => {
+        knex("client").where({id: client.id}).update({needs_build: false}, "*").asCallback((err, rows) => {
             if(err) return callback(err);
             callback();
         });
@@ -123,8 +122,11 @@ class Builder {
     build(client_id, callback) {
         console.log(`Building client ${client_id}...`);
 
-        Client.getById(client_id, (err, client)=>{
+        knex("client").where("id", client_id).asCallback( (err, rows )=>{
             if(err) return callback(err);
+            if(rows.length != 1) callback( new Error(`Unable to get client with id ${client_id}`) );
+
+            let client = rows[0];
 
             this._unsetNeedsBuild(client, (err)=>{
                 if(err) return callback(err);
@@ -136,14 +138,12 @@ class Builder {
                         this._buildImageGood(client, (err)=>{
                             if(err) return callback(err);
 
-                            //Write to db
-                            var sql = knex("client").where({id: client.id}).update({
+                            knex("client").where({id: client.id}).update({
                                 success_time: "now()",
                                 modified_time: "now()",
                                 attempt_time: "now()",
                                 build_success: true
-                            }, "*").toString();
-                            Db.queryOnce(sql, [], (err) => {
+                            }, "*").asCallback((err, rows) => {
                                 if(err) return callback(err);
                                 console.log(`Built client ${client_id} with success`);
                                 callback(null, true);
@@ -162,8 +162,7 @@ class Builder {
                                 attempt_time: "now()",
                                 build_success: false
 
-                            }, "*").toString();
-                            Db.queryOnce(sql, [], (err) => {
+                            }, "*").asCallback((err, rows) => {
                                 if(err) return callback(err);
                                 console.log(`Built client ${client.id} with failure`);
                                 callback(null, false);
@@ -261,7 +260,7 @@ class Builder {
      */
     _saveHashTmp(client, callback) {
         console.log(`Saving temporary hash for client ${client.id}...`);
-        var cmd = `sha256sum ${path.join(this.tar_dir, `client_${client.id}.tar.tmp`)} > ${path.join(this.hash_dir, `client_${client.id}.sha256.tmp`)}`;
+        const cmd = `sha256sum ${path.join(tar_dir, `client_${client.id}.tar.tmp`)} > ${path.join(hash_dir, `client_${client.id}.sha256.tmp`)}`;
         child_process.exec(cmd, (err) =>{
             if(err) return callback(err);
             callback();
@@ -281,10 +280,10 @@ class Builder {
      */
     _applyTmpFilesGood(client, callback) {
         console.log(`Applying temporary files for good client ${client.id}...`);
-        var cmds = [
-            `mv -f ${path.join(this.tar_dir, `client_${client.id}.tar.tmp`)} ${path.join(this.tar_dir, `client_${client.id}.tar`)}`,
-            `mv -f ${path.join(this.log_dir, `client_${client.id}.log.tmp`)} ${path.join(this.log_dir, `client_${client.id}.log`)}`,
-            `mv -f ${path.join(this.hash_dir, `client_${client.id}.sha256.tmp`)} ${path.join(this.hash_dir, `client_${client.id}.sha256`)}`
+        const cmds = [
+            `mv -f ${path.join(tar_dir, `client_${client.id}.tar.tmp`)} ${path.join(tar_dir, `client_${client.id}.tar`)}`,
+            `mv -f ${path.join(log_dir, `client_${client.id}.log.tmp`)} ${path.join(log_dir, `client_${client.id}.log`)}`,
+            `mv -f ${path.join(hash_dir, `client_${client.id}.sha256.tmp`)} ${path.join(hash_dir, `client_${client.id}.sha256`)}`
         ];
 
         async.map(cmds, (cmd, cb) => {
@@ -311,9 +310,9 @@ class Builder {
      */
     _applyTmpFilesBad(client, callback) {
         console.log(`Applying temporary files for bad client ${client.id}...`);
-        var cmds = [
-            `rm -f ${path.join(this.tar_dir, `client_${client.id}.tar`)} ${path.join(this.hash_dir, `client_${client.id}.sha256`)}`,
-            `mv -f ${path.join(this.log_dir, `client_${client.id}.log.tmp`)} ${path.join(this.log_dir, `client_${client.id}.log`)}`,
+        const cmds = [
+            `rm -f ${path.join(tar_dir, `client_${client.id}.tar`)} ${path.join(hash_dir, `client_${client.id}.sha256`)}`,
+            `mv -f ${path.join(log_dir, `client_${client.id}.log.tmp`)} ${path.join(log_dir, `client_${client.id}.log`)}`,
         ];
 
         async.map(cmds, (cmd, cb)=>{
@@ -324,51 +323,6 @@ class Builder {
         }, (err) => {
             if(err) return callback(err);
             callback();
-        });
-    }
-
-    /**
-     * Callback invoked when finished retrieving the tar file
-     * @callback Builder~getTarCallback
-     * @param err
-     * @param tar_data
-     */
-
-    /**
-     * Gets a tar image from the file system
-     * @param client_id {integer} Integer id of individual client in database
-     * @param callback {Builder~getTarCallback}
-     */
-    getTar(client_id, callback) {
-        fs.readFile( path.join(this.tar_dir, `client_${client_id}.tar`), (err, data)=>{
-            if(err) return callback(err);
-            callback(null, data);
-        });
-    }
-
-    /**
-     * Callback invoked when finished retrieving build log
-     * @callback Builder~getLogCallback
-     * @param err
-     * @param log_data
-     */
-
-    /**
-     * Gets the build log from the file system
-     * @param client_id {integer} Integer id of individual client in database
-     * @param callback {Builder~getLogCallback}
-     */
-    getLog(client_id, callback) {
-        fs.readFile( path.join(this.log_dir, `client_${client_id}.log`), (err, data)=>{
-            if(err) return callback(err);
-            callback(null, data);
-        });
-    }
-
-    getHash(client_id, callback) {
-        fs.readFile( path.join(this.hash_dir, `client_${client_id}.sha256`), (err, data)=>{
-            if(err) return callback(err);
-            callback(null, data);
         });
     }
 }
