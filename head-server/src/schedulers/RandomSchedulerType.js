@@ -1,7 +1,5 @@
-var BaseScheduler = require("./BaseSchedulerType");
-var Client = require("../../common/Client");
-
-
+let BaseScheduler = require("./BaseSchedulerType");
+let Client = require("../../common/Client");
 
 class RandomSchedulerType extends BaseScheduler {
     constructor() {
@@ -14,21 +12,22 @@ class RandomSchedulerType extends BaseScheduler {
      */
     
     genNext(callback) {
-        var options = {
+        const options = {
             order_by : "random",
             limit : 2
         };
         Client.get(options, (err, clients) => {
             if(err) return callback(err);
             if(clients.length < 2) console.warn("Got less than two clients.");
-            var client_ids = clients.map(function (client) {
+            let client_ids = clients.map(function (client) {
                 return client.id;
             });
             callback(null, client_ids);
         });
 
     }
-    getType(){
+
+    getType() {
         return "random";
     }
 }

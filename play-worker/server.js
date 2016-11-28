@@ -39,7 +39,7 @@ function pollFunc() {
             return;
         }
         if(response.statusCode != 200) {
-            winston.debug(`Bad status code ${response.statusCode} - ${response.statusMessage}`);
+            winston.debug(`Bad status code ${response.statusCode} - ${response.statusMessage} - ${JSON.stringify(body)}`);
             return;
         }
         winston.debug(`GOT\t${response}\t${body}`);

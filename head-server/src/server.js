@@ -9,8 +9,8 @@ winston.level = config.logging;
 // let clientApi       = require("./client/api");
 // let matchApi        = require("./match/api");
 // let logApi          = require("./log/api");
-// let scheduleApi     = require("./schedule/api");
-let playApi = require("./play_api");
+let scheduleApi     = require("./schedule_api");
+let playApi         = require("./play_api");
 
 let app = express();
 

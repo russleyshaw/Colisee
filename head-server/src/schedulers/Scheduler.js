@@ -1,10 +1,14 @@
-var Db = require("../../common/Db");
-var Match = require("../../common/Match");
-var Schedule = require("../../common/Schedule");
-var knex = require("knex")({
-    dialect: "pg"
+let Match = require("../../common/Match");
+let Schedule = require("../../common/Schedule");
+let knex = require("knex")({
+    client: "pg",
+    connection: {
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME
+    }
 });
-var Logger = require("../../common/Logger");
 
 function defaultErrorCallback(err) {
     console.error(err);
@@ -27,27 +31,11 @@ class Scheduler {
      * @callback Scheduler ~getNumScheduledCallback
      */
     getNumScheduled(callback){
-        var sql = knex("match").where("status","scheduled").count("* as count").toString();
-        Db.queryOnce(sql,[],function(err,result){
-            if(err)return callback(new Error("queryOnce returns an error"));
-            callback(null,result.rows[0].count);
+        knex("match").where("status","scheduled").count("* as count").asCallback( (err, rows) => {
+            if(err) return callback(err);
+            callback(null, rows[0].count);
         });
     }
-
-    /**
-     * creates a schedule of type "random" , with generated ID and status "stopped"
-     * @callback Scheduler ~createScheduleCallback
-     */
-    // createSchedule(callback){
-    //     var sched1 = {
-    //         type: this.current_scheduler.getType()
-    //     };
-    //     var sql1 = knex("schedule").insert(sched1,"*").toString();
-    //     Db.queryOnce(sql1,[],function(err,scheduler){
-    //         if(err)return console.error("queryOnce in schedDbId returns an error");
-    //         callback(null,scheduler.id);
-    //     });
-    // }
 
     /**
      * Starts a scheduler if MAX_SCHEDULED is not met.
@@ -60,58 +48,42 @@ class Scheduler {
      * @param callback
      */
     start(callback) {
-        if(callback===undefined) callback=defaultErrorCallback;
-        if(this.current_scheduler===undefined||this.current_scheduler===null) {
+        if(callback === undefined) callback = defaultErrorCallback;
+        if(this.current_scheduler === undefined || this.current_scheduler === null) {
             callback(new Error("Schedule type not set yet."));
             return;
         }
-        var sched1 = {
+        let sched1 = {
             type: this.current_scheduler.getType()
         };
         Schedule.create(sched1,(err,scheduleID)=>{
-            if(err) {
-                var log = {
-                    message: "schedule.create() error",
-                    severity: "error"
-                };
-                Logger.create(log, (err) => {
-                    if (err) console.error("Logger.create() error");
-                });
-                return callback(err);
-            }
+            if(err) return callback(err);
             this.schedId= scheduleID;
         });
-        this.interval_ptr = setInterval(() => {
-            this.getNumScheduled((err,numScheduled)=>{
-                if(err) return console.error("error returning the number scheduled",numScheduled);
-                if (numScheduled < this.MAX_SCHEDULED){
+        this.interval_ptr = setInterval(this.intervalFunc, this.SCHEDULE_INTERVAL);
+        callback();
+    }
 
-                    this.scheduleOnce(function(err){
-                        if(err)return console.error(err);
-                    });
-                }
-            });
-
-        }, this.SCHEDULE_INTERVAL);
+    intervalFunc() {
+        this.getNumScheduled( (err,numScheduled)=>{
+            if(err) return console.error("error returning the number scheduled",numScheduled);
+            if(numScheduled < this.MAX_SCHEDULED) {
+                this.scheduleOnce(function(err){
+                    if(err) return console.error(err);
+                });
+            }
+        });
     }
 
     /**
      * clears match objects for new tournament.
      */
     stop(callback) {
-        if(callback===undefined) callback=defaultErrorCallback;
-        //was: var sql= knex("schedule").where("match_status_enum","scheduled").update("match_status_enum","stopped").toString();
-        var sql= knex("schedule").where("status","running").update("status","stopped").toString();// I assume you meant this? - Tyler K.
-        Db.queryOnce(sql,[],(err)=>{
-            if(err)return callback(err);
+        if(callback === undefined) callback = defaultErrorCallback;
+        knex("schedule").where("status","running").update("status", "stopped").asCallback( (err) => {
+            if(err) return callback(err);
             clearInterval(this.interval_ptr);
         });
-    }
-    pause() {}
-    resume() {}
-
-    purge() {
-        //TODO: delete all entries in schedule queue
     }
 
     /**
@@ -124,26 +96,14 @@ class Scheduler {
     scheduleOnce(callback){
         this.current_scheduler.genNext( (err, clientIDs) => {
             if(err)return callback(err);
-            var match = {
-                clients:clientIDs,
-                schedule_id: 1
-            };
-            Match.create(match, (err) => {
-                if (err){
 
-                    var log = {
-                        message: "Match.create() error",
-                        severity: "error"
-                    };
-                    Logger.create(log, (err, log) => {
-                        if (err) console.error("Logger.create() error");
-                        callback(null, log);
-                    });
-                    return callback(err);
-                }
+            Match.create({
+                clients: clientIDs,
+                schedule_id: 1
+            }, (err) => {
+                if (err) return callback(err);
                 callback(null, clientIDs);
             });
-
         });
     }
 
@@ -152,27 +112,9 @@ class Scheduler {
      * @param scheduler_type
      */
     switchTo( scheduler_type ) {
+        //TODO: stop current scheduler and start new one?
         this.current_scheduler = scheduler_type;
-
     }
-
-    /**
-     * Gets next scheduled match.
-     * @returns {*}
-     */
-    next(){
-        // if( this.sched_queue.length > 0) {
-        //     //TODO: pop off queue
-        //     return this.sched_queue[this.sched_queue.length-1];
-        // }
-        // else {
-        //     return null;
-        // }
-    }
-
-
-
-
 }
 
 module.exports = Scheduler;
