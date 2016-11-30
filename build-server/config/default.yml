@@ -1,0 +1,5 @@
+port: 3000
+logging: "default"
+log_dir: "tmp/log"
+tar_dir: "tmp/tar"
+hash_dir: "tmp/hash"
