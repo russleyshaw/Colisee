@@ -11,7 +11,7 @@ services:
 
 before_script:
   - docker-compose build
-  - docker-compose up db
+  - docker-compose up -d db
 
 # Build steps
 script:
