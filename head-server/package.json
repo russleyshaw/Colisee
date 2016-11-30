@@ -4,6 +4,7 @@
   "description": "",
   "main": "src/server.js",
   "scripts": {
+    "test": "mocha test/",
     "start": "node src/server.js"
   },
   "author": "siggame",
@@ -16,5 +17,8 @@
     "knex": "^0.12.6",
     "pg": "^6.1.0",
     "winston": "^2.3.0"
+  },
+  "devDependencies": {
+    "mocha": "^3.2.0"
   }
 }
