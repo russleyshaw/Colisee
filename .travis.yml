@@ -7,20 +7,13 @@ node_js:
   - "v6.9.0"
   
 services:
-  - postgresql
   - docker
 
-addons:
-  postgresql: "9.4"
-
 before_script:
-  - npm install
-  - cp config/travis_test.json config/test.json
-  - psql -c 'create database colisee_test;' -U postgres
-  - psql -U postgres -d colisee_test -a -f db/init.sql
-  - npm run setup:tmp
-  
+  - docker-compose build
+  - docker-compose up db
+
 # Build steps
 script:
-  - npm test
+  - docker-compose run --service-ports head-server npm test
 
