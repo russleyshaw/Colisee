@@ -4,7 +4,7 @@ _Making the world a better place one MegaMinerAI at a time._
 https://russleyshaw.github.io/Colisee/
 
 ### Status
-[![Build Status](https://travis-ci.org/russleyshaw/Colisee.svg?branch=master)](https://travis-ci.org/russleyshaw/Colisee) ![Dependencies](https://david-dm.org/russleyshaw/Colisee.svg) ![DevDependencies](https://img.shields.io/david/dev/russleyshaw/Colisee.svg)
+[![Build Status](https://travis-ci.org/russleyshaw/Colisee.svg?branch=master)](https://travis-ci.org/russleyshaw/Colisee)
 
 
 ### Setup
@@ -14,12 +14,9 @@ https://russleyshaw.github.io/Colisee/
 2) Install Docker Compose - https://docs.docker.com/compose/install/  
 `pip install docker-compose`
 
-3) run copyCommon.sh in head-server  
-`./copyCommon.sh`
-
-4) Build images  
+3) Build images  
 `docker-compose build`
 
-5) Run images  
+4) Run images  
 `docker-compose up`
 
