@@ -21,7 +21,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - "3101:3000"
+      - "5403:3000"
 
   head-server:
     environment:
@@ -33,15 +33,15 @@ services:
       HEAD_TOKEN: "abcd"
     build: head-server/
     ports:
-      - "3100:3000"
+      - "5401:3000"
 
   play-worker:
     environment:
       HEAD_HOST: "head-server"
-      HEAD_PORT: "3100"
+      HEAD_PORT: "5401"
       HEAD_TOKEN: "abcd"
     build: play-worker/
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - "3102:3000"
+      - "5402:3000"
