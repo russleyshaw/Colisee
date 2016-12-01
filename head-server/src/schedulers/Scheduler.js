@@ -24,7 +24,6 @@ class Scheduler {
         this.interval_ptr = undefined;
         this.current_scheduler = undefined;
         this.sched_id = null;
-
     }
 
     /**
@@ -32,7 +31,7 @@ class Scheduler {
      * @callback Scheduler ~getNumScheduledCallback
      */
     getNumScheduled(callback){
-        knex("match").where("status","scheduled").count("* as count").asCallback( (err, rows) => {
+        knex("match").where("status","scheduled").count("* as count").asCallback((err, rows) => {
             if(err) return callback(err);
             callback(null, rows[0].count);
         });
@@ -54,24 +53,25 @@ class Scheduler {
             callback(new Error("Schedule type not set yet."));
             return;
         }
-        let sched1 = {
+        Schedule.create({
             type: this.current_scheduler.getType()
-        };
-        Schedule.create(sched1,(err, schedule_id)=>{
+        }, (err, schedule) => {
             if(err) return callback(err);
-            this.sched_id= schedule_id;
+            this.sched_id = schedule.id;
+
+            this.interval_ptr = setInterval(() => {
+                Scheduler.intervalFunc(this);
+            }, this.SCHEDULE_INTERVAL);
+
+            callback();
         });
-        this.interval_ptr = setInterval(() => {
-            Scheduler.intervalFunc(this);
-        }, this.SCHEDULE_INTERVAL);
-        callback();
     }
 
     static intervalFunc(self) {
-        self.getNumScheduled( (err, numScheduled) => {
+        self.getNumScheduled((err, numScheduled) => {
             if(err) return winston.error(err);
             if(numScheduled < self.MAX_SCHEDULED) {
-                self.scheduleOnce(function(err){
+                self.scheduleOnce((err) => {
                     if(err) return winston.error(err);
                 });
             }
@@ -83,9 +83,10 @@ class Scheduler {
      */
     stop(callback) {
         if(callback === undefined) callback = defaultErrorCallback;
-        knex("schedule").where("status","running").update("status", "stopped").asCallback( (err) => {
+        knex("schedule").where("status","running").update("status", "stopped").asCallback((err) => {
             if(err) return callback(err);
             clearInterval(this.interval_ptr);
+            callback();
         });
     }
 
@@ -96,10 +97,17 @@ class Scheduler {
      * Logs any errors in the Db log table as a message.
      * @param callback
      */
-    scheduleOnce(callback){
-        this.current_scheduler.genNext( (err, clientIDs) => {
-            if(err)return callback(err);
-
+    scheduleOnce(callback) {
+        winston.debug("scheduling once");
+        if(this.current_scheduler === null) {
+            return callback( new Error("Current scheduler is null") );
+        }
+        winston.debug("after null check");
+        this.current_scheduler.genNext((err, clientIDs) => {
+            if(err) return callback(err);
+            if(this.sched_id === null) {
+                return callback( new Error("Internal schedule id is null") );
+            }
             Match.create({
                 clients: clientIDs,
                 schedule_id: this.sched_id
@@ -115,7 +123,6 @@ class Scheduler {
      * @param scheduler_type
      */
     switchTo( scheduler_type ) {
-        //TODO: stop current scheduler and start new one?
         this.current_scheduler = scheduler_type;
     }
 }

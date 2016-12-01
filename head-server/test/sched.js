@@ -63,46 +63,4 @@ describe("Scheduler", function() {
             });
         });
     });
-
-    describe("RandomSchedulerType", function () {
-        describe("scheduleOnce()", function(){
-            it("should schedule an individual game",function(done){
-                let sched = new Scheduler();
-                sched.switchTo( new RandomSchedulerType() );
-                sched.scheduleOnce(function(err,idArray){
-                    should(err).not.be.ok();
-                    should( idArray.length ).be.equal(2);
-                    done();
-                });
-            });
-        });
-        it("Should create a new  single_elimination schedule ", (done)=> {
-            Schedule.create({
-                type: "single_elimination"
-            }, (err, schedule)=> {
-                should(err).not.be.ok();
-                should(schedule.type).equal("single_elimination");
-                should(schedule.status).equal("stopped");
-                done();
-            });
-        });
-        describe("start", function () {
-            it("should begin scheduling games", function (done) {
-                let sched = new Scheduler();
-                sched.SCHEDULE_INTERVAL =100;
-                sched.switchTo(new RandomSchedulerType);
-                sched.start((err) =>{
-                    should(err).not.be.ok();
-                });
-                setTimeout(function () {
-                    sched.stop();
-                    sched.getNumScheduled(function(err,numScheduled){
-                        should(err).not.be.ok();
-                        should( numScheduled).be.within(1,10);
-                        done();
-                    });
-                }, 500);
-            });
-        });
-    });
 });
