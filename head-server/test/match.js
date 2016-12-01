@@ -13,8 +13,7 @@ let knex = require("knex")({
         user: process.env.DB_USER,
         password: process.env.DB_PASS,
         database: process.env.DB_NAME,
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT
+        host: process.env.DB_HOST
     }
 });
 
@@ -22,9 +21,9 @@ describe("Match", function() {
 
     function clearDb(callback) {
         async.map([
-            knex("client").del(),
-            knex("schedule").del(),
-            knex("match").del()
+            knex("client").select("*").del(),
+            knex("schedule").select("*").del(),
+            knex("match").select("*").del()
         ], (item, cb) => {
             item.asCallback((err) => {
                 if(err) return cb(err);
@@ -36,23 +35,47 @@ describe("Match", function() {
         });
     }
 
-    before("Reset database and initialize test data", function(done){
+    function populateDb(callback) {
+        async.map([
+            knex("schedule").insert({type: "random"}, "*"),
+            knex("client").insert({name: "client1"}, "*"),
+            knex("client").insert({name: "client2"}, "*")
+        ], (item, cb) => {
+            item.asCallback((err, rows) => {
+                if(err) return cb(err);
+                cb(null, rows);
+            });
+        }, (err, results) => {
+            if(err) return callback(err);
+            callback(null, results);
+        });
+    }
+
+    let schedule_id = null;
+    let client_ids = [];
+
+    before("Reset database and initialize test data", function(done) {
         this.timeout(5 * 1000);
         clearDb((err) => {
             should(err).not.be.ok();
-            done();
+
+            populateDb((err, results) => {
+                should(err).not.be.ok();
+                schedule_id = results[0][0].id;
+                client_ids.push(results[1][0].id);
+                client_ids.push(results[2][0].id);
+                done();
+            });
         });
     });
 
     describe("create", function() {
-
         it("should create a new client in the database", function (done) {
             Client.create({
                 name: "test1",
                 build_success: true
             }, (err, client) => {
                 should(err).not.be.ok();
-                should(client.id).equal(1);
                 should(client.name).equal("test1");
                 done();
             });
@@ -68,56 +91,28 @@ describe("Match", function() {
             });
         });
     });
-    describe("getById", () => {
-        it("should retrieve a client by id", function(done) {
-            Client.getById(1, (err, client) => {
-                should(err).not.be.ok();
-                should(client.name).be.equal("Team_1");
-                done();
-            });
-        });
-    });
-
-    describe("getByName", () => {
-        it("should retrieve a client by name", function(done) {
-            Client.getByName("Team_1", (err, client) => {
-                should(err).not.be.ok();
-                should(client.name).be.equal("Team_1");
-                should(client.build_success).be.equal(true);
-                done();
-            });
-        });
-    });
 
     describe("create", function() {
         it("should create a new match in the database", function(done) {
             Match.create({
-                clients: [1, 2],
+                clients: [client_ids[0], client_ids[1]],
                 reason: "Random reason 3",
-                gamelog: 3,
-                schedule_id: 3
+                schedule_id: schedule_id
             }, (err, match) => {
                 should(err).not.be.ok();
-                should(match.id).equal(3);
                 should(match.reason).equal("Random reason 3");
-                should(match.gamelog).equal(3);
-                should(match.schedule_id).equal(3);
                 done();
             });
-
         });
 
         it("should create a new match in the database", function(done) {
             Match.create({
-                clients: [1, 2],
+                clients: [client_ids[0], client_ids[1]],
                 reason: "Random reason 4",
-                gamelog: 4,
-                schedule_id: 4
+                schedule_id: schedule_id
             }, (err, match) => {
                 should(err).not.be.ok();
                 should(match.reason).equal("Random reason 4");
-                should(match.gamelog).equal(4);
-                should(match.schedule_id).equal(4);
                 done();
             });
 
@@ -125,10 +120,10 @@ describe("Match", function() {
 
         it("should not create a match with an invalid gamelog", function(done) {
             Match.create({
-                clients: [1, 2],
+                clients: [client_ids[0], client_ids[1]],
                 reason: "Random reason 5",
                 gamelog: "Random gamelog",
-                schedule_id: 5
+                schedule_id: schedule_id
             }, (err) => {
                 should(err).be.ok();
                 done();
@@ -136,26 +131,24 @@ describe("Match", function() {
         });
         it("should not create a match with a non-existent schedule reference", function(done) {
             Match.create({
-                clients: [1, 2],
+                clients: [client_ids[0], client_ids[1]],
                 reason: "Random reason 5",
-                gamelog: "5",
                 schedule_id: 6
             }, (err) => {
                 should(err).be.ok();
                 done();
             });
         });
+
         it("should not create a match without a schedule_id", function(done) {
             Match.create({
-                clients: [1, 2],
+                clients: [client_ids[0], client_ids[1]],
                 reason: "Random reason 5",
-                gamelog: "5"
             }, (err) => {
                 should(err).be.ok();
                 done();
             });
         });
     });
-
 });
 

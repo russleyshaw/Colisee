@@ -1,3 +1,4 @@
+let winston = require("winston");
 let Match = require("../../common/Match");
 let Schedule = require("../../common/Schedule");
 let knex = require("knex")({
@@ -11,7 +12,7 @@ let knex = require("knex")({
 });
 
 function defaultErrorCallback(err) {
-    console.error(err);
+    winston.error(err);
 }
 
 class Scheduler {
@@ -56,7 +57,7 @@ class Scheduler {
         let sched1 = {
             type: this.current_scheduler.getType()
         };
-        Schedule.create(sched1,(err,scheduleID)=>{
+        Schedule.create(sched1,(err, scheduleID)=>{
             if(err) return callback(err);
             this.schedId= scheduleID;
         });
@@ -67,11 +68,11 @@ class Scheduler {
     }
 
     static intervalFunc(self) {
-        self.getNumScheduled( (err,numScheduled)=>{
-            if(err) return console.error("error returning the number scheduled",numScheduled);
+        self.getNumScheduled( (err, numScheduled) => {
+            if(err) return winston.error(err);
             if(numScheduled < self.MAX_SCHEDULED) {
                 self.scheduleOnce(function(err){
-                    if(err) return console.error(err);
+                    if(err) return winston.error(err);
                 });
             }
         });
@@ -101,7 +102,7 @@ class Scheduler {
 
             Match.create({
                 clients: clientIDs,
-                schedule_id: 1
+                schedule_id: this.schedId
             }, (err) => {
                 if (err) return callback(err);
                 callback(null, clientIDs);

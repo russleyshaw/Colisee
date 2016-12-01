@@ -10,8 +10,7 @@ let knex = require("knex")({
         user: process.env.DB_USER,
         password: process.env.DB_PASS,
         database: process.env.DB_NAME,
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT
+        host: process.env.DB_HOST
     }
 });
 
@@ -19,7 +18,7 @@ describe("Logger", function() {
 
     before("Reset database and initialize test data", function(done){
         this.timeout(5 * 1000);
-        knex("log").del().asCallback((err) => {
+        knex("log").select("*").del().asCallback((err) => {
             should(err).not.be.ok();
             done();
         })
@@ -74,7 +73,6 @@ describe("Logger", function() {
                 severity: "debug"
             }, (err, log) => {
                 should(err).not.be.ok();
-                should(log.id).equal(4);
                 should(log.message).equal("test5");
                 should(log.severity).equal("debug");
                 done();

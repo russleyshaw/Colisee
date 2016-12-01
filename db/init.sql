@@ -76,7 +76,7 @@ CREATE TABLE "match" (
 
     created_time timestamp NOT NULL DEFAULT now(),
     modified_time timestamp NOT NULL DEFAULT now(),
-    schedule_id integer NOT NULL REFERENCES schedule(id)
+    schedule_id integer NOT NULL REFERENCES schedule ON DELETE CASCADE
 );
 
 DELETE FROM "log";
