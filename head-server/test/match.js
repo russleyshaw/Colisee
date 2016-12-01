@@ -1,78 +1,73 @@
 /* eslint-env node, mocha */
 
-var should = require("should");
-// Load the full build.
-// var _ = require("lodash");
-var Db = require("../../src/common/Db");
-var Match = require("../../src/common/Match");
-var Client= require("../../src/common/Client");
-//var Schedule= require("../../src/common/Schedule");
+let should = require("should");
+let async = require("async");
+
+let Match = require("../common/Match");
+let Client = require("../common/Client");
+//let Schedule= require("../common/Schedule");
 
 describe("Match", function() {
 
     before("Reset database and initialize test data", function(done){
         this.timeout(5 * 1000);
-        Db.reset(function(err){
-            should(err).not.be.ok();
-            Db.queryLots([
-                [ "INSERT INTO  client(name, build_success) VALUES($1::text, $2::boolean)  RETURNING*",["Team_1", true]],
-                [ "INSERT INTO  client(name, build_success) VALUES($1::text, $2::boolean)  RETURNING*",["Team_2", true]],
-                [ "INSERT INTO  client(name, build_success) VALUES($1::text, $2::boolean)  RETURNING*",["Team_3", true]],
-                [ "INSERT INTO  client(name, build_success) VALUES($1::text, $2::boolean)  RETURNING*",["Team_4", true]],
-                [ "INSERT INTO  schedule(type, status)      VALUES($1, $2)     RETURNING*",["single_elimination", "stopped"]],
-                [ "INSERT INTO  schedule(type, status)      VALUES($1, $2)     RETURNING*",["single_elimination", "stopped"]],
-                [ "INSERT INTO  schedule(type, status)      VALUES($1, $2)     RETURNING*",["single_elimination", "stopped"]],
-                [ "INSERT INTO  schedule(type, status)      VALUES($1, $2)     RETURNING*",["single_elimination", "stopped"]],
-                [ "INSERT INTO  schedule(type, status)      VALUES($1, $2)     RETURNING*",["single_elimination", "stopped"]],
-                [ "INSERT INTO match (clients, reason, gamelog,schedule_id) VALUES ($1,  $2::text, $3::integer,$4::integer) RETURNING *", [[1,2],  "Random_reason_1", 1,1]],
-                [ "INSERT INTO match (clients, reason, gamelog,schedule_id) VALUES ($1,  $2::text, $3::integer,$4::integer) RETURNING *", [[1,2],  "Random reason 2", 2,2]]
-            ], function(err) {
+        async.map([
+            knex("client").del(),
+            knex("schedule").del(),
+            knex("match").del()
+        ], (item, cb) => {
+            item.asCallback((err) => {
+                cb(err);
+            });
+        }, () => {
+            done();
+        });
+    });
+
+    describe("create", function() {
+
+        before("Create Schedule and Clients to create match for", function(done) {
+            knex("schedule").insert({type: "random"}, "*").asCallback((err, rows) => {
+                let schedule_id = rows[0].id;
+                async.map([
+                    knex("client").del(),
+                    knex("schedule").del(),
+                    knex("match").del()
+                ], (item, cb) => {
+                    item.asCallback((err) => {
+                        cb(err);
+                    });
+                }, () => {
+                    done();
+                });
+            });
+        });
+
+        it("should create a new client in the database", function (done) {
+            var client = {
+                name: "test1",
+                build_success: true
+            };
+            Client.create(client, (err, client) => {
                 should(err).not.be.ok();
+                should(client.id).equal(1);
+                should(client.name).equal("test1");
+                done();
+            });
+        });
+        it("should create a new client in the database", function (done) {
+            var client = {
+                name: "test2",
+                build_success: true
+            };
+            Client.create(client, (err, client) => {
+                should(err).not.be.ok();
+                should(client.id).equal(2);
+                should(client.name).equal("test2");
                 done();
             });
         });
     });
-
-    describe("getById", function() {
-        it("should retrieve a match by id", function(done){
-            Match.getById(1, (err, match) => {
-                should(err).not.be.ok();
-
-                should(match.id).be.equal(1);
-                should(match.reason).be.equal("Random_reason_1");
-                should(match.gamelog).be.equal(1);
-                should(match.schedule_id).be.equal(1);
-
-                done();
-            });
-        });
-    });
-    // describe("create", function() {
-    //     it("should create a new client in the database", function (done) {
-    //         var client = {
-    //             name: "test1",
-    //             build_success: true
-    //         };
-    //         Client.create(client, (err, client) => {
-    //             should(err).not.be.ok();
-    //             should(client.id).equal(1);
-    //             should(client.name).equal("test1");
-    //             done();
-    //         });
-    //     });
-    //     it("should create a new client in the database", function (done) {
-    //         var client = {
-    //             name: "test2",
-    //             build_success: true
-    //         };
-    //         Client.create(client, (err, client) => {
-    //             should(err).not.be.ok();
-    //             should(client.id).equal(2);
-    //             should(client.name).equal("test2");
-    //             done();
-    //         });
-    //     });
-    // });
     describe("getById", () => {
         it("should retrieve a client by id", function(done) {
             Client.getById(1, (err, client) => {

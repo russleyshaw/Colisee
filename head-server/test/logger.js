@@ -1,46 +1,43 @@
 /* eslint-env node, mocha */
 
-var should = require("should");
+let should = require("should");
 
-var Db = require("../../src/common/Db");
-var Logger = require("../../src/common/Logger");
+let Logger = require("../common/Logger");
 
 describe("Logger", function() {
 
     before("Reset database and initialize test data", function(done){
         //Db.DEBUG = true;
         this.timeout(5 * 1000);
-        Db.reset((err) => {
-            should(err).not.be.ok();
+        knex("log").del().asCallback(() => {
             done();
-        });
+        })
     });
+
+    let log_id = null;
 
     describe("create", function() {
         it("should create a new log in the database", function(done) {
             this.timeout(525);
-            var log = {
+            Logger.create({
                 message: "test1",
                 severity: "warn"
-            };
-            Logger.create(log, (err, log) => {
+            }, (err, log) => {
                 should(err).not.be.ok();
-                should(log.id).equal(1);
                 should(log.message).equal("test1");
                 should(log.severity).equal("warn");
+                log_id = log.id;
                 done();
             });
         });
 
         it("should create a new log in the database", function(done) {
             this.timeout(525);
-            var log = {
+            Logger.create({
                 message: "test2",
                 severity: "warn"
-            };
-            Logger.create(log, (err, log) => {
+            }, (err, log) => {
                 should(err).not.be.ok();
-                should(log.id).equal(2);
                 should(log.message).equal("test2");
                 should(log.severity).equal("warn");
                 done();
@@ -49,13 +46,11 @@ describe("Logger", function() {
 
         it("should create a new log in the database", function(done) {
             this.timeout(525);
-            var log = {
+            Logger.create({
                 message: "test3",
                 severity: "warn"
-            };
-            Logger.create(log, (err, log) => {
+            }, (err, log) => {
                 should(err).not.be.ok();
-                should(log.id).equal(3);
                 should(log.message).equal("test3");
                 should(log.severity).equal("warn");
                 done();
@@ -63,11 +58,10 @@ describe("Logger", function() {
         });
         it("should create a new log in the database", function(done) {
             this.timeout(525);
-            var log = {
+            Logger.create({
                 message: "test5",
                 severity: "debug"
-            };
-            Logger.create(log, (err, log) => {
+            }, (err, log) => {
                 should(err).not.be.ok();
                 should(log.id).equal(4);
                 should(log.message).equal("test5");
@@ -77,11 +71,10 @@ describe("Logger", function() {
         });
         it("should not create a log with an invalid severity", function(done) {
             this.timeout(525);
-            var log = {
+            Logger.create({
                 message: "test4",
                 severity: "critical1"
-            };
-            Logger.create(log, (err) => {
+            }, (err) => {
                 should(err).be.ok();
                 done();
             });
@@ -89,12 +82,11 @@ describe("Logger", function() {
 
         it("should not create a log with a given id", function(done) {
             this.timeout(525);
-            var log = {
+            Logger.create({
                 id: 1,
                 message: "test4",
                 severity: "error"
-            };
-            Logger.create(log, (err) => {
+            }, (err) => {
                 should(err).be.ok();
                 done();
             });
@@ -104,12 +96,11 @@ describe("Logger", function() {
     describe("updateById", function() {
         it("should update a log based on its id", function(done){
             this.timeout(525);
-            var fields = {
+            Logger.updateById(log_id, {
                 severity: "info",
-            };
-            Logger.updateById(1, fields, (err, log) => {
+            }, (err, log) => {
                 should(err).not.be.ok();
-                should(log.id).equal(1);
+                should(log.id).equal(log_id);
                 should(log.severity).equal("info");
                 done();
             });
@@ -119,9 +110,9 @@ describe("Logger", function() {
     describe("getById", function() {
         it("should retrieve a log by id", function(done) {
             this.timeout(525);
-            Logger.getById(1, (err, log) => {
+            Logger.getById(log_id, (err, log) => {
                 should(err).not.be.ok();
-                should(log.id).be.equal(1);
+                should(log.id).be.equal(log_id);
                 should(log.message).be.equal("test1");
                 done();
             });
@@ -163,7 +154,7 @@ describe("Logger", function() {
         });
         it("should get most recent log with at least specified severity level", function(done) {
             this.timeout(525);
-            Logger.getLatest({limit:1,severity:"warn"}, (err, logs) => {
+            Logger.getLatest({limit:1, severity:"warn"}, (err, logs) => {
                 should(err).not.be.ok();
                 should(logs.length).be.equal(1);
                 should(logs[0].severity).be.equal("warn");
@@ -172,7 +163,7 @@ describe("Logger", function() {
         });
         it("should get latest specified number of logs with at least specified severity level", function(done) {
             this.timeout(525);
-            Logger.getLatest({limit:2,severity:"warn"}, (err, logs) => {
+            Logger.getLatest({limit:2, severity:"warn"}, (err, logs) => {
                 should(err).not.be.ok();
                 should(logs.length).be.equal(2);
                 should(logs[0].severity).be.equal("warn");

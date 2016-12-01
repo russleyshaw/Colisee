@@ -1,76 +1,68 @@
 /* eslint-env node, mocha */
 
-var should = require("should");
-
-var Db = require("../../src/common/Db");
-var Client = require("../../src/common/Client");
+let should = require("should");
+let Client = require("../common/Client");
 
 describe("Client", function() {
 
+    let client_id = null;
+
     before("Reset database and initialize test data", function(done) {
         this.timeout(5 * 1000);
-        Db.reset((err) => {
-            should(err).not.be.ok();
+        knex("client").del().asCallback(() => {
             done();
-        });
+        })
     });
 
     describe("create", function() {
         it("should create a new client in the database", function(done) {
-            var client = {
+            Client.create({
                 name: "test1",
-                build_success:true
-            };
-            Client.create(client, (err, client) => {
+                build_success: true
+            }, (err, client) => {
                 should(err).not.be.ok();
-                should(client.id).equal(1);
                 should(client.name).equal("test1");
+                client_id = client.id;
                 done();
             });
         });
         it("should create a new client in the database", function(done) {
-            var client = {
+            Client.create({
                 name: "test2",
                 build_success:true
-            };
-            Client.create(client, (err, client) => {
+            }, (err, client) => {
                 should(err).not.be.ok();
-                should(client.id).equal(2);
                 should(client.name).equal("test2");
                 done();
             });
         });
 
         it("should create a new client in the database", function(done) {
-            var client = {
+            Client.create({
                 name: "test3",
                 build_success:true
-            };
-            Client.create(client, (err, client) => {
+            }, (err, client) => {
                 should(err).not.be.ok();
-                should(client.id).equal(3);
                 should(client.name).equal("test3");
                 done();
             });
         });
 
         it("should not create a client with an invalid language", function(done) {
-            var client = {
+            Client.create({
                 name: "test4",
                 language: "cpp1"
-            };
-            Client.create(client, (err) => {
+            }, (err) => {
                 should(err).be.ok();
                 done();
             });
         });
 
         it("should not create a client with a given id", function(done) {
-            var client = {
+            Client.create({
                 id: 1,
                 name: "test4",
-            };
-            Client.create(client, (err) => {
+            }, (err) => {
                 should(err).be.ok();
                 done();
             });
@@ -79,10 +71,9 @@ describe("Client", function() {
 
     describe("updateById", function() {
         it("should update a client based on its id", function(done){
-            var fields = {
+            Client.updateById(1, {
                 language: "cpp",
-            };
-            Client.updateById(1, fields, (err, client) => {
+            }, (err, client) => {
                 should(err).not.be.ok();
                 should(client.id).equal(1);
                 should(client.language).equal("cpp");
@@ -93,9 +84,9 @@ describe("Client", function() {
 
     describe("getById", () => {
         it("should retrieve a client by id", function(done) {
-            Client.getById(1, (err, client) => {
+            Client.getById(client_id, (err, client) => {
                 should(err).not.be.ok();
-                should(client.id).be.equal(1);
+                should(client.id).be.equal(client_id);
                 should(client.name).be.equal("test1");
                 done();
             });
@@ -106,10 +97,7 @@ describe("Client", function() {
         it("should retrieve a client by name", function(done) {
             Client.getByName("test2", (err, client) => {
                 should(err).not.be.ok();
-
-                should(client.id).be.equal(2);
                 should(client.name).be.equal("test2");
-
                 done();
             });
         });
