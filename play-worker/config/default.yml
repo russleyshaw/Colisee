@@ -1,0 +1,4 @@
+port: 3000
+poll_interval: 1000
+max_playing: 2
+logging: "debug"

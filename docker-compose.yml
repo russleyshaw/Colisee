@@ -1,0 +1,47 @@
+version: "2"
+
+services:
+  db:
+    environment:
+      POSTGRES_USER: "colisee"
+      POSTGRES_PASSWORD: "colisee"
+      POSTGRES_DB: "colisee"
+    build: db/
+    ports:
+      - "5400:5432"
+
+  build-server:
+    environment:
+      DB_USER: "colisee"
+      DB_PASS: "colisee"
+      DB_NAME: "colisee"
+      DB_HOST: "db"
+      DB_PORT: "5400"
+    build: build-server/
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "5403:3000"
+
+  head-server:
+    environment:
+      DB_USER: "colisee"
+      DB_PASS: "colisee"
+      DB_NAME: "colisee"
+      DB_HOST: "db"
+      DB_PORT: "5400"
+      HEAD_TOKEN: "abcd"
+    build: head-server/
+    ports:
+      - "5401:3000"
+
+  play-worker:
+    environment:
+      HEAD_HOST: "head-server"
+      HEAD_PORT: "5401"
+      HEAD_TOKEN: "abcd"
+    build: play-worker/
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "5402:3000"
