@@ -23,7 +23,7 @@ class Scheduler {
 
         this.interval_ptr = undefined;
         this.current_scheduler = undefined;
-        this.schedID = null;
+        this.sched_id = null;
 
     }
 
@@ -57,9 +57,9 @@ class Scheduler {
         let sched1 = {
             type: this.current_scheduler.getType()
         };
-        Schedule.create(sched1,(err, scheduleID)=>{
+        Schedule.create(sched1,(err, schedule_id)=>{
             if(err) return callback(err);
-            this.schedId= scheduleID;
+            this.sched_id= schedule_id;
         });
         this.interval_ptr = setInterval(() => {
             Scheduler.intervalFunc(this);
@@ -102,7 +102,7 @@ class Scheduler {
 
             Match.create({
                 clients: clientIDs,
-                schedule_id: this.schedId
+                schedule_id: this.sched_id
             }, (err) => {
                 if (err) return callback(err);
                 callback(null, clientIDs);
