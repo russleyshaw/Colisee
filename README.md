@@ -12,14 +12,14 @@ https://russleyshaw.github.io/Colisee/
 ```curl -sSL https://get.docker.com/ | sh```  
  
 2) Install Docker Compose - https://docs.docker.com/compose/install/  
-```pip install docker-compose```
+`pip install docker-compose`
 
-3) run copyCommon.sh in head-server
-```./copyCommon.sh```
+3) run copyCommon.sh in head-server  
+`./copyCommon.sh`
 
-4) Build images
-```docker-compose build```
+4) Build images  
+`docker-compose build`
 
-5) Run images
-```docker-compose up```
+5) Run images  
+`docker-compose up`
 
