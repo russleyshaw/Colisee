@@ -14,12 +14,9 @@ https://russleyshaw.github.io/Colisee/
 2) Install Docker Compose - https://docs.docker.com/compose/install/  
 `pip install docker-compose`
 
-3) run copyCommon.sh in head-server  
-`./copyCommon.sh`
-
-4) Build images  
+3) Build images  
 `docker-compose build`
 
-5) Run images  
+4) Run images  
 `docker-compose up`
 
