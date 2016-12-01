@@ -26,8 +26,6 @@ router.get("/api/v2/schedule/:id/", (req, res) => {
     });
 });
 
-router.use("/schedule", express.static(path.join(__dirname, "../static/schedule")));
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // POST

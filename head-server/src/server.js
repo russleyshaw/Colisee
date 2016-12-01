@@ -14,6 +14,7 @@ let playApi         = require("./play_api");
 
 let app = express();
 
+app.use("/", express.static(path.join(__dirname, "../static/")));
 app.use("/lib/bootstrap", express.static(path.join(__dirname, "../bower_components/bootstrap/dist")));
 app.use("/lib/jquery", express.static(path.join(__dirname, "../bower_components/jquery/dist")));
 app.use("/lib/react", express.static(path.join(__dirname, "../bower_components/react")));
