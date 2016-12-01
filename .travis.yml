@@ -15,5 +15,5 @@ before_script:
 
 # Build steps
 script:
-  - docker-compose run --service-ports head-server npm test
+  - docker-compose exec head-server npm test
 
