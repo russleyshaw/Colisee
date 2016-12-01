@@ -4,12 +4,23 @@ let should = require("should");
 
 let Logger = require("../common/Logger");
 
+let knex = require("knex")({
+    client: "pg",
+    connection: {
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME,
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT
+    }
+});
+
 describe("Logger", function() {
 
     before("Reset database and initialize test data", function(done){
-        //Db.DEBUG = true;
         this.timeout(5 * 1000);
-        knex("log").del().asCallback(() => {
+        knex("log").del().asCallback((err) => {
+            should(err).not.be.ok();
             done();
         })
     });

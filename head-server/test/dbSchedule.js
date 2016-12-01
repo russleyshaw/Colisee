@@ -3,11 +3,23 @@
 let should = require("should");
 let Schedule = require("../common/Schedule");
 
+let knex = require("knex")({
+    client: "pg",
+    connection: {
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME,
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT
+    }
+});
+
 describe("Schedule", function() {
 
     before("Reset database and initialize test data", function (done) {
         this.timeout(5 * 1000);
-        knex("schedule").del().asCallback(() => {
+        knex("schedule").del().asCallback((err) => {
+            should(err).not.be.ok();
             done();
         });
     });

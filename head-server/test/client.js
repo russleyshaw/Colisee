@@ -3,6 +3,17 @@
 let should = require("should");
 let Client = require("../common/Client");
 
+let knex = require("knex")({
+    client: "pg",
+    connection: {
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME,
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT
+    }
+});
+
 describe("Client", function() {
 
     let client_id = null;
