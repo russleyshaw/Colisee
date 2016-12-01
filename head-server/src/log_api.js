@@ -1,10 +1,9 @@
 var express = require("express");
 var path = require("path");
-var Logger = require("../../common/Logger");
+var Logger = require("../common/Logger");
 var router = express.Router();
 
-router.use("/log/", express.static(path.join(__dirname, "static/index.html")));
-router.use("/log/static/", express.static(path.join(__dirname, "static")));
+router.use("/log/", express.static(path.join(__dirname, "../static/log/")));
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // GET

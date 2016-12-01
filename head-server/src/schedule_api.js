@@ -49,11 +49,16 @@ router.post("/api/v2/schedule/", function(req, res){
     });
 });
 router.post("/api/v2/schedule/start", (req, res )=>{
-    ScheduleInterface.start();
-    res.status(200).send("Started schedule");
+    scheduler.start((err) => {
+        if(err) {
+            console.log(JSON.stringify(err));
+            return res.status(404).send(err);
+        }
+        res.status(200).send("Started schedule");
+    });
 });
 router.post("/api/v2/schedule/stop",(req,res) =>{
-    ScheduleInterface.stop();
+    scheduler.stop();
     res.status(200).send("Stopped schedule");
 });
 

@@ -7,8 +7,8 @@ const winston       = require("winston");
 winston.level = config.logging;
 
 let clientApi       = require("./client_api");
-// let matchApi        = require("./match/api");
-// let logApi          = require("./log/api");
+let matchApi        = require("./match_api");
+let logApi          = require("./log_api");
 let scheduleApi     = require("./schedule_api");
 let playApi         = require("./play_api");
 
@@ -29,8 +29,8 @@ app.use(function (req, res, next) {
 });
 
 app.use("/", clientApi);
-// app.use("/", matchApi);
-// app.use("/", logApi);
+app.use("/", matchApi);
+app.use("/", logApi);
 app.use("/", scheduleApi);
 app.use("/api/v2/play/", playApi);
 

@@ -1,10 +1,9 @@
 var express = require("express");
-var Match = require("../../common/Match");
+var Match = require("../common/Match");
 var path = require("path");
 var router = express.Router();
 
-router.use("/match/", express.static(path.join(__dirname, "static/index.html")));
-router.use("/match/static/", express.static(path.join(__dirname, "static")));
+router.use("/match/", express.static(path.join(__dirname, "../static/match/")));
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // GET

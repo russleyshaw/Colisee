@@ -44,7 +44,7 @@ class CreateLogComponent extends React.Component {
         }
 
         var self = this;
-        $.post("api/v2/log/", body, function(newLog){
+        $.post("/api/v2/log/", body, function(newLog){
             var out = Object.keys(newLog).map(function(key){
                 return <span><strong>{key}</strong>: {JSON.stringify(newLog[key])}<br/></span>;
             });

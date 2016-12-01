@@ -60,15 +60,17 @@ class Scheduler {
             if(err) return callback(err);
             this.schedId= scheduleID;
         });
-        this.interval_ptr = setInterval(this.intervalFunc, this.SCHEDULE_INTERVAL);
+        this.interval_ptr = setInterval(() => {
+            Scheduler.intervalFunc(this);
+        }, this.SCHEDULE_INTERVAL);
         callback();
     }
 
-    intervalFunc() {
-        this.getNumScheduled( (err,numScheduled)=>{
+    static intervalFunc(self) {
+        self.getNumScheduled( (err,numScheduled)=>{
             if(err) return console.error("error returning the number scheduled",numScheduled);
-            if(numScheduled < this.MAX_SCHEDULED) {
-                this.scheduleOnce(function(err){
+            if(numScheduled < self.MAX_SCHEDULED) {
+                self.scheduleOnce(function(err){
                     if(err) return console.error(err);
                 });
             }

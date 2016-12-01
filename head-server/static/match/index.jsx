@@ -145,8 +145,7 @@ class CreateMatchGroup extends React.Component {
         this.TEXT_AREA_STYLE = {resize: "vertical"};
         this.TEXT_AREA_DEFAULT_CONTENT = JSON.stringify({
             clients: [],
-            reason: "",
-            status: ""
+            schedule_id: 1,
         }, null, 2);
     }
     render() {
@@ -178,7 +177,7 @@ class CreateMatchGroup extends React.Component {
         }
 
         var self = this;
-        $.post("api/v2/match/", body, function(newMatch){
+        $.post("/api/v2/match/", body, function(newMatch){
             var out = Object.keys(newMatch).map(function(key){
                 return <span><strong>{key}</strong>: {JSON.stringify(newMatch[key])}<br/></span>;
             });
@@ -204,8 +203,7 @@ class UpdateMatchGroup extends React.Component {
 
         this.TEXT_AREA_DEFAULT_CONTENT = JSON.stringify({
             clients: [],
-            reason: "",
-            status: "",
+            schedule_id: 1,
         }, null, 2);
 
         this.TEXT_AREA_STYLE = {resize: "vertical"};
@@ -240,7 +238,7 @@ class UpdateMatchGroup extends React.Component {
         var body = JSON.parse( this.state.inputBody );
         var id = this.state.inputId;
         var self = this;
-        $.post(`api/v2/match/${id}/update/`, body, function(newMatch){
+        $.post(`/api/v2/match/${id}/update/`, body, function(newMatch){
             var out = Object.keys(newMatch).map(function(key){
                 return <span><strong>{key}</strong>: {JSON.stringify(newMatch[key])}<br/></span>;
             });
