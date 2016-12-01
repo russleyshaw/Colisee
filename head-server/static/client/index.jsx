@@ -172,7 +172,7 @@ class CreateClientGroup extends React.Component {
         }
 
         var self = this;
-        $.post("api/v2/client/", body, function(newClient){
+        $.post("/api/v2/client/", body, function(newClient){
             var out = Object.keys(newClient).map(function(key){
                 return <span><strong>{key}</strong> {JSON.stringify(newClient[key])}<br/></span>;
             });
@@ -234,7 +234,7 @@ class UpdateClientGroup extends React.Component {
         var body = JSON.parse( this.state.inputBody );
         var id = this.state.inputId;
         var self = this;
-        $.post(`api/v2/client/${id}/update/`, body, function(newClient){
+        $.post(`/api/v2/client/${id}/update/`, body, function(newClient){
             var out = Object.keys(newClient).map(function(key){
                 return <span><strong>{key}</strong>: {JSON.stringify(newClient[key])}<br/></span>;
             });

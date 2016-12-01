@@ -1,12 +1,11 @@
 var express = require("express");
 var path = require("path");
 
-var Client = require("../../common/Client");
+var Client = require("../common/Client");
 
 var router = express.Router();
 
-router.use("/client/", express.static(path.join(__dirname, "static/index.html")));
-router.use("/client/static/", express.static(path.join(__dirname, "static")));
+router.use("/client/", express.static(path.join(__dirname, "../static/client")));
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // GET
@@ -39,7 +38,10 @@ router.post("/api/v2/client/:id/update/", (req, res) => {
 
 router.post("/api/v2/client/", function(req, res){
     Client.create(req.body, (err, client) => {
-        if(err) return res.sendStatus(400);
+        if(err) {
+            console.log(JSON.stringify(err));
+            return res.status(400).send(err);
+        }
         res.send(client);
     });
 });

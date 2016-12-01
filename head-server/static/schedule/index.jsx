@@ -226,6 +226,8 @@ class ScheduleListPanel extends React.Component {
         var self = this;
 
         console.log(this.state.filterQs);
+        if(this.state.filterQs===null || this.state.filterQs===undefined)
+            this.state.filterQs = "";
         $.get(`/api/v2/schedule/?${this.state.filterQs}`, function(schedules) {
             self.setState({"schedules": schedules});
 
@@ -325,7 +327,7 @@ class CreateScheduleGroup extends React.Component {
         }
 
         var self = this;
-        $.post("api/v2/schedule/", body, function(newSchedule){
+        $.post("/api/v2/schedule/", body, function(newSchedule){
             var out = Object.keys(newSchedule).map(function(key){
                 return <span><strong>{key}</strong> {JSON.stringify(newSchedule[key])}<br/></span>;
             });
@@ -386,7 +388,7 @@ class UpdateScheduleGroup extends React.Component {
         var body = JSON.parse( this.state.inputBody );
         var id = this.state.inputId;
         var self = this;
-        $.post(`api/v2/schedule/${id}/update/`, body, function(newSchedule){
+        $.post(`/api/v2/schedule/${id}/update/`, body, function(newSchedule){
             var out = Object.keys(newSchedule).map(function(key){
                 return <span><strong>{key}</strong>: {JSON.stringify(newSchedule[key])}<br/></span>;
             });
