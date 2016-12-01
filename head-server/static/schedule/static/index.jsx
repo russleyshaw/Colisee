@@ -126,17 +126,14 @@ class ScheduleType extends React.Component {
         return (
             <div className="panel panel-default">
                 <div className="panel-body">
-                    <input onChange={this.onChangedFilter} type="text" className="form-control" placeholder="type"/>
                     <div className="dropdown">
-                        <button className="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Type
-                            <span className="caret"></span></button>
-                        <u1 onClick={this.onChangedFilter} className="dropdown-menu">
-                            <li><a role="menuitem" href="#">Random</a></li>
-                            <li><a role="menuitem" href="#">Single_elimination</a></li>
-                            <li><a role="menuitem" href="#">Triple_elimination</a></li>
-                            <li><a role="menuitem" href="#">Swiss</a></li>
-                            <li><a role="menuitem" href="#">Test</a></li>
-                        </u1>
+                        <select defaultValue={this.state.value} onChange={this.onChangedFilter}>
+                            <option value = "Random">Random</option>
+                            <option value = "Single_elimination">Single_elimination</option>
+                            <option value = "Triple_elimination">Triple_elimination</option>
+                            <option value = "Swiss">Swiss</option>
+                            <option value = "Test">Test</option>
+                        </select>
                     </div>
                     <div className="well">{this.state.output}</div>
                 </div>
