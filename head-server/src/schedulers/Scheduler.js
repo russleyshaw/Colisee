@@ -7,7 +7,8 @@ let knex = require("knex")({
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
         password: process.env.DB_PASS,
-        database: process.env.DB_NAME
+        database: process.env.DB_NAME,
+        port: process.env.DB_PORT,
     }
 });
 
@@ -54,7 +55,8 @@ class Scheduler {
             return;
         }
         Schedule.create({
-            type: this.current_scheduler.getType()
+            type: this.current_scheduler.getType(),
+            status: "running"
         }, (err, schedule) => {
             if(err) return callback(err);
             this.sched_id = schedule.id;

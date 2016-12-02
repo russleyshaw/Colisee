@@ -29,11 +29,11 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use("/", clientApi);
-app.use("/", matchApi);
-app.use("/", logApi);
-app.use("/", scheduleApi);
-app.use("/api/v2/play/", playApi);
+app.use("/api/v2/client",   clientApi);
+app.use("/api/v2/match",    matchApi);
+app.use("/api/v2/log",      logApi);
+app.use("/api/v2/schedule", scheduleApi);
+app.use("/api/v2/play",     playApi);
 
 app.listen(config.port, () => {
     winston.info(`Listening on port ${config.port}`);

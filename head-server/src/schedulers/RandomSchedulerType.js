@@ -3,7 +3,6 @@ let Client = require("../../common/Client");
 let config = require("config");
 let winston = require("winston");
 
-
 class RandomSchedulerType extends BaseScheduler {
     constructor() {
         super();
@@ -28,7 +27,7 @@ class RandomSchedulerType extends BaseScheduler {
         });
     }
 
-    static getType(){
+    getType(){
         return "random";
     }
 }

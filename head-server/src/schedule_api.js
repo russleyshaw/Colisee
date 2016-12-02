@@ -10,7 +10,7 @@ let router = express.Router();
 let scheduler =  new Scheduler();
 scheduler.switchTo(new RandomSchedulerType());
 
-router.get("/api/v2/schedule/", (req, res) => {
+router.get("/", (req, res) => {
     let options = req.query;
     ScheduleInterface.get(options, (err, schedules) => {
         if(err) return res.status(404).send(err);
@@ -18,7 +18,7 @@ router.get("/api/v2/schedule/", (req, res) => {
     });
 });
 
-router.get("/api/v2/schedule/:id/", (req, res) => {
+router.get("/:id/", (req, res) => {
     ScheduleInterface.get({id: req.params.id, limit: 1}, (err, schedules) => {
         if(err) return res.status(404).send(err);
         if(schedules.length !== 1) return res.status(404).send(new Error(`Unable to find schedule with id ${req.params.id}`));
@@ -26,38 +26,30 @@ router.get("/api/v2/schedule/:id/", (req, res) => {
     });
 });
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// POST
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-router.post("/api/v2/schedule/:id/update/", (req, res) => {
+router.post("/:id/update/", (req, res) => {
     ScheduleInterface.updateById(req.params.id, req.body, (err, schedule) => {
-        if(err) {
-            console.log(JSON.stringify(err));
-            return res.sendStatus(404);
-        }
+        if(err) return res.status(404).send(err);
         res.send(schedule);
     });
 });
 
-router.post("/api/v2/schedule/", function(req, res){
+router.post("/", function(req, res){
     ScheduleInterface.create(req.body, (err, schedule) => {
         if(err) return res.status(400).send(err);
         res.status(200).send(schedule);
     });
 });
-router.post("/api/v2/schedule/start", (req, res )=>{
+router.post("/start", (req, res )=>{
     scheduler.start((err) => {
-        if(err) {
-            console.log(JSON.stringify(err));
-            return res.status(404).send(err);
-        }
+        if(err) return res.status(404).send(err);
         res.status(200).send("Started schedule");
     });
 });
-router.post("/api/v2/schedule/stop",(req,res) =>{
-    scheduler.stop();
-    res.status(200).send("Stopped schedule");
+router.post("/stop",(req,res) =>{
+    scheduler.stop((err) => {
+        if(err) return res.status(400).send(err);
+        res.status(200).send("Stopped schedule");
+    });
 });
 
 module.exports = router;

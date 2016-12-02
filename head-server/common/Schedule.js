@@ -5,6 +5,7 @@ let knex = require("knex")({
         password: process.env.DB_PASS,
         database: process.env.DB_NAME,
         host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
     }
 });
 
@@ -28,9 +29,9 @@ class Schedule{
         if(schedule.hasOwnProperty("created_time")) return callback( new Error("Cannot create with created time") );
         if(schedule.hasOwnProperty("modified_time")) return callback( new Error("Cannot create with modified time") );
 
-        knex("schedule").insert(schedule,"*").asCallback(( err, rows) => {
-            if(err) return console.error("queryOnce in schedule.create() returns an error");
-            if(rows.length != 1) return console.error("Unable to insert into database");
+        knex("schedule").insert(schedule,"*").asCallback((err, rows) => {
+            if(err) return callback(err);
+            if(rows.length != 1) callback( new Error("Nothing was inserted into the database") );
             callback(null, rows[0]);
         });
     }
