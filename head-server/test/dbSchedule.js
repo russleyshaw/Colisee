@@ -10,7 +10,7 @@ let knex = require("knex")({
         password: process.env.DB_PASS,
         database: process.env.DB_NAME,
         host: process.env.DB_HOST,
-        port: process.env.DB_PORT
+        port: process.env.DB_PORT,
     }
 });
 
@@ -18,7 +18,7 @@ describe("Schedule", function() {
 
     before("Reset database and initialize test data", function (done) {
         this.timeout(5 * 1000);
-        knex("schedule").del().asCallback((err) => {
+        knex("schedule").select("*").del().asCallback((err) => {
             should(err).not.be.ok();
             done();
         });
@@ -86,27 +86,7 @@ describe("Schedule", function() {
             });
         });
     });
-    describe("getByID", ()=> {
-        it("Should retrieve a schedule by ID.", (done)=> {
-            Schedule.getByID(schedule_id, (err, result) => {
-                should(err).not.be.ok();
-                should(result.id).equal(schedule_id);
-                should(result.type).equal("random");
-                should(result.status).equal("stopped");
-                done();
-            });
-        });
-    });
-    describe("getByType", ()=> {
-        it("Should retrieve a schedule by ID.", (done)=> {
-            Schedule.getByType("triple_elimination", (err, result) => {
-                should(err).not.be.ok();
-                should(result.type).equal("triple_elimination");
-                should(result.status).equal("stopped");
-                done();
-            });
-        });
-    });
+
     describe("get", ()=>{
         it("Should retreive a schedule with given config.", (done)=>{
             Schedule.get({
@@ -119,15 +99,15 @@ describe("Schedule", function() {
             });
         });
     });
+
     describe("updateById",function(){
         it("Should update status of existing schedule.", function(done){
             this.timeout(8000);
-            Schedule.updateById(3, {
+            Schedule.updateById(schedule_id, {
                 status:"running",
-            }, (err, result)=>{
+            }, (err, result) => {
                 should(err).not.be.ok();
                 should(result.status).equal("running");
-                should(result.type).equal("triple_elimination");
                 done();
             });
         });

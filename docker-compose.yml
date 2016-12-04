@@ -15,7 +15,7 @@ services:
       DB_USER: "colisee"
       DB_PASS: "colisee"
       DB_NAME: "colisee"
-      DB_HOST: "db"
+      DB_HOST: "${DOCKER_INET}"
       DB_PORT: "5400"
     build: build-server/
     volumes:
@@ -28,7 +28,7 @@ services:
       DB_USER: "colisee"
       DB_PASS: "colisee"
       DB_NAME: "colisee"
-      DB_HOST: "db"
+      DB_HOST: "${DOCKER_INET}"
       DB_PORT: "5400"
       HEAD_TOKEN: "abcd"
     build: head-server/
@@ -37,7 +37,7 @@ services:
 
   play-worker:
     environment:
-      HEAD_HOST: "head-server"
+      HEAD_HOST: "${DOCKER_INET}"
       HEAD_PORT: "5401"
       HEAD_TOKEN: "abcd"
     build: play-worker/

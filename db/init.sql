@@ -72,11 +72,11 @@ CREATE TABLE "match" (
     reason character varying,
 
     status match_status_enum NOT NULL DEFAULT 'scheduled',
-    gamelog integer UNIQUE,
+    gamelog integer,
 
     created_time timestamp NOT NULL DEFAULT now(),
     modified_time timestamp NOT NULL DEFAULT now(),
-    schedule_id integer NOT NULL REFERENCES schedule(id)
+    schedule_id integer NOT NULL REFERENCES schedule ON DELETE CASCADE
 );
 
 DELETE FROM "log";

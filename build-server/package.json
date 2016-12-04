@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "postinstall": "./setupTmp.sh",
     "start": "node server.js"
   },
   "author": "siggame",

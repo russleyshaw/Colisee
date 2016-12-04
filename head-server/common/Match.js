@@ -5,11 +5,11 @@ let knex = require("knex")({
         password: process.env.DB_PASS,
         database: process.env.DB_NAME,
         host: process.env.DB_HOST,
-        port: process.env.DB_PORT
+        port: process.env.DB_PORT,
     }
 });
 
-var _ = require("lodash");
+let _ = require("lodash");
 
 
 /**
@@ -18,7 +18,7 @@ var _ = require("lodash");
 class Match {
 
     static get(options, callback){
-        var sql = knex("match").select();
+        let sql = knex("match").select();
 
         if(options.hasOwnProperty("id")){
             if(Array.isArray(options.id)) sql = sql.whereIn("id", options.id);

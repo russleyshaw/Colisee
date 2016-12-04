@@ -1,3 +1,4 @@
+let winston = require("winston");
 let Match = require("../../common/Match");
 let Schedule = require("../../common/Schedule");
 let knex = require("knex")({
@@ -6,12 +7,13 @@ let knex = require("knex")({
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
         password: process.env.DB_PASS,
-        database: process.env.DB_NAME
+        database: process.env.DB_NAME,
+        port: process.env.DB_PORT,
     }
 });
 
 function defaultErrorCallback(err) {
-    console.error(err);
+    winston.error(err);
 }
 
 class Scheduler {
@@ -22,8 +24,7 @@ class Scheduler {
 
         this.interval_ptr = undefined;
         this.current_scheduler = undefined;
-        this.schedID = null;
-
+        this.sched_id = null;
     }
 
     /**
@@ -31,7 +32,7 @@ class Scheduler {
      * @callback Scheduler ~getNumScheduledCallback
      */
     getNumScheduled(callback){
-        knex("match").where("status","scheduled").count("* as count").asCallback( (err, rows) => {
+        knex("match").where("status","scheduled").count("* as count").asCallback((err, rows) => {
             if(err) return callback(err);
             callback(null, rows[0].count);
         });
@@ -53,23 +54,27 @@ class Scheduler {
             callback(new Error("Schedule type not set yet."));
             return;
         }
-        let sched1 = {
-            type: this.current_scheduler.getType()
-        };
-        Schedule.create(sched1,(err,scheduleID)=>{
+        Schedule.create({
+            type: this.current_scheduler.getType(),
+            status: "running"
+        }, (err, schedule) => {
             if(err) return callback(err);
-            this.schedId= scheduleID;
+            this.sched_id = schedule.id;
+
+            this.interval_ptr = setInterval(() => {
+                Scheduler.intervalFunc(this);
+            }, this.SCHEDULE_INTERVAL);
+
+            callback();
         });
-        this.interval_ptr = setInterval(this.intervalFunc, this.SCHEDULE_INTERVAL);
-        callback();
     }
 
-    intervalFunc() {
-        this.getNumScheduled( (err,numScheduled)=>{
-            if(err) return console.error("error returning the number scheduled",numScheduled);
-            if(numScheduled < this.MAX_SCHEDULED) {
-                this.scheduleOnce(function(err){
-                    if(err) return console.error(err);
+    static intervalFunc(self) {
+        self.getNumScheduled((err, numScheduled) => {
+            if(err) return winston.error(err);
+            if(numScheduled < self.MAX_SCHEDULED) {
+                self.scheduleOnce((err) => {
+                    if(err) return winston.error(err);
                 });
             }
         });
@@ -80,9 +85,10 @@ class Scheduler {
      */
     stop(callback) {
         if(callback === undefined) callback = defaultErrorCallback;
-        knex("schedule").where("status","running").update("status", "stopped").asCallback( (err) => {
+        knex("schedule").where("status","running").update("status", "stopped").asCallback((err) => {
             if(err) return callback(err);
             clearInterval(this.interval_ptr);
+            callback();
         });
     }
 
@@ -93,13 +99,20 @@ class Scheduler {
      * Logs any errors in the Db log table as a message.
      * @param callback
      */
-    scheduleOnce(callback){
-        this.current_scheduler.genNext( (err, clientIDs) => {
-            if(err)return callback(err);
-
+    scheduleOnce(callback) {
+        winston.debug("scheduling once");
+        if(this.current_scheduler === null) {
+            return callback( new Error("Current scheduler is null") );
+        }
+        winston.debug("after null check");
+        this.current_scheduler.genNext((err, clientIDs) => {
+            if(err) return callback(err);
+            if(this.sched_id === null) {
+                return callback( new Error("Internal schedule id is null") );
+            }
             Match.create({
                 clients: clientIDs,
-                schedule_id: 1
+                schedule_id: this.sched_id
             }, (err) => {
                 if (err) return callback(err);
                 callback(null, clientIDs);
@@ -112,7 +125,6 @@ class Scheduler {
      * @param scheduler_type
      */
     switchTo( scheduler_type ) {
-        //TODO: stop current scheduler and start new one?
         this.current_scheduler = scheduler_type;
     }
 }

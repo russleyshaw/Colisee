@@ -7,16 +7,23 @@ https://russleyshaw.github.io/Colisee/
 [![Build Status](https://travis-ci.org/russleyshaw/Colisee.svg?branch=master)](https://travis-ci.org/russleyshaw/Colisee)
 
 
-### Setup
+### Setup Colisee
 1) Install Docker - https://docs.docker.com/engine/installation/linux/ubuntulinux/  
 ```curl -sSL https://get.docker.com/ | sh```  
  
 2) Install Docker Compose - https://docs.docker.com/compose/install/  
-`pip install docker-compose`
+`pip install docker-compose`  
 
-3) Build images  
-`docker-compose build`
+3) Run `npm install` on each service using installAll script  
+`./installAll.sh`  
 
-4) Run images  
-`docker-compose up`
+### Run Colisee  
+4) Build images  
+`docker-compose build`  
 
+5) Run images  
+`docker-compose up`    
+
+### Test Colisee  
+4) Run test command  
+`./test.sh`  

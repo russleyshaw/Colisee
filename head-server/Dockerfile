@@ -4,6 +4,7 @@ MAINTAINER siggame
 ADD . head-server
 WORKDIR head-server
 
-RUN npm install
+RUN [ -d node_modules ]
+RUN [ -d bower_components ]
 
 CMD ["npm", "start"]

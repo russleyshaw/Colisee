@@ -10,20 +10,21 @@ let knex = require("knex")({
         password: process.env.DB_PASS,
         database: process.env.DB_NAME,
         host: process.env.DB_HOST,
-        port: process.env.DB_PORT
+        port: process.env.DB_PORT,
     }
 });
 
 describe("Client", function() {
 
-    let client_id = null;
-
     before("Reset database and initialize test data", function(done) {
         this.timeout(5 * 1000);
-        knex("client").del().asCallback(() => {
+        knex("client").select("*").del().asCallback((err) => {
+            should(err).not.be.ok();
             done();
         })
     });
+
+    let client_id = null;
 
     describe("create", function() {
         it("should create a new client in the database", function(done) {
@@ -82,36 +83,14 @@ describe("Client", function() {
 
     describe("updateById", function() {
         it("should update a client based on its id", function(done){
-            Client.updateById(1, {
+            Client.updateById(client_id, {
                 language: "cpp",
             }, (err, client) => {
                 should(err).not.be.ok();
-                should(client.id).equal(1);
+                should(client.id).equal(client_id);
                 should(client.language).equal("cpp");
                 done();
             });
         });
     });
-
-    describe("getById", () => {
-        it("should retrieve a client by id", function(done) {
-            Client.getById(client_id, (err, client) => {
-                should(err).not.be.ok();
-                should(client.id).be.equal(client_id);
-                should(client.name).be.equal("test1");
-                done();
-            });
-        });
-    });
-
-    describe("getByName", () => {
-        it("should retrieve a client by name", function(done) {
-            Client.getByName("test2", (err, client) => {
-                should(err).not.be.ok();
-                should(client.name).be.equal("test2");
-                done();
-            });
-        });
-    });
-
 });

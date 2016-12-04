@@ -5,7 +5,7 @@ let knex = require("knex")({
         password: process.env.DB_PASS,
         database: process.env.DB_NAME,
         host: process.env.DB_HOST,
-        port: process.env.DB_PORT
+        port: process.env.DB_PORT,
     }
 });
 
@@ -64,7 +64,7 @@ class Logger {
 
         fields["modified_time"] = "now()";
 
-        knex("log").where({id: id}).update(fields, "*").asCallback( (err, result) => {
+        knex("log").where({id: id}).update(fields, "*").asCallback( (err, rows) => {
             if(err) return callback(err);
             if(rows.length != 1) return callback( new Error("Query resulted in invalid number of rows") );
             callback(null, rows[0]);

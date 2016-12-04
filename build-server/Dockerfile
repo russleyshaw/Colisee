@@ -7,7 +7,7 @@ RUN usermod -aG docker node
 ADD . build-server
 WORKDIR build-server
 
-RUN ./setupTmpDirs.sh
-RUN npm install
+RUN [ -d node_modules ]
+RUN [ -d tmp ]
 
 CMD ["npm", "start"]

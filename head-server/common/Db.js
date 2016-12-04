@@ -3,13 +3,13 @@
  * @file Db.js
  */
 
-var pg = require("pg");
-var path = require("path");
-var fs = require("fs");
-var config = require("config");
-var async = require("async");
+let pg = require("pg");
+let path = require("path");
+let fs = require("fs");
+let config = require("config");
+let async = require("async");
 
-var _DEBUG = false;
+let _DEBUG = false;
 
 /**
  * Database interaction and utilities class
@@ -26,7 +26,7 @@ class Db {
             user: process.env.DB_USER,
             database: process.env.DB_NAME,
             password: process.env.DB_PASS,
-            host: process.env.DB_HOST
+            host: process.env.DB_HOST,
             port: process.env.DB_PORT,
         });
     }
@@ -36,10 +36,10 @@ class Db {
      * @param callback {function(err)}
      */
     static reset(callback) {
-        var init_sql = fs.readFileSync( path.join(__dirname, "../../db/init.sql") );
-        var sqls = init_sql.toString();
+        let init_sql = fs.readFileSync( path.join(__dirname, "../../db/init.sql") );
+        let sqls = init_sql.toString();
 
-        var pgclient = this.newPgClient();
+        let pgclient = this.newPgClient();
 
         pgclient.connect((err) => {
             if(err) return callback(err);

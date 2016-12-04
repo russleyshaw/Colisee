@@ -6,6 +6,6 @@ RUN curl -sSL https://get.docker.com/ | sh
 ADD . play-worker
 WORKDIR play-worker
 
-RUN npm install
+RUN [ -d node_modules ]
 
 CMD ["npm", "start"]

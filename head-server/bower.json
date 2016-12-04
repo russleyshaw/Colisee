@@ -1,0 +1,23 @@
+{
+  "name": "head-server",
+  "description": "",
+  "main": "src/server.js",
+  "authors": [
+    "siggame"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/russleyshaw/Colisee",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "4",
+    "jquery": "^3.1.1",
+    "babel": "^5.8.38",
+    "react": "^15.4.1"
+  }
+}
