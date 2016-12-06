@@ -40,6 +40,11 @@ services:
       HEAD_HOST: "${DOCKER_INET}"
       HEAD_PORT: "5401"
       HEAD_TOKEN: "abcd"
+      DB_USER: "colisee"
+      DB_PASS: "colisee"
+      DB_NAME: "colisee"
+      DB_HOST: "${DOCKER_INET}"
+      DB_PORT: "5400"
     build: play-worker/
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock

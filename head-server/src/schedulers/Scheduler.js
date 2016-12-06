@@ -19,7 +19,7 @@ function defaultErrorCallback(err) {
 class Scheduler {
 
     constructor() {
-        this.MAX_SCHEDULED = 50;
+        this.MAX_SCHEDULED = 5;
         this.SCHEDULE_INTERVAL = 1000;
 
         this.interval_ptr = undefined;

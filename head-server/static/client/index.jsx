@@ -136,9 +136,9 @@ class CreateClientGroup extends React.Component {
 
         this.TEXT_AREA_DEFAULT_CONTENT = JSON.stringify({
             name: "",
-            repo: "",
-            hash: "",
-            language: "",
+            repo: "https://github.com/russleyshaw/Joueur.cpp.git",
+            hash: "ca3803e2a120668b1715ba29cafbad3fed4b10ce",
+            language: "cpp",
         }, null, 2);
         this.TEXT_AREA_STYLE = {resize: "vertical"};
 
@@ -199,9 +199,7 @@ class UpdateClientGroup extends React.Component {
         this.handleChangedBody = this.handleChangedBody.bind(this);
 
         this.TEXT_AREA_DEFAULT_CONTENT = JSON.stringify({
-            repo: "",
-            hash: "",
-            language: ""
+            "needs_build": true
         }, null, 2);
 
         this.TEXT_AREA_STYLE = {resize: "vertical"};

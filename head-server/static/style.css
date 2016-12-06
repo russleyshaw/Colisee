@@ -2595,6 +2595,7 @@ output {
     opacity: 1;
 }
 .form-control:-ms-input-placeholder {
+.form-control:-ms-input-placeholder {
     color: #cccccc;
 }
 .form-control::-webkit-input-placeholder {

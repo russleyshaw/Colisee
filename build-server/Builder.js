@@ -1,8 +1,9 @@
-const config = require("config");
-const child_process = require("child_process");
-const fs = require("fs");
-const path = require("path");
-const async = require("async");
+let config = require("config");
+let child_process = require("child_process");
+let fs = require("fs");
+let winston = require("winston");
+let path = require("path");
+let async = require("async");
 let knex = require("knex")({
     client: "pg",
     connection: {
@@ -14,6 +15,8 @@ let knex = require("knex")({
     }
 });
 
+winston.level = config.logging;
+
 const log_dir = path.join(__dirname, config.log_dir);
 const tar_dir = path.join(__dirname, config.tar_dir);
 const hash_dir = path.join(__dirname, config.hash_dir);
@@ -24,7 +27,7 @@ const hash_dir = path.join(__dirname, config.hash_dir);
 class Builder {
 
     constructor() {
-        this._build_interval = undefined;
+        this._build_interval = null;
         this._build_interval_time = 1000;
         this._num_building = 0;
         this.MAX_BUILDING = 1;
@@ -52,14 +55,13 @@ class Builder {
         ];
 
         //Build each base image
-        async.map(cmds, function(cmd, cb) {
+        async.map(cmds, (cmd, cb) => {
             child_process.exec(cmd, function(err) {
                 if(err) return cb(err);
                 cb();
             });
-        }, function(err){
+        }, (err) => {
             if(err) return callback(err);
-            console.log("Initialized");
             callback();
         });
     }
@@ -68,28 +70,31 @@ class Builder {
     /**
      * Starts the building service
      */
-    start() {
-        console.log("Starting build service...");
+    start(callback) {
+        winston.info("Starting build service...");
         clearInterval(this._build_interval);
         this._build_interval = setInterval(() => {
-            //Don't build more if at maSx
-            if(this._num_building >= this._MAX_BUILDING) return;
-
-            //Select oldest client needing build, with
-            knex("client").where("needs_build", true).whereNotNull("repo").whereNotNull("hash").whereNotNull("language").orderBy("attempt_time").limit(1).asCallback((err, rows) => {
-                if(err) return console.warn(`Error: ${JSON.stringify(err)}`);
-                if(rows.length < 1) return; //None needing building
-
-                this._num_building++;
-
-                var client = rows[0];
-
-                this.build(client.id, (err) => {
-                    if(err) return console.warn(`Error: ${JSON.stringify(err)}`);
-                    this._num_building--;
-                });
-            });
+            this.buildIntervalFunc(this);
         }, this._build_interval_time);
+    }
+
+    buildIntervalFunc(self) {
+        if(self._num_building >= self._MAX_BUILDING) return;
+
+        //Select oldest client needing build, with
+        knex("client").where("needs_build", true).whereNotNull("repo").whereNotNull("hash").whereNotNull("language").orderBy("attempt_time").limit(1).asCallback((err, rows) => {
+            if(err) return winston.warn(`Knex Error: ${JSON.stringify(err)}`);
+            if(rows.length < 1) return; //None needing building
+            self._num_building++;
+
+            let client = rows[0];
+
+            self.build(client.id, (err) => {
+                if(err) return winston.warn(`Build Error: ${JSON.stringify(err)}`);
+                self._num_building--;
+                winston.debug(`Build client with id ${client.id}`);
+            });
+        });
     }
 
     /**
@@ -121,7 +126,7 @@ class Builder {
      * @param callback {Builder~buildCallback}
      */
     build(client_id, callback) {
-        console.log(`Building client ${client_id}...`);
+        winston.debug(`Building client ${client_id}...`);
 
         knex("client").where("id", client_id).asCallback( (err, rows )=>{
             if(err) return callback(err);
@@ -210,19 +215,17 @@ class Builder {
      * @private
      */
     _buildImageAndTmpLog(client, callback) {
-        console.log(`Building image and tmp log for client ${client.id}...`);
+        winston.debug(`Building image and tmp log for client ${client.id}...`);
 
-        var cmds = {
-            "cpp": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_cpp.dockerfile")} . > ${path.join(this.log_dir, `client_${client.id}.log.tmp`)}`,
-            "js": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_js.dockerfile")} . > ${path.join(this.log_dir, `client_${client.id}.log.tmp`)}`,
+        let cmds = {
+            "cpp": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_cpp.dockerfile")} . > ${path.join(log_dir, `client_${client.id}.log.tmp`)}`,
+            "js": `docker build -t client_${client.id} --build-arg REPO=${client.repo} --build-arg HASH=${client.hash} -f ${path.join(__dirname, "dockerfiles/client_js.dockerfile")} . > ${path.join(log_dir, `client_${client.id}.log.tmp`)}`,
         };
 
         if(!(client.language in cmds)) return callback(new Error("Language not supported!"));
 
-        var cmd = cmds[client.language];
-        child_process.exec(cmd, (err)=>{
-            console.warn(err);
-            //Failure to build is a build failure, not an error
+        let cmd = cmds[client.language];
+        child_process.exec(cmd, (err) => {
             if(err) return callback(null, false);
             callback(null, true);
         });
@@ -241,7 +244,7 @@ class Builder {
      */
     _saveTarTmp(client, callback) {
         console.log(`Saving temporary tar for client ${client.id}...`);
-        var cmd = `docker save -o ${path.join(this.tar_dir, `client_${client.id}.tar.tmp`)} client_${client.id}`;
+        let cmd = `docker save -o ${path.join(tar_dir, `client_${client.id}.tar.tmp`)} client_${client.id}`;
         child_process.exec(cmd, (err) => {
             if(err) return callback(err);
             callback();
@@ -260,7 +263,7 @@ class Builder {
      * @private
      */
     _saveHashTmp(client, callback) {
-        console.log(`Saving temporary hash for client ${client.id}...`);
+        winston.debug(`Saving temporary hash for client ${client.id}...`);
         const cmd = `sha256sum ${path.join(tar_dir, `client_${client.id}.tar.tmp`)} > ${path.join(hash_dir, `client_${client.id}.sha256.tmp`)}`;
         child_process.exec(cmd, (err) =>{
             if(err) return callback(err);
@@ -280,7 +283,7 @@ class Builder {
      * @private
      */
     _applyTmpFilesGood(client, callback) {
-        console.log(`Applying temporary files for good client ${client.id}...`);
+        winston.debug(`Applying temporary files for good client ${client.id}...`);
         const cmds = [
             `mv -f ${path.join(tar_dir, `client_${client.id}.tar.tmp`)} ${path.join(tar_dir, `client_${client.id}.tar`)}`,
             `mv -f ${path.join(log_dir, `client_${client.id}.log.tmp`)} ${path.join(log_dir, `client_${client.id}.log`)}`,
@@ -310,7 +313,7 @@ class Builder {
      * @private
      */
     _applyTmpFilesBad(client, callback) {
-        console.log(`Applying temporary files for bad client ${client.id}...`);
+        winston.debug(`Applying temporary files for bad client ${client.id}...`);
         const cmds = [
             `rm -f ${path.join(tar_dir, `client_${client.id}.tar`)} ${path.join(hash_dir, `client_${client.id}.sha256`)}`,
             `mv -f ${path.join(log_dir, `client_${client.id}.log.tmp`)} ${path.join(log_dir, `client_${client.id}.log`)}`,
