@@ -17,7 +17,10 @@ let router = express.Router();
 
 router.get("/", (req, res) => {
     // get the oldest, scheduled match and play it
-    knex("match").where("status", "scheduled").limit(1).orderBy("created_time").update({status: "sending", modified_time: "now()"}).asCallback((err, rows) => {
+    knex("match").where(function(){
+        this.where({status: "scheduled"}).limit(1)
+    }).update({status: "sending", modified_time: "now()"}, "*").asCallback((err, rows) => {
+        console.log(JSON.stringify(rows));
         if(err) return res.status(400).send(err);
         if(rows.length !== 1) return res.status(204).send("Nothing scheduled");
         res.status(200).send({id: rows[0].id});

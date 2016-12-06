@@ -89,7 +89,7 @@ function pollFunc() {
                 uri: `http://${head_host}:${head_port}/api/v2/play/${match_id}`,
             }, () => {
 
-            })
+            });
         });
     });
 }
