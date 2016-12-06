@@ -34,7 +34,7 @@ class Scheduler {
     getNumScheduled(callback){
         knex("match").where("status","scheduled").count("*").asCallback((err, rows) => {
             if(err) return callback(err);
-            console.log(JSON.stringify(rows));
+            if(rows.length !== 1) return callback( new Error("Could not get length") );
             callback(null, rows[0].count);
         });
     }
@@ -52,8 +52,7 @@ class Scheduler {
     start(callback) {
         if(callback === undefined) callback = defaultErrorCallback;
         if(this.current_scheduler === undefined || this.current_scheduler === null) {
-            callback(new Error("Schedule type not set yet."));
-            return;
+            return callback(new Error("Schedule type not set yet."));
         }
         Schedule.create({
             type: this.current_scheduler.getType(),
@@ -74,8 +73,9 @@ class Scheduler {
         self.getNumScheduled((err, numScheduled) => {
             if(err) return winston.error(err);
             if(numScheduled < self.MAX_SCHEDULED) {
-                self.scheduleOnce((err) => {
+                self.scheduleOnce((err, match) => {
                     if(err) return winston.error(err);
+                    winston.debug(`Scheduled match ${match.id}`);
                 });
             }
         });
@@ -101,11 +101,9 @@ class Scheduler {
      * @param callback
      */
     scheduleOnce(callback) {
-        winston.debug("scheduling once");
         if(this.current_scheduler === null) {
             return callback( new Error("Current scheduler is null") );
         }
-        winston.debug("after null check");
         this.current_scheduler.genNext((err, clientIDs) => {
             if(err) return callback(err);
             if(this.sched_id === null) {
@@ -115,9 +113,9 @@ class Scheduler {
                 clients: clientIDs,
                 schedule_id: this.sched_id,
                 status: "scheduled"
-            }, (err) => {
+            }, (err, match) => {
                 if (err) return callback(err);
-                callback(null, clientIDs);
+                callback(null, match);
             });
         });
     }

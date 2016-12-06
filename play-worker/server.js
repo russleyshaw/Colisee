@@ -49,11 +49,8 @@ function playGame(match_id, callback) {
 
 function pollFunc() {
     if(num_playing >= max_playing) {
-        winston.debug(`Max games currently playing`);
         return;
     }
-
-    winston.debug(`Polling head server at ${head_host}:${head_port}...`);
 
     request({
         method: "GET",
@@ -64,31 +61,25 @@ function pollFunc() {
         json: true
     }, (err, response, body) => {
         if(err) {
-            winston.warn(`Error polling head server - ${err}`);
-            winston.warn(err);
-            return;
+            return winston.warn(err);
         }
         if(response.statusCode == 204) {
-            winston.debug(`Nothing to poll`);
-            return;
+            return; // nothing to poll
         }
         if(response.statusCode != 200) {
-            winston.warn(`Bad status code ${response.statusCode} - ${response.statusMessage} - ${JSON.stringify(body)}`);
-            return;
+            return winston.warn( new Error(`Status code: ${response.statusCode} - Status message: ${response.statusMessage}`));
         }
-        winston.debug(`GOT\t${response}\t${body}`);
-        let match_id = req.body.id;
-        winston.debug(`Starting playing match ${match_id}...`);
+        let match_id = body.id;
         num_playing += 1;
         playGame(match_id, (err) => {
-            winston.debug(`Finished playing match ${match_id}`);
             num_playing -= 1;
             if(err) winston.warn(err);
+            winston.debug(`Played match ${match_id}`);
             request({
                 method: "POST",
                 uri: `http://${head_host}:${head_port}/api/v2/play/${match_id}`,
-            }, () => {
-
+            }, (err, response, body) => {
+                if(err) return winston.warn(err);
             });
         });
     });
