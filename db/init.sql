@@ -25,7 +25,7 @@ CREATE TYPE  schedule_status_enum AS ENUM(
 );
 
 CREATE TYPE match_status_enum AS ENUM (
-    'playing', 'sending', 'scheduled', 'finished', 'failed'
+    'playing', 'scheduled', 'finished', 'failed', 'sending'
 );
 
 CREATE TABLE "log" (
