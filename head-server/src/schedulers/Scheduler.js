@@ -19,7 +19,7 @@ function defaultErrorCallback(err) {
 class Scheduler {
 
     constructor() {
-        this.MAX_SCHEDULED = 50;
+        this.MAX_SCHEDULED = 5;
         this.SCHEDULE_INTERVAL = 1000;
 
         this.interval_ptr = undefined;
@@ -32,8 +32,10 @@ class Scheduler {
      * @callback Scheduler ~getNumScheduledCallback
      */
     getNumScheduled(callback){
-        knex("match").where("status","scheduled").count("* as count").asCallback((err, rows) => {
+        console.log(knex("match").where("status","scheduled").count("*").toString());
+        knex("match").where("status","scheduled").count("*").asCallback((err, rows) => {
             if(err) return callback(err);
+            console.log(JSON.stringify(rows));
             callback(null, rows[0].count);
         });
     }
@@ -71,6 +73,8 @@ class Scheduler {
 
     static intervalFunc(self) {
         self.getNumScheduled((err, numScheduled) => {
+            console.log(self.MAX_SCHEDULED);
+            console.log(numScheduled);
             if(err) return winston.error(err);
             if(numScheduled < self.MAX_SCHEDULED) {
                 self.scheduleOnce((err) => {
@@ -112,7 +116,8 @@ class Scheduler {
             }
             Match.create({
                 clients: clientIDs,
-                schedule_id: this.sched_id
+                schedule_id: this.sched_id,
+                status: "scheduled"
             }, (err) => {
                 if (err) return callback(err);
                 callback(null, clientIDs);
