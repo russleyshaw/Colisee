@@ -44,14 +44,14 @@ One major feature of Colisee over previous Arena implementations is the use of \
 Also because the code lives within containers, it is significantly more cumbersome to access the container file system than the host file system, making it more difficult for a malicious user to access individual's code over previous implementations
 
 \subsection{Client Privacy}
-In our implementation of the Arena, there is no concept of the user. Teams exist relatively anonymously because they are only identified by a unique identifier number and a unique name. The name of a team is not required to be personally identifying and if a user/team was concerned, they would have the ability to make their name whatever they wanted.
+In our implementation of the Arena, there is no concept of the user. Teams exist relatively anonymously because they are only identified by a unique identifier number and a unique name. The name of a team is not required to be personally identifying and if a user/team was concerned, they would have the ability to make their name whatever they wanted. All data from users is requested rather than collected, and therefore if a competitor does not give use the minimal required information, then they simply choose not to participate in the tournament. 
 
-For example, a team named \textit{a932vds30kio} reveals very little about the specific team, where-as \textit{RussShawTeam} could reveal more directly personal information about the users of the team.
+For example, a team named \textit{a932vds30kio} reveals very little about the specific team, where-as \textit{RussShawTeam} could reveal more directly personal information about the users of the team. Also, the nature of the Arena is an administrative program, meaning no non-privileged users will have access to the web interface.
 
 \subsection{Scheduling Fairness}
 Between the two options presented to us (random and ranked scheduling), we decided to implement a random scheduling service. We felt this was fairer in a more absolute sense, where every team has an equal chance to play against another team.
 
-Our service also only replaces the previous build if the current build succeeds. Therefore, as long as a single successful build exists, every team should be able to play games against other competitors. 
+Our service also only replaces the previous build if the current build succeeds. Therefore, as long as a single successful build exists, every team should be able to play games against other competitors. Other elements of the code have been unit tested extensiveness to ensure fairness in the implementation and its usage.
 
 \newpage
 \section{Future Concerns}
@@ -62,6 +62,8 @@ More issues arise when considering implementation of tournament scheduling algor
 Finally the issue of a transition to use in MST's Computer Science Introduction to AI's Chess Tournament will eventually become an issue. This will be a major ethical concern spike, as rather than being a client for simply SIG-Game, our implementation will eventually become a product used by another class, full of tuition paying students. Previous implementations of the Arena have struggled with performing in this environment  and judging when Colisee crosses the threshold into becoming usable for this use case is a matter of judgment on the part of SIG-Game's Arena development team.
 
 \section{Conclusion}
-It is our held belief at Team-A that our software introduces no major ethical concerns. Any minor ethical concerns can either be realized as design decisions or items in SIG-Game's terms and conditions for entry to MegaMinerAI. This lack of ethical concern is due in part to its state of completion. The goal for this project was to begin development on the new Arena component and to eventually reach a state it could be handed off to future development teams. This project laid the ground work for future development and although issues may lie ahead, these are issues that SIG-Game will need to resolve, rather than Team-A.
+It is our held belief at Team-A that our software introduces no major ethical concerns. Any minor ethical concerns can either be realized as design decisions or items in SIG-Game's terms and conditions for entry to MegaMinerAI.
+
+This lack of ethical concern is due in part to its state of completion. This product is not a professional product yet, as the purpose was not to have a turn-key solution. SIG-Game is responsible for the final professionalism of the product. The goal for this project was to begin development on the new Arena component and to eventually reach a state it could be handed off to future development teams. This project laid the ground work for future development and although issues may lie ahead, these are issues that SIG-Game will need to resolve, rather than Team-A.
 
 \end{document}
